@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<servers>
+  <server auto-publish-setting="2" auto-publish-time="1" configMode="1" hostname="127.0.0.1" id="defaultServer0" id-set="true" name="Web Preview Server" runtime-id="Web Preview Server Runtime" server-type="com.ibm.etools.wdt.server.serverType" server-type-id="com.ibm.etools.wdt.server.serverType" serverName="defaultServer0" start-timeout="30" stop-timeout="15" timestamp="0"/>
+  <server auto-publish-setting="1" hostname="Cloud" id="IBM Bluemix" name="IBM Bluemix" org.eclipse.cft.org="marcelo.manhaes@hotmail.com" org.eclipse.cft.serverId="marcelo.manhaes@hotmail.com_marcelo.manhaes@hotmail.com_Centro Espirita@https://api.ng.bluemix.net" org.eclipse.cft.space="Centro Espirita" org.eclipse.cft.url="https://api.ng.bluemix.net" org.eclipse.cft.username="marcelo.manhaes@hotmail.com" runtime-id="IBM Bluemix Runtime" server-type="com.ibm.cftools.server" server-type-id="com.ibm.cftools.server" start-timeout="600" stop-timeout="60" timestamp="2">
+    <list key="modules"/>
+  </server>
+</servers>

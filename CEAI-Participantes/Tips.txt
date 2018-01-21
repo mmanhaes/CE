@@ -1,0 +1,93 @@
+1 - For while didn´t find a way to get rid of this exception
+	
+2 - Create an index for all
+
+{ "index": {}, "type": "text"}
+
+3 - Buildpack 
+
+https://github.com/cloudfoundry/nodejs-buildpack
+
+4 - Create Index
+
+{
+  "index": {
+    "selector": {},
+    "fields": [
+      {"name": "firstName", "type": "string"},
+      {"name": "middleName", "type": "string"},
+      {"name": "lastName", "type": "string"}
+    ]
+  },
+  "type": "text",
+  "name": "my-index"
+}
+
+5 -  Create Index
+
+{
+  "index": {
+    "fields": [
+  "firstName" : "asc"   ]
+  },
+  "type": "json"
+}
+
+{
+  "index": {
+    "fields": [
+  "middleName" : "asc"  ]
+  },
+  "type": "json"
+}
+
+{
+  "index": {
+    "fields": [
+  "lastName" : "asc"  ]
+  },
+  "type": "json"
+}
+
+6 - Selector
+
+{
+  "selector": {
+    "firstName" : "Marcelo",
+    "middleName" : "Mota",
+    "lastName" : "Manhães"
+  },
+  "fields": [
+  "_id",  "firstName",
+    "middleName",
+    "lastName",
+    "userID"
+  ],
+  "sort": [
+    {
+      "firstName": "asc"
+    }
+  ]
+}
+
+7 -
+
+{
+  "selector": {
+    "firstName" : "Marcelo"
+  },
+  "fields": [
+    "_id",
+    "firstName",
+    "middleName",
+    "lastName",
+    "userID"
+  ],
+  "sort": [
+    {
+      "firstName": "asc"
+    }
+  ]
+}
+7 - if you put a variable that was not assigned jquery/javascript tries to mach some component into HTML
+	

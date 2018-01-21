@@ -1,0 +1,3 @@
+Sun Oct 22 2017 04:49:55 PM - CloudFoundryServer.modifyModules(...): add: { CEAI-Participantes [com.ibm.cftools.nodejs.core.internal.modules.NodejsModuleFactory:CEAI-Participantes/com.ibm.cftools.nodejs.module]} remove: {}
+Sun Oct 22 2017 04:50:27 PM - CloudFoundryServer.modifyModules(...): add: {} remove: { CEAI-Participantes [com.ibm.cftools.nodejs.core.internal.modules.NodejsModuleFactory:CEAI-Participantes/com.ibm.cftools.nodejs.module]}
+Sun Oct 22 2017 04:50:27 PM - CloudFoundryServerBehaviour.publishModule(...): ADDED { ceai-participantes [:external:ceai-participantes/org.eclipse.cft.server.core.CloudFoundryApplicationModule]}

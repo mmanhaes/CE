@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CEAI-Cadastro de Participantes</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+<link rel="icon" href="images/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="_demo--heading">
+	<div class="_demo--container">
+		<a class="wordmark" href="/home">
+			<span class="wordmark--right">CEAI</span>
+		</a>
+		<nav class="heading-nav" role="menubar">
+		 <ul>
+			<li class="base--li heading-nav--li" role="presentation">
+				<a class="heading-nav--item" href="/General" role="menuitem">
+					Dados Pessoais
+				</a>
+			</li>
+			<li class="base--li heading-nav--li" role="presentation">
+				<a class="heading-nav--item" style="color:orange" href="/Contact" role="menuitem">
+					Dados Para Contato
+				</a>
+			</li>
+			<li class="base--li heading-nav--li" role="presentation">
+				<a class="heading-nav--item" href="../Study" role="menuitem">
+					Atividades de Estudo
+				</a>
+			</li>
+			<li class="base--li heading-nav--li" role="presentation">
+				<a class="heading-nav--item" href="../Work" role="menuitem">
+					Atividades de Trabalho
+				</a>
+			</li>
+			<li class="base--li heading-nav--li" role="presentation">
+				<a class="heading-nav--item" href="../Association" role="menuitem">
+					Associação ao CEAI
+				</a>
+			</li>
+			<li class="base--li heading-nav--li" role="presentation">
+				<a class="heading-nav--item" href="/logout" role="menuitem">
+					Sair
+				</a>
+			</li>
+			</ul>
+		</nav>		
+	</div>
+</header>
+  <div class="_demo--banner">
+	<div class="_demo--container">
+	    <div class="banner--service-icon-container" style="height: 20px; ">
+			<img class="banner--service-icon" src="images/CEAI.png" alt="Retrieve and Rank API Icon" style="width: 140px; height: 42px; ">
+			
+		</div>		
+		<div class="banner--service-info" style="height: 74px;">
+		    <h2></h2>
+			<h2 class="banner--service-title base--h2">
+				 Cadastro de Participantes
+			</h2>
+		</div>
+	</div>
+</div>
+  <div class="_demo--container">
+	<article class="_content base--article">
+			<div class="_content--choose-input-file">
+				<h3 id="top" class="base--h3">Dados para Contato</h3>
+				<p class="_content--input-description base--p">Insira, altere ou
+					exclua um contato</p>
+			</div>
+			<table border="" style="width: 100%">
+				<tr>
+					
+					<th scope="col" colspan="1" style="width: 25%"><h5
+							class="base--h5" style="width: 160px;">Código do Sistema:</h5></th>
+					<th scope="col" colspan="6" style="width: 75%">
+					<input id="ID" type="text" disabled="disabled"
+						class="input--question--manual--reduced base--a"
+						style="width: 100px;"></th>
+				</tr>
+				<tr>
+					<td scope="col" colspan="1" style="width: 25%"><h5
+							class="base--h5" style="width: 160px;">Nome completo :</h5></td>
+					<td scope="col" colspan="6" style="width: 75%">
+						<table border="" style="width: 100%">
+						<tr>
+							<td><input	id="fullName" type="text" disabled="disabled" class="input--question--manual--reduced base--a"
+							style="width: 740px;"></td>
+						</tr>
+					</table>		
+					</td>		
+				</tr>
+				<tr>
+					<td scope="col" colspan="1" style="width: 25%"><h5
+							class="base--h5" style="width: 160px;">Telefone Principal:</h5></td>
+
+					<td colspan="2">
+						<table border="" style="width: 100%">
+							<tr>
+								<td style="width: 20%"><input id="rg" type="text"
+									class="input--question--manual--reduced base--a"
+									style="width: 130px;"></td>
+								<td style="width: 20%"><h5
+							class="base--h5" style="width: 75px;">Whatsup:</h5>
+								<td style="width: 20%"><select id="state" style="color: #a53725" width:="" px="">
+										<option value="YES">SIM</option>
+										<option value="NO">NÃO</option>																			
+								</select></td>
+								<td style="width: 20%"><h5 class="base--h5"
+										style="width: 130px;">Outro Telefone:</h5></td>
+								<td style="width: 40%" colspan="1"><input id="rg-exp"
+									type="text" class="input--question--manual--reduced base--a"
+									style="width: 130px;"></td>
+								<td style="width: 20%"><h5 class="base--h5" style="width: 75px;">Whatsup:</h5>
+								<td style="width: 20%"><select id="state" style="color: #a53725" width:="" px="">
+										<option value="YES">SIM</option>
+										<option value="NO">NÃO</option>																			
+								</select></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td scope="col" colspan="1" style="width: 25%"><h5
+							class="base--h5" style="width: 160px;">Email-1:</h5></td>
+					<td colspan="5">
+						<table border="" style="width: 100%">
+							<tr>
+								<td ><input id="rg" type="text"
+									class="input--question--manual--reduced base--a"
+									style="width: 320px;"></td>
+								<td style="width: 20%"><h5 class="base--h5"></h5></td>
+								<td style="width: 20%"><h5 class="base--h5"
+										style="width: 100px;">Email-2:</h5></td>
+								<td style="width: 85%"><input id="rg-exp"
+									type="text" class="input--question--manual--reduced base--a"
+									style="width: 320px;"></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+
+
+			</table>
+			<input type="button" class="input--request-button base--a"
+				id="next" value="<Anterior">	
+			<input type="button" class="input--request-button base--a"
+				id="insert" value="Inserir">
+			<input type="button" class="input--request-button base--a"
+				id="change" value="Alterar">
+			<input type="button" class="input--request-button base--a"
+				id="delete" value="Excluir">
+			<input type="button" class="input--request-button base--a"
+				id="next" value="Proximo>">	
+			<div class="processing" style="display:none;'">
+	 			<div class="_demo--container">
+	 				<p class="base--p">
+						<img src="images/processing.gif" alt="processing"
+							style="width:96px;height:96px;align:middle">
+					</p>	
+	 			</div>
+  			</div>   			
+  				
+			<div class="Output" style="display:none;'">
+    			<div class="_demo--container">
+      				<h3 class="base--h4">Mensagem:</h4>
+      				<span id="results" style="color:red">No message</span>      			
+      			</div>
+    		</div>	
+    		</article>	
+   </div>
+   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+   <script type="text/javascript" src="js/index.js"></script>
+</body>
+</html>

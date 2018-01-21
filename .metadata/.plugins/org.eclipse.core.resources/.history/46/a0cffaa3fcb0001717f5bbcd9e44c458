@@ -1,0 +1,8 @@
+---
+applications:
+- name: ceai
+  memory: 512M
+  host: ceai
+  domain: mybluemix.net
+  buildpack: https://github.com/cloudfoundry/ibm-websphere-liberty-buildpack
+

@@ -1,0 +1,461 @@
+console.log("Iniciando CEAI Biblioteca Server...");
+var express = require('express');
+var config = require('./config');
+var app = express();
+var bodyParser = require("body-parser");
+var vcapServices = require('vcap_services');
+const uuidv1 = require('uuid/v1');
+const case_ins = "(?i)"; 
+//Variables used for authentication
+var passport = require('passport');
+var Strategy = require('passport-local').Strategy;
+var auth = require('./auth');
+//Variables for Cloudant
+var Cloudant = require('cloudant');
+var credentials = vcapServices.getCredentials('cloudantNoSQLDB', 'Lite', config.cloudant.instance);
+var dbURL =  credentials.url || config.cloudant.url; 
+var cloudant = Cloudant(dbURL);
+//Control Session data
+var session = require('express-session');
+//var RedisStore = require('connect-redis')(session);
+//Variables for port
+var Sync = require('sync');
+var port = (process.env.PORT || process.env.VCAP_APP_PORT || 3000);
+
+passport.use(new Strategy(
+		function(username, password, cb) {
+			auth.users.findByUsername(username, function(err, user) {
+				if (err) { return cb(err); }
+				if (!user) { return cb(null, false); }
+				if (user.password !== password) { return cb(null, false); }
+				return cb(null, user);
+			});
+		}));
+
+passport.serializeUser(function(user, cb) {
+	cb(null, user.id);
+});
+
+passport.deserializeUser(function(id, cb) {
+	auth.users.findById(id, function (err, user) {
+		if (err) { return cb(err); }
+		cb(null, user);
+	});
+});
+
+//Configure view engine to render EJS templates.
+app.set('views', __dirname + '/public/views');
+app.set('view engine', 'ejs');
+
+//Use application-level middleware for common functionality, including
+//logging, parsing, and session handling.
+app.use(require('morgan')('combined'));
+app.use(require('cookie-parser')());
+app.use(require('body-parser').urlencoded({ extended: true }));
+app.use(session({ 
+		secret: 'keyboard cat', 
+		/*
+		store: new RedisStore({
+			  host:'127.0.0.1',
+			  port:6380,
+			  prefix:'sess'
+			}),*/
+			resave: false, 
+			saveUninitialized: false
+		}));
+
+//Initialize Passport and restore authentication state, if any, from the
+//session.
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(express.static("public"));
+app.use(express.static("node_modules/bootstrap/dist"));
+app.use(bodyParser.urlencoded({ extended: false }));
+
+//parse application/json
+app.use(bodyParser.json());
+
+var buildSelector = function(data,callback){
+	if (data.type === "isbn"){
+		config.selectors.isbn.selector.isbn = data.entry;
+		return callback(false,config.selectors.isbn);
+	}
+	
+	if (data.type === "bookName"){
+		//cloning an object
+		var selector = Object.create(config.selectors.bookName);
+		var query = selector.selector.$or[0].bookName.$regex;
+		selector.selector.$or[0].bookName.$regex= query.replace('<ENTRY>',data.entry);
+		query = selector.selector.$or[1].bookName.$regex;
+		selector.selector.$or[1].bookName.$regex= query.replace('<ENTRY>',data.entry);
+		return callback(false,selector);
+	}
+	
+	if (data.lastName!=="" && data.firstName!=="" && data.middleName!=="")
+	{
+		config.fullName_selector.selector.firstName.$regex = case_ins+data.firstName;
+		config.fullName_selector.selector.middleName.$regex  = case_ins+data.middleName;
+		config.fullName_selector.selector.lastName.$regex  = case_ins+data.lastName;
+		
+		return callback(false,config.fullName_selector);
+	}	
+	else{
+		if (data.lastName!=="" && data.firstName!=="")
+		{
+			config.firstAndlastName_selector.selector.firstName.$regex  = case_ins+data.firstName;
+			config.firstAndlastName_selector.selector.lastName.$regex  = case_ins+data.lastName;
+			
+			return callback(false,config.firstAndlastName_selector);
+		}
+		else
+		{
+			if (data.middleName!=="" && data.firstName!=="")
+			{
+				config.firstAndlastName_selector.selector.firstName.$regex  = case_ins+data.firstName;
+				config.fullName_selector.selector.middleName.$regex  = case_ins+data.middleName;
+				
+				return callback(false,config.firstAndMiddleName_selector);
+			}
+			else
+			{	
+				if (data.firstName!=="")
+				{				
+					config.firstName_selector.selector.firstName.$regex  = case_ins+data.firstName;
+					
+					return callback(false,config.firstName_selector);
+				}
+			}	
+		}			
+	}
+	return callback("No Selector Found",null);
+};
+
+app.get('/services/ceai/resetSession',function(req,res){
+	res.setHeader('Content-Type', 'text/plain');
+	req.session.bookID = "";
+	res.end('OK');
+});
+
+app.post('/services/ceai/saveSearchSession', function(req, res){
+	res.setHeader('Content-Type', 'text/plain');
+	req.session.bookID = req.body.bookID;
+	console.log("Session ID Saved "+req.session.bookID);
+	res.end('OK');	
+});
+
+var searchUsersByBook = function(sel, callback){
+	var db2 = cloudant.db.use(config.database.person.name);
+	
+	console.log("Searching by UserID : "+sel.selector.userID+" and BookID: "+sel.selector.book.$elemMatch.bookID);
+	
+	db2.find(sel,function(err,result){
+		  if (err) {
+			    console.log(err);
+		  }else{
+			  console.log('Found %d documents with %s', result.docs.length,JSON.stringify(sel));
+			  if (result.docs.length >0) {	 
+				 return callback(null,result);									 
+			  }	
+			  else{
+				 return callback(null,"{docs:{length:0}}");
+			  }
+		 }
+	 });	
+	
+};
+
+app.post('/services/ceai/loadSessionData', function(req, res){
+	res.setHeader('Content-Type', 'text/plain');
+	//TODO with searchKey , example '{"searchKey" : "general"}' define what selector to search and execute the db.find
+	var sel = config.selectors[req.body.searchKey];
+	console.log("Loading data from bookID : "+req.session.bookID);
+	if (typeof req.session.bookID !== 'undefined'){
+			
+		sel.selector.bookID = req.session.bookID;
+		
+		var db = null;
+				
+		if (req.body.searchKey === "stockBook"){
+			db = cloudant.db.use(config.database.book.name); 			
+			
+			if (db !== null){
+				db.find(sel, function(err, result) {
+					  if (err) {
+					    console.log(err);
+					    res.end(err);
+					  }
+					  else{
+						  Sync(function(){
+							  console.log('Found %d documents with %s', result.docs.length,JSON.stringify(sel));
+							  if (result.docs.length>0)
+							  {	  
+							  	  if (result.docs[0].userIDs.length>0)
+								  {
+							  		  selectors = [];						  		  
+							  		  result.docs[0].userIDs.forEach(function(listItem, index){	
+							  			  selectors[index] = config.selectors.userID;
+							  			  selectors[index].selector.book.$elemMatch.bookID = req.session.bookID;
+							  			  selectors[index].selector.userID = listItem.userID;						  			
+										  var results2 = searchUsersByBook.sync(null,selectors[index]);
+										  if (results2.docs.length>0){
+											  result.docs[0].userIDs[index].firstName = results2.docs[0].firstName;
+										      result.docs[0].userIDs[index].middleName = results2.docs[0].middleName;
+											  result.docs[0].userIDs[index].lastName = results2.docs[0].lastName;
+											  result.docs[0].userIDs[index].loanDate = results2.docs[0].book[0].loanDate;
+											  result.docs[0].userIDs[index].returnDate = results2.docs[0].book[0].returnDate;	
+										  }	 									 
+							  		  });						  		  
+								  }							  	  
+							  }
+							  console.log("Function return: "+JSON.stringify(result));
+							  res.end(JSON.stringify(result));					  
+						  });
+					  }	  
+				});	 
+			}
+			else{
+				 res.end("Nenhum banco de dados encontrado para a operação, contacte o administrador");
+			}	
+		}
+		if(req.body.searchKey === "loan"){
+			db = cloudant.db.use(config.database.person.name);
+		}
+	}
+	else{
+		var result = '{docs:{length:0}}';
+		res.end(JSON.stringify(result));
+	}
+});
+
+app.post('/services/ceai/searchBook', function(req, res){
+	res.setHeader('Content-Type', 'text/plain');
+	
+	var db = cloudant.db.use(config.database.book.name);
+	
+	var selector = "";
+	buildSelector(req.body,function(err,response){
+		if (err){
+			console.log(err);
+			config.config.config.searchError.error = err;
+		    res.end(config.searchError);
+		}
+		else
+		{	
+			selector = response;
+			db.find(selector, function(err, result) {
+				  if (err) {
+				    console.log(err);
+				    config.searchError.error = err;
+				    res.end(config.searchError);
+				  }
+				  else{
+					  console.log('Found %d documents with %s', result.docs.length,JSON.stringify(selector));
+					  if (result.docs.length>0)
+					  {
+					  	  for (var i = 0; i < result.docs.length; i++) {
+					  		  console.log('  Doc bookIDs: %s', result.docs[i].bookID);
+					  	  }
+					  	  console.log('Function return :'+JSON.stringify(result));
+					  	  res.end(JSON.stringify(result));
+					  }
+					  else {
+						  res.end('Nenhum Livro encontrado !');
+					  }						  
+				  }	  
+			});	 
+		}	
+	});
+});
+
+function prepareUpdate(dbSource,request,callback){
+	
+	switch (request.type){
+		case  "general":
+			dbSource.bookID= request.bookID;
+			dbSource.firstName = request.firstName;
+			dbSource.middleName = request.middleName;
+			dbSource.lastName = request.lastName;
+			dbSource.rg = request.rg;
+			dbSource.rgExp = request.rgExp;
+			dbSource.rgState = request.rgState;
+			dbSource.birthDate = request.birthDate;
+			dbSource.address = request.address;
+			dbSource.number = request.number;
+			dbSource.complement = request.complement;
+			dbSource.neighborhood = request.neighborhood;
+			dbSource.city = request.city;
+			dbSource.state = request.state;
+			dbSource.postCode = request.postCode;
+			break;
+		case "contact":
+			dbSource.bookID= request.bookID;
+			dbSource.firstName = request.firstName;
+			dbSource.middleName = request.middleName;
+			dbSource.lastName = request.lastName;
+			dbSource.phone1 = request.phone1;
+			dbSource.whatsup1 = request.whatsup1;
+			dbSource.phone2 = request.phone2;
+			dbSource.whatsup2 = request.whatsup2;
+			dbSource.email1 = request.email1;
+			dbSource.email2 = request.email2;
+			break;
+		case "association":
+			dbSource.bookID= request.bookID;
+			dbSource.firstName = request.firstName;
+			dbSource.middleName = request.middleName;
+			dbSource.lastName = request.lastName;
+			dbSource.association = request.association;
+			break;
+		case "study":
+			dbSource.bookID= request.bookID;
+			dbSource.firstName = request.firstName;
+			dbSource.middleName = request.middleName;
+			dbSource.lastName = request.lastName;
+			dbSource.study = request.study;
+			break;
+		case "work":
+			dbSource.bookID= request.bookID;
+			dbSource.firstName = request.firstName;
+			dbSource.middleName = request.middleName;
+			dbSource.lastName = request.lastName;
+			dbSource.work = request.work;
+			break;
+	}
+	
+	return callback(dbSource);
+}
+
+app.post('/services/ceai/update', function(req, res){
+	res.setHeader('Content-Type', 'text/plain');
+
+	var db = cloudant.db.use(config.database.person.name);
+	var selector = config.bookID.selectors.forUpdates;
+	selector.selector.bookID = req.body.bookID;
+	db.find(selector, function(err, result) {
+		  if (err) {
+		    console.log(err);
+		    config.config.searchError.error = err;
+		    res.end(config.searchError);
+		  }
+		  else{
+			    console.log('Found %d documents with %s', result.docs.length,JSON.stringify(selector));
+			    console.log('Result %s', JSON.stringify(result));
+			    if (result.docs.length>0)
+			    {					  	
+			    	prepareUpdate(result.docs[0],req.body,function(response){
+			    		db.insert(response, function(err, body, header) {
+							if (err) {
+								console.log('[db.update] ', err.message);
+								res.end('[db.update] ', err.message);
+							}
+							else{
+								console.log('You have updated the record.');
+								console.log(body);
+								console.log('With Content :');
+								console.log(JSON.stringify(req.body, null, 2));
+								res.write('Requisicão Atualizada com Sucesso com o ID :'+req.body.bookID +'\n');
+								res.end('para o participante : '+ req.body.firstName+ " "+ req.body.middleName+" "+req.body.lastName);	
+							}	
+						});								    		
+			    	});
+			    }
+			    else
+			    {
+			    	res.end('Erro na Atualização para o participante : '+ req.body.firstName+ " "+ req.body.middleName+" "+req.body.lastName);
+			    }	
+		  }
+	});	 
+});
+
+
+app.post('/services/ceai/inputBook', function(req, res){
+	res.setHeader('Content-Type', 'text/plain');
+	cloudant.db.list(function(err, allDbs) {
+		console.log('All my databases: %s', allDbs.join(', '));
+	});
+	console.log(JSON.stringify(req.body, null, 2));
+
+	var db = cloudant.db.use(config.database.book.name);
+	var id =  uuidv1();
+	var sel = config.selectors.isbn;
+	
+	db.find(sel, function(err, result) {
+		  if (err) {
+		    console.log(err);
+		    res.end(err);
+		  }
+		  else{
+			  if (result.docs.length===0){
+				  db.insert(req.body, id, function(err, body, header) {
+						if (err) {
+							return console.log('[db.insert] ', err.message);
+						}
+
+						console.log('You have inserted the record.');
+						console.log(body);
+						console.log('With Content :');
+						console.log(JSON.stringify(req.body, null, 2));
+					});
+					res.write('Requisicão Salva com Sucesso com o ID :'+req.body.bookID +'<br>');
+					res.write('para o Livro ISBN: '+ req.body.isbn);	 
+					res.end('e Nome: '+ req.body.bookName);	 
+			  }
+			  else{
+				  res.write('Inclusão não realizada !');
+				  res.end(' Motivo: Livro com com o ISBN '+ req.body.isbn+' Já existe na base de dados, por gentileza pesquisar primeiro na página principal');	
+			  }
+		  }
+	});	
+});
+
+app.get('/',
+		function(req, res){
+	res.redirect('/home');
+});
+
+app.get('/login',
+		function(req, res){
+	res.render('login');
+});
+
+app.post('/login', 
+		passport.authenticate('local', { failureRedirect: '/login' }),
+		function(req, res) {
+	res.redirect('/');
+});
+
+app.get('/logout',
+		function(req, res){
+	req.logout();
+	res.redirect('/');
+});
+
+app.get('/home',
+		require('connect-ensure-login').ensureLoggedIn(),
+		function(req, res){
+	res.sendFile(__dirname + "/public/home.html");
+});
+
+app.get('/Loan',
+		require('connect-ensure-login').ensureLoggedIn(),
+		function(req, res){
+	res.sendFile(__dirname + "/public/loan.html");
+});
+
+app.get('/StockBook',
+		require('connect-ensure-login').ensureLoggedIn(),
+		function(req, res){
+	res.sendFile(__dirname + "/public/stockBook.html");
+});
+
+app.get('/Admin',
+		require('connect-ensure-login').ensureLoggedIn(),
+		function(req, res){
+	res.sendFile(__dirname + "/public/admin.html");
+});
+
+app.listen(port,function(){
+	console.log('CEAI Biblioteca Server running on port:'+port);
+});
+

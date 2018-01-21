@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;CEAI-Biblioteca/public/js/input.js&apos;" deleteContents="false" description="Delete resource &apos;CEAI-Biblioteca/public/js/input.js&apos;" element1="/CEAI-Biblioteca/public/js/input.js" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1515857489206"/>
+</session>

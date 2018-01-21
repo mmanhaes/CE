@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CEAI-Cadastro de Participantes</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+<link rel="icon" href="images/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body onload="loadSessionData()">
+	<header class="_demo--heading">
+		<div class="_demo--container">
+			<a class="wordmark" href="/home"> <span class="wordmark--right">CEAI</span>
+			</a>
+			<nav class="heading-nav" role="menubar">
+				<ul>
+					<li class="base--li heading-nav--li" role="presentation"><a
+						class="heading-nav--item" href="/General" role="menuitem">
+							Dados Pessoais </a></li>
+					<li class="base--li heading-nav--li" role="presentation"><a
+						class="heading-nav--item" href="/Contact" role="menuitem">
+							Dados de Contato </a></li>
+					<li class="base--li heading-nav--li" role="presentation"><a
+						class="heading-nav--item" 
+						href="../Association" role="menuitem"> Associação ao CEAI </a></li>
+					<li class="base--li heading-nav--li" role="presentation"><a
+						class="heading-nav--item" href="../Study" role="menuitem">
+							Atividade de Estudo </a></li>
+					<li class="base--li heading-nav--li" role="presentation"><a
+						class="heading-nav--item" style="color: orange" href="../Work" role="menuitem">
+							Atividade de Trabalho </a></li>
+					<li class="base--li heading-nav--li" role="presentation"><a
+						class="heading-nav--item" href="/Admin" role="menuitem">
+							Admin</a></li>
+					<li class="base--li heading-nav--li" role="presentation"><a
+						class="heading-nav--item" href="/logout" role="menuitem"> Sair
+					</a></li>
+				</ul>
+			</nav>
+		</div>
+	</header>
+	<div class="_demo--banner">
+		<div class="_demo--container">
+			<div class="banner--service-icon-container" style="height: 20px;">
+				<img class="banner--service-icon" src="images/CEAI.png"
+					alt="Retrieve and Rank API Icon"
+					style="width: 140px; height: 42px;">
+
+			</div>
+			<div class="banner--service-info" style="height: 74px;">
+				<h2></h2>
+				<h2 class="banner--service-title base--h2">Cadastro de
+					Participantes</h2>
+			</div>
+		</div>
+	</div>
+	<div class="_demo--container">
+		<article class="_content base--article">
+			<div class="_content--choose-input-file">
+				<h3 id="top" class="base--h3">Atividades de Trabalho</h3>
+				<p class="_content--input-description base--p">Inclua, Exclue ou
+					Altere uma atividade de estudo, verifique também o histórico de trabalho
+				</p>
+			</div>
+			<table border="" style="width: 80%">
+				<tr>
+
+					<th scope="col" colspan="1" style="width: 25%"><h5
+							class="base--h5" style="width: 160px;">Código do Sistema:</h5></th>
+					<th scope="col" colspan="6" style="width: 75%"><input
+						id="userID" type="text" disabled="disabled"
+						class="input--question--manual--reduced base--a"
+						style="width: 188px;"></th>
+				</tr>
+				<tr>
+					<td scope="col" colspan="1" style="width: 25%"><h5
+							class="base--h5" style="width: 160px;">Nome completo :</h5></td>
+					<td scope="col" colspan="6" style="width: 75%">
+						<table border="" style="width: 100%">
+							<tr>
+								<td><input id="fullName" type="text" disabled="disabled"
+									class="input--question--manual--reduced base--a"
+									style="width: 750px;"></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="1""width: 25%">
+						<h5 class="base--h5" style="width: 140px;">Trabalho:</h5>
+					</td>
+					<td style="width: 100%" colspan="2"><select id="workType"
+						style="color: #a53725";width: 90px">
+							<option value="Recepção">Recepção</option>
+							<option value="Ação Social">Ação Social</option>
+							<option value="Coordenação de Período">Coordenação de Período</option>
+							<option value="Expositor do Evangelho">Expositor do Evangelho</option>
+							<option value="Dirigente em Exposição do Evangelho">Dirigente em Exposição do Evangelho</option>
+							<option value="Atendimento Inicial">Atendimento Inicial</option>
+							<option value="Atividade de Passe">Atividade de Passe</option>
+							<option value="Atendimento Diálogo Fraterno">Atendimento Diálogo Fraterno</option>
+							<option value="Coordenador de EIDE I">Coordenador de EIDE I</option>
+							<option value="Coordenador de EIDE II">Coordenador de EIDE I</option>
+							<option value="Coordenador de ESDE I">Coordenador de ESDE I</option>
+							<option value="Coordenador de ESDE II">Coordenador de ESDE II</option>
+							<option value="Coordenador de EADE">Coordenador de EADE</option>
+							<option value="Coordenador de Estudo do Evangelho">Coordenador de Estudo do Evangelho</option>
+							<option value="Coordenador de Estudo Joanna de Ângelis">Coordenador de Estudo Joanna de Ângelis</option>
+							<option value="Coordenador de Estudo da Mediunidade">Coordenador de Estudo da Mediunidade</option>
+							<option value="Coordenador de Evangelização e Juventude">Coordenador de Evangelização e Juventude</option>
+							<option value="Coordenador de Diálogo Fraterno em Grupo">Coordenador de Diálogo Fraterno em Grupo</option>
+							<option value="Coordenação de Apoio a diretoria">Coordenação de Apoio a diretoria</option>
+							<option value="Conselho Fiscal">Conselho Fiscal</option>
+							<option value="Diretoria">Diretoria</option>
+					</select></td>
+					<td colspan="1""width: 25%">
+						<h5 class="base--h5" style="width: 130px;">Dia da Semana:</h5>
+					</td>
+					<td style="width: 100%" colspan="1"><select id="weekDay"
+						style="color: #a53725";width: 55px">
+							<option selected="selected" value="Segunda">Segunda</option>
+							<option value="Terça">Terça</option>
+							<option value="Quarta">Quarta</option>
+							<option value="Quinta">Quinta</option>
+							<option value="Sexta">Sexta</option>
+							<option value="Sábado">Sábado</option>
+							<option value="Domingo">Domingo</option>
+					</select></td>
+					<td colspan="1""width: 25%">
+						<h5 class="base--h5" style="width: 90px;">Período:</h5>
+					</td>
+					<td style="width: 100%" colspan="1"><select id="period"
+						style="color: #a53725";width: 75px">
+							<option selected="selected" value="Manhã">Manhã</option>
+							<option value="Tarde">Tarde</option>
+							<option value="Noite">Noite</option>
+					</select></td>
+				</tr>				
+				<tr>
+					<td colspan="1" style="width: 150px;"><h5 class="base--h5">Data
+							Inicial:</h5></td>
+					<td colspan="1" style="width: 90px;">
+						<table border="" style="width: 100%" cellspacing="0">
+							<tr>
+								<td><input id="initDay" maxlength="2" type="text"
+									class="input--question--manual base--a" style="width: 30px;">
+								</td>
+								<td>/</td>
+								<td><input id="initMonth" maxlength="2" type="text"
+									class="input--question--manual base--a" style="width: 30px;">
+								</td>
+								<td>/</td>
+								<td><input id="initYear" type="text" maxlength="4"
+									class="input--question--manual base--a" style="width: 60px;">
+								</td>
+							</tr>
+						</table>
+					</td>
+					<td colspan="1" style="width: 110px;"><h5 align="right" class="base--h5">Data
+							da Final:</h5></td>
+					<td colspan="1" style="width: 90px;">
+						<table border="" style="width: 100%" cellspacing="0">
+							<tr>
+								<td><input id="finalDay" maxlength="2" type="text"
+									class="input--question--manual base--a" style="width: 30px;">
+								</td>
+								<td>/</td>
+								<td><input id="finalMonth" maxlength="2" type="text"
+									class="input--question--manual base--a" style="width: 30px;">
+								</td>
+								<td>/</td>
+								<td><input id="finalYear" type="text" maxlength="4"
+									class="input--question--manual base--a" style="width: 60px;">
+								</td>
+							</tr>
+						</table>
+					</td>
+					<td colspan="3" style="width: 120px;"></td>
+				</tr>
+				
+				<tr>
+					<td scope="col" colspan="1" style="width: 25%"><h5
+							class="base--h5" style="width: 160px;">Observações :</h5></td>
+					<td scope="col" colspan="6" style="width: 75%">
+						<table border="" style="width: 100%">
+							<tr>
+								<td><input id="notes" type="text" 
+									class="input--question--manual--reduced base--a"
+									style="width: 750px;"></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+			<input type="button" class="input--request-button base--a"
+				id="previous" value="<Atividades de Estudo"> <input type="button"
+				class="input--request-button base--a" id="insert" value="Inserir">
+			<input type="button" class="input--request-button base--a"
+				id="update" value="Alterar"> <input type="button"
+				class="input--request-button base--a" id="delete" value="Excluir">
+			<input type="button" class="input--request-button base--a" id="next"
+				value="Empréstimo de Livros>">
+			<div class="processing" style="display: none;'">
+				<div class="_demo--container">
+					<p class="base--p">
+						<img src="images/processing.gif" alt="processing"
+							style="width: 96px; height: 96px; align: middle">
+					</p>
+				</div>
+			</div>
+			<div class="output">
+				<div class="_demo--container" style="width: 960px;">
+					<form>
+						<table class="table" id="tableResult" 
+						style="border: 1px solid grey">
+							<tr>
+								<th class="th" style="border: 1px solid grey" colspan="7"><h5
+										class="base--h5">Histórico de Trabalho</h5></th>
+							</tr>
+							<tr>
+								<th class="th" style="border: 1px solid grey"><h5
+										class="base--h5">Sel</h5></th>
+								<th class="th" style="border: 1px solid grey"><h5
+										class="base--h5">Trabalho</h5></th>
+								<th class="th" style="border: 1px solid grey"><h5
+										class="base--h5">Dia da Semana</h5></th>
+								<th class="th" style="border: 1px solid grey"><h5
+										class="base--h5">Período</h5></th>
+								<th class="th" style="border: 1px solid grey"><h5
+										class="base--h5">Data Inicial</h5></th>
+								<th class="th" style="border: 1px solid grey"><h5
+										class="base--h5">Data Final</h5></th>
+								<th colspan="1" class="th" style="border: 1px solid grey"><h5
+										class="base--h5">Observações</h5></th>
+							</tr>
+							<!-- <tr>
+								<td width="40"><input type="radio"></td>
+								<td width="40">1234</td>
+								<td colspan="2">&nbsp;</td>
+								<td width="40">&nbsp;</td>
+								<td width="40">&nbsp;</td>
+								<td width="40">&nbsp;</td>
+								<td width="40">&nbsp;</td>
+							</tr> -->
+						</table>
+					</form>
+
+
+				</div>
+			</div>
+			<div class="error" style="display: none;'">
+				<div class="_demo--container">
+					<h3 class="base--h3">Error</h3>
+					<span id="message" style="color: red">No message</span>
+				</div>
+			</div>
+		</article>
+	</div>
+	<script type="text/javascript"
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	<script type="text/javascript" src="js/work.js"></script>
+</body>
+</html>

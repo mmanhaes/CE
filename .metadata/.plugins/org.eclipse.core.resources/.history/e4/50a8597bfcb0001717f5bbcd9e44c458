@@ -1,0 +1,11 @@
+---
+applications:
+- name: dsrt
+  memory: 512M
+  host: ceai
+  domain: mybluemix.net
+  buildpack: https://github.com/cloudfoundry/ibm-websphere-liberty-buildpack
+  path: C:\MyProfile\Projects\DSRT\APIM\dsrt.war
+  env:
+    IBM_JVM_LICENSE: L-PMAA-A3Z8P2
+    IBM_LIBERTY_LICENSE: L-SWIS-AKWR6K

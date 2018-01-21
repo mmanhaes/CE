@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CEAI-Cadastro de Participantes</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+<link rel="icon" href="images/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body onload="loadSessionData()">
+	<header class="_demo--heading">
+		<div class="_demo--container">
+			<div class="banner--service-icon-container" style="height: 70px;">
+				<img class="banner--service-icon" src="images/CEAI.png"
+					alt="Retrieve and Rank API Icon"
+					style="width: 140px; height: 38px;">
+			</div>
+			<nav class="heading-nav" role="menubar">
+				<ul>
+					<li class="base--li heading-nav--li" role="presentation"><a
+						class="heading-nav--item" href="/Home" role="menuitem">
+							Pesquisa de Livros </a></li>
+					<li class="base--li heading-nav--li" role="presentation"><a
+						class="heading-nav--item" style="color: orange" href="/StockBook" role="menuitem">
+							Estoque de Livros </a></li>
+					<li class="base--li heading-nav--li" role="presentation"><a
+						class="heading-nav--item" href="/Loan" role="menuitem">
+							Empréstimos </a></li>
+					<li class="base--li heading-nav--li" role="presentation"><a
+						class="heading-nav--item" href="/logout" role="menuitem"> Sair
+					</a></li>
+				</ul>
+			</nav>
+		</div>
+	</header>
+	<div class="_demo--banner">
+		<div class="_demo--container">
+			<div class="banner--service-icon-container" style="height: 20px;">
+				<img class="banner--service-icon" src="images/livros.png"
+					alt="Retrieve and Rank API Icon"
+					style="width: 100px; height: 80px;">
+
+			</div>
+			<div class="banner--service-info" style="height: 74px;">
+				<h2></h2>
+				<h2></h2>
+				<h2 class="banner--service-title base--h2">Biblioteca</h2>
+			</div>
+		</div>
+	</div>
+	<div class="_demo--container">
+		<article class="_content base--article">
+			<div class="_content--choose-input-file">
+				<h3 id="top" class="base--h3">Dados Pessoais</h3>
+				<p class="_content--input-description base--p">Insira, altere ou
+					exclua um participante</p>
+			</div>
+			<table border="" style="width: 100%">
+				<tr>
+					<th scope="col" colspan="1" style="width: 150px;"><h5
+							class="base--h5">ID do Livro:</h5></th>
+					<th scope="col" colspan="5" style="width: 75%"><input
+						id="bookID" type="text" disabled="disabled"
+						class="input--question--manual--reduced base--a"
+						style="width: 188px;"></th>
+				</tr>
+				<tr>
+					<th scope="col" colspan="1" style="width: 150px;"><h5
+							class="base--h5">ISBN:</h5></th>
+					<th scope="col" colspan="5" style="width: 75%"><input
+						id="isbn" type="text"
+						class="input--question--manual--reduced base--a"
+						style="width: 188px;"></th>
+				</tr>
+				<tr>
+					<td scope="col" colspan="1" style="width: 150px"><h5
+							class="base--h5" style="width: 200px;">Autor:</h5></td>
+					<td scope="col" colspan="5" style="width: 75%"><input
+						id="author" type="text" placeholder="Campo Requerido"
+						class="input--question--manual--reduced base--a"
+						style="width: 750px;"></td>
+				</tr>
+				<tr>
+					<td scope="col" colspan="1" style="width: 150px"><h5
+							class="base--h5">Autor Espiritual:</h5></td>
+					<td scope="col" colspan="5" style="width: 75%"><input
+						id="espAuthor" type="text"
+						class="input--question--manual--reduced base--a"
+						style="width: 750px;"></td>
+				</tr>
+				<tr>
+					<td scope="col" colspan="1" style="width: 150px"><h5
+							class="base--h5">Nome do Livro:</h5></td>
+					<td scope="col" colspan="5" style="width: 75%"><input
+						id="bookName" type="text"
+						class="input--question--manual--reduced base--a"
+						style="width: 750px;" placeholder="Campo Requerido"></td>
+				</tr>
+				<tr>
+					<td style="width: 150px">
+						<h5 class="base--h5" style="width: 80px;">Categoria:</h5>
+					</td>
+					<td style="width: 75%" colspan="5"><select id="category"
+						style="color: #a53725";width: 65px">
+							<option value="Selecione">Selecione</option>
+							<option value="Romance">Romance</option>
+							<option value="Científico">Científico</option>
+							<option value="Filosófico">Filosófico</option>
+							<option value="Obras Básicas">Obras Básicas</option>
+							<option value="Biografia">Biografia</option>
+							<option value="Psicologia">Psicologia</option>
+					</select></td>
+				</tr>
+				<tr>
+					<td colspan="1"><h5 class="base--h5">Quantidade Total:</h5></td>
+					<td colspan="5">
+						<table border="" style="width: 100%">
+							<tr>
+								<td><input id="amount" type="text"
+									class="input--question--manual base--a" style="width: 80px;"
+									placeholder="Requerido"></td>
+								<td align="right"><h5 class="base--h5">Emprestados:</h5></td>
+								<td colspan="1"><input id="loan" type="text"
+									disabled="disabled" class="input--question--manual base--a"
+									style="width: 80px;"></td>
+								<td align="right" colspan="1"><h5 class="base--h5">Disponíveis:</h5></td>
+								<td><input id="available" type="text" disabled="disabled"
+									class="input--question--manual base--a" style="width: 80px;">
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+
+
+			</table>
+			<input type="button" class="input--request-button base--a"
+				id="previous" value="<Pesquisa de Livros">	
+			<input type="button" class="input--request-button base--a"
+				id="insert" value="Inserir">
+			<input type="button" class="input--request-button base--a"
+				id="update" value="Alterar">
+			<input type="button" class="input--request-button base--a"
+				id="delete" value="Excluir">
+			<input type="button" class="input--request-button base--a"
+				id="next" value="Empréstimos>">	
+			<div class="processing" style="display:none;'">
+	 			<div class="_demo--container">
+	 				<p class="base--p">
+						<img src="images/processing.gif" alt="processing"
+							style="width:96px;height:96px;align:middle">
+					</p>	
+	 			</div>
+  			</div>   
+  			
+  			<div class="output">
+				<div class="_demo--container" style="width: 960px;">
+					<form>
+						<table class="table" id="tableResult" 
+						style="border: 1px solid grey">
+							<tr>
+								<th class="th" style="border: 1px solid grey" colspan="8"><h5
+										class="base--h5">Descrição dos Empréstimos</h5></th>
+							</tr>
+							<tr>
+								<th class="th" style="border: 1px solid grey"><h5
+										class="base--h5">ID Empréstimo</h5></th>
+								<th class="th" style="border: 1px solid grey"><h5
+										class="base--h5">ID Partic.</h5></th>
+								<th colspan="3" class="th" style="border: 1px solid grey"><h5
+										class="base--h5">Participante</h5></th>
+								<th class="th" style="border: 1px solid grey"><h5
+										class="base--h5">Data Empréstimo</h5></th>
+								<th class="th" style="border: 1px solid grey"><h5
+										class="base--h5">Data Devolução</h5></th>
+								<th colspan="1" class="th" style="border: 1px solid grey"><h5
+										class="base--h5">Observações</h5></th>
+							</tr>
+							<!-- <tr>
+								<td width="40"><input type="radio"></td>
+								<td width="40">1234</td>
+								<td colspan="2">&nbsp;</td>
+								<td width="40">&nbsp;</td>
+								<td width="40">&nbsp;</td>
+								<td width="40">&nbsp;</td>
+								<td width="40">&nbsp;</td>
+							</tr> -->
+						</table>
+					</form>
+
+
+				</div>
+			</div>			
+  				
+			<div class="output" style="display:none;'">
+    			<div class="_demo--container">
+      				<h4 class="base--h4">Mensagem:</h4>
+      				<span id="results" style="color:red">No message</span>      			
+      			</div>
+    		</div>	
+    		</article>	
+   </div>
+   <script type="text/javascript"
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+   <script type="text/javascript" src="js/stockBook.js"></script>
+</body>
+</html>

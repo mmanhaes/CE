@@ -1,0 +1,31 @@
+<% var title = 'CEAI-Biblioteca' %>
+<% include head %>
+<img src="../images/CEAI.png" alt="CEAI" style="align:center ;width: 267px; height: 78px; ">
+<table>
+<tr>
+<td>
+<img src="../images/livros.png" alt="CEAI" style="align:center ;width: 110px; height: 80px; ">
+</td>
+<td>
+<h2 style="font-size: 1.95312em; font-weight: 700; color: #d74108">
+   Biblioteca
+</h2>
+</td>
+</tr>
+</table>
+<h1>Login</h1>
+<form method="post" action="/login">
+  <p>
+    <label>Username:</label>
+    <input type="text" name="username">
+  </p>
+  <p>
+    <label>Password:</label>
+    <input type="password" name="password">
+  </p>
+  <p>
+    <input type="submit" value="Entrar">
+  </p>
+</form>
+
+<% include foot %>

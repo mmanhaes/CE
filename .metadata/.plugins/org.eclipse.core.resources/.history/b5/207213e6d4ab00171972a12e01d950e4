@@ -1,0 +1,71 @@
+
+exports.cloudant = {
+		  instance: "CloudantCEs",
+		  username: "5ed24b63-560a-49da-9f7b-08d641077e1f-bluemix",
+		  password: "dad79337e9ac8bb06f0802b0a1be0eec31824a4a32755ec57ed0ef8caf986f82",
+		  host: "5ed24b63-560a-49da-9f7b-08d641077e1f-bluemix.cloudant.com",
+		  port: 443,
+		  url: "https://5ed24b63-560a-49da-9f7b-08d641077e1f-bluemix:dad79337e9ac8bb06f0802b0a1be0eec31824a4a32755ec57ed0ef8caf986f82@5ed24b63-560a-49da-9f7b-08d641077e1f-bluemix.cloudant.com"
+};
+
+exports.database = {
+		name: "ceai"		
+};
+
+exports.fullName_selector ={
+		  "selector": {
+			    "firstName" : "Marcelo",
+			    "middleName" : "Mota",
+			    "lastName" : "Manhães"
+			  },
+			  "fields": [
+			    "firstName",
+			    "middleName",
+			    "lastName",
+			    "userID"
+			  ],
+			  "sort": [
+			    {
+			      "firstName": "asc"
+			    }
+			  ]
+};
+
+exports.firstName_selector ={
+		  "selector": {
+			    "firstName" : "Marcelo"
+			  },
+			  "fields": [
+			    "firstName",
+			    "middleName",
+			    "lastName",
+			    "userID"
+			  ],
+			  "sort": [
+			    {
+			      "firstName": "asc"
+			    }
+			  ]
+};
+
+exports.firstAndlastName_selector ={
+		  "selector": {
+			    "firstName" : "Marcelo",
+			    "lastName" : "Manhães"
+			  },
+			  "fields": [
+			    "firstName",
+			    "middleName",
+			    "lastName",
+			    "userID"
+			  ],
+			  "sort": [
+			    {
+			      "firstName": "asc"
+			    }
+			  ]
+};
+
+exports.searchError = {
+		"error":""
+}

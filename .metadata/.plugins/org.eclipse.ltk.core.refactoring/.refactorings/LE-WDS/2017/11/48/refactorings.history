@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename compilation unit &apos;com.opensource.UploadDocuments.java&apos; to &apos;AdminCollection.java&apos;&#x0D;&#x0A;- Original project: &apos;LE-WDS&apos;&#x0D;&#x0A;- Original element: &apos;com.opensource.UploadDocuments.java&apos;&#x0D;&#x0A;- Renamed element: &apos;com.opensource.AdminCollection.java&apos;" description="Rename compilation unit &apos;UploadDocuments.java&apos;" flags="2" id="org.eclipse.jdt.ui.rename.compilationunit" input="/src&lt;com.opensource{UploadDocuments.java" name="AdminCollection.java" references="false" stamp="1511723139717" version="1.0"/>
+</session>
