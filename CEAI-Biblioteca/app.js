@@ -19,7 +19,7 @@ var cloudant = Cloudant(dbURL);
 var session = require('express-session');
 //var RedisStore = require('connect-redis')(session);
 //Variables for port
-var Sync = require('sync');
+var Promise = require('promise');
 var port = (process.env.PORT || process.env.VCAP_APP_PORT || 3000);
 const NOT_FOUND = '{"docs":[]}';
 
@@ -180,19 +180,73 @@ app.post('/services/ceai/saveSearchSession', function(req, res){
 	res.end('OK');	
 });
 
-var searchUsersByBook = function(sel, callback){
-	var db2 = cloudant.db.use(config.database.person.name);
-	
-	console.log("Searching by UserID : "+sel.selector.userID+" and BookID: "+sel.selector.book.$elemMatch.bookID);
-	
-	db2.find(sel,function(err,result){
-		  if (err) {
-			    console.log(err);
-		  }else{
-			  console.log('Found %d documents with %s', result.docs.length,JSON.stringify(sel));
-			  return callback(null,result);									 
-		 }
-	 });		
+var searchUsersByBook = function(sel){
+	return new Promise(function (resolve, reject) {
+		var db2 = cloudant.db.use(config.database.person.name);
+		
+		console.log("Searching by UserID : "+sel.selector.userID+" and BookID: "+sel.selector.book.$elemMatch.bookID);
+		
+		db2.find(sel,function(err,result){
+			  if (err) {
+				    reject(err);
+			  }else{
+				  console.log('Found %d documents with %s', result.docs.length,JSON.stringify(sel));
+				  resolve(result);									 
+			 }
+		 });	
+	});
+};
+var populateBookWithLoan = function(result,req,callback){
+		var selectors = [];
+		var usersOk = [];
+		var index=0;
+		var promises = [];
+		while (index< result.docs[0].userIDs.length){
+			console.log("Validating if user was already searched: "+result.docs[0].userIDs[index].userID);
+			if (usersOk.indexOf(result.docs[0].userIDs[index].userID)===-1){
+				  usersOk.push(result.docs[0].userIDs[index].userID);
+				  selectors[index] = config.selectors.userID;
+				  selectors[index].selector.book.$elemMatch.bookID = req.session.bookID;
+				  selectors[index].selector.userID = result.docs[0].userIDs[index].userID;	
+				  console.log("Gather users by Book");
+				  var searchBookPromise = searchUsersByBook(selectors[index]);
+				  promises.push(searchBookPromise);				  
+			}
+			++index;					  
+		}
+		return Promise.all(promises).then(function(values) {
+			  console.log('Values Returned : '+JSON.stringify(values));
+			  var loansOK = [];
+			  for (index=0;index<values.length;++index){	
+				//Each index is an user data
+				  for(var i=0;i<values[index].docs[0].book.length;++i){
+					  // If is a loan opened put the relationship with user info
+					  if (values[index].docs[0].book[i].returnDate === '')
+					  {
+						  for (var j=0;j<result.docs[0].userIDs.length;++j)
+						  {
+							 console.log('Changing user data inside book for index '+j);
+							 if (result.docs[0].userIDs[j].userID === values[index].docs[0].userID && typeof(result.docs[0].userIDs[j].loanID)==='undefined' && loansOK.indexOf(values[index].docs[0].book[i].loanID)===-1)
+							 {						  
+								  console.log("Putting loan ID "+values[index].docs[0].book[i].loanID+" with user details of "+values[index].docs[0].userID);
+								  result.docs[0].userIDs[j].firstName = values[index].docs[0].firstName;
+								  result.docs[0].userIDs[j].middleName = values[index].docs[0].middleName;
+								  result.docs[0].userIDs[j].lastName = values[index].docs[0].lastName;
+								  result.docs[0].userIDs[j].loanID = values[index].docs[0].book[i].loanID;
+								  result.docs[0].userIDs[j].returnDate = values[index].docs[0].book[i].returnDate;
+								  result.docs[0].userIDs[j].loanDate = values[index].docs[0].book[i].loanDate;
+								  result.docs[0].userIDs[j].limitDate = values[index].docs[0].book[i].limitDate;	
+								  result.docs[0].userIDs[j].notes = values[index].docs[0].book[i].notes;
+								  result.docs[0].userIDs[j].renovationNr = values[index].docs[0].book[i].renovationNr;
+								  loansOK.push(values[index].docs[0].book[i].loanID);
+							 }
+						  }
+					  }	
+				  }
+			  }	  
+			  console.log("Function return (populateBookWithLoan) : "+JSON.stringify(result));
+			  return callback(result);
+		});
 };
 
 app.post('/services/ceai/loadSessionData', function(req, res){
@@ -216,41 +270,21 @@ app.post('/services/ceai/loadSessionData', function(req, res){
 					    res.end(err);
 					  }
 					  else{
-						  Sync(function(){
 							  console.log('Found %d documents with %s', result.docs.length,JSON.stringify(sel));
 							  if (result.docs.length>0)
 							  {	  
 							  	  if (result.docs[0].userIDs.length>0)
 								  {
-							  		  selectors = [];						  		  
-							  		  result.docs[0].userIDs.forEach(function(listItem, index){	
-							  			  selectors[index] = config.selectors.userID;
-							  			  selectors[index].selector.book.$elemMatch.bookID = req.session.bookID;
-							  			  selectors[index].selector.userID = listItem.userID;						  			
-										  var results2 = searchUsersByBook.sync(null,selectors[index]);
-										  if (results2.docs.length>0){		
-											  for(var i=0;i<results2.docs[0].book.length;++i){
-												  // If is a loan opened put the relationship with user
-												  if (results2.docs[0].book[i].returnDate === '')
-												  {
-													  result.docs[0].userIDs[index].firstName = results2.docs[0].firstName;
-												      result.docs[0].userIDs[index].middleName = results2.docs[0].middleName;
-												      result.docs[0].userIDs[index].lastName = results2.docs[0].lastName;
-												      result.docs[0].userIDs[index].loanID = results2.docs[0].book[i].loanID;
-												      result.docs[0].userIDs[index].returnDate = results2.docs[0].book[i].returnDate;
-												      result.docs[0].userIDs[index].loanDate = results2.docs[0].book[i].loanDate;
-												      result.docs[0].userIDs[index].limitDate = results2.docs[0].book[i].limitDate;	
-												      result.docs[0].userIDs[index].notes = results2.docs[0].book[i].notes;
-												      result.docs[0].userIDs[index].renovationNr = results2.docs[0].book[i].renovationNr;
-												  }
-											  }
-										  }											  
-							  		  });						  		  
+							  		console.log("Populating Book with all loans");
+							  		populateBookWithLoan(result,req,function(resultFinal) {
+							  			console.log("Function return (With Loans) : "+JSON.stringify(resultFinal));
+							  			res.end(JSON.stringify(resultFinal)); 	
+							  		});						  						  		  
 								  }							  	  
+							  }else{
+								  console.log("Function return (No Loans) : "+JSON.stringify(result));
+								  res.end(JSON.stringify(result));
 							  }
-							  console.log("Function return: "+JSON.stringify(result));
-							  res.end(JSON.stringify(result));					  
-						  });
 					  }	  
 				});	 
 			}
@@ -505,9 +539,9 @@ app.post('/services/ceai/inputBook', function(req, res){
 						console.log('With Content :');
 						console.log(JSON.stringify(req.body, null, 2));
 					});
-					res.write('Requisicão Salva com Sucesso com o ID :'+req.body.bookID +'<br>');
-					res.write(' para o Livro ISBN: '+ req.body.isbn);	 
-					res.end(' Nome: '+ req.body.bookName);	 
+					res.write('Requisicão Salva com Sucesso com o ID :<b>'+req.body.bookID +'</b><br>');
+					res.write(' para o Livro ISBN:<b> '+ req.body.isbn+ '</b>');	 
+					res.end(' Nome:<b> '+ req.body.bookName+'</b>');	 
 			  }
 			  else{
 				  res.write('Inclusão não realizada !');

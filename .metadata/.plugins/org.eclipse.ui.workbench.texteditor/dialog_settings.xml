@@ -6,12 +6,18 @@
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="session.role" key="selection"/>
+		<item value="uploadAnswerUnit" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+			<item value="uploadAnswerUnit"/>
+			<item value="uploadAnswerUnits"/>
+			<item value="131"/>
+			<item value="173"/>
+			<item value="convertDocumentsToAnswerUnits"/>
+			<item value="uploadDocument"/>
 			<item value="session.role"/>
 			<item value="user.role"/>
 			<item value="esgotado"/>
@@ -21,12 +27,6 @@
 			<item value="ssn"/>
 			<item value="keyboard cat"/>
 			<item value="session"/>
-			<item value="passport.session()"/>
-			<item value="passport"/>
-			<item value="or"/>
-			<item value="Empréstimo"/>
-			<item value="returnDate"/>
-			<item value="loadSession"/>
 		</list>
 		<list key="replacehistory">
 			<item value=""/>

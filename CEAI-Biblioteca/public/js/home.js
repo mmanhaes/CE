@@ -30,11 +30,12 @@ function handleChangeRadioButton(){
 	
 	var radios = document.getElementsByName("group1");
 	var table = document.getElementById("tableResult");
-	var row,cell;
+	var row,cell,bookCell;
     for (var i = 0, len = radios.length; i < len; i++) {
          if (radios[i].checked) {
         	 row = table.rows[i+2];
         	 cell = row.cells[1];
+        	 bookCell = row.cells[3];
         	 break;
          }
     }
@@ -46,6 +47,7 @@ function handleChangeRadioButton(){
         data: searchSession,
         contentType: "application/json",
         success: function(data, textStatus, jqXHR){
+        	alert('Livro: '+bookCell.innerHTML+' carregado para alterações');
         	console.log("Saving Session Data "+cell.innerHTML+" "+data);    
         },
         error: function(jqXHR, textStatus, errorThrown){
@@ -187,7 +189,7 @@ $(document).ready(function() {
   		url: '/services/ceai/searchBook',
         type: 'POST',
         data: inputSearch,
-        contentType: "application/json",
+        contentType: "application/json;charset=ISO-8859-1",
         success: function(data, textStatus, jqXHR){
         	//alert(data);
         	data = JSON.parse(data);

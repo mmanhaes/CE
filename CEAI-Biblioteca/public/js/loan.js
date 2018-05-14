@@ -376,8 +376,15 @@ function loan(){
 	$message = $('.message'),
 	$process = $('.processing');
 	
+	var loanNumber = parseInt($('#loanNumber').val());
+	if (loanNumber === 3){
+		alert('Não é possível emprestar este livro, o limite (3) para o número de livros emprestados para o participante '+$('#fullName').val()+' foi alcançado!');
+		return;
+	}
+	
 	var loanID = getLoanID();
 	var now = formatCurrentDate();
+	
 	var loan = parseInt($('#loan').val()) +1;
 	var amount = parseInt($('#amount').val());
 	if (loan > amount){
