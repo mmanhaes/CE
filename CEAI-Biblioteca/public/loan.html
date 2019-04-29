@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CEAI-Biblioteca</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+<link rel="icon" href="images/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="/css/bootstrap.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body onload="loadSessionData()">
+	<header class="_demo--heading">
+		<div class="_demo--container">
+			<div class="banner--service-icon-container" style="height: 70px;">
+				<img class="banner--service-icon" src="images/CEAI.png"
+					alt="Retrieve and Rank API Icon"
+					style="width: 140px; height: 38px;">
+			</div>
+			<nav class="heading-nav" role="menubar">
+				<ul>
+					<li class="base--li heading-nav--li" role="presentation"><a
+						class="heading-nav--item" href="/Home" role="menuitem">
+							Pesquisa de Livros </a></li>
+					<li class="base--li heading-nav--li" role="presentation"><a
+						class="heading-nav--item" id="stockBookLink" href="/StockBook" role="menuitem">
+							Estoque de Livros </a></li>
+					<li class="base--li heading-nav--li" role="presentation"><a
+						class="heading-nav--item" style="color: orange" href="/Loan" role="menuitem">
+							Empréstimos </a></li>
+					<li class="base--li heading-nav--li" role="presentation"><a
+						class="heading-nav--item" href="/logout" role="menuitem"> Sair
+					</a></li>
+				</ul>
+			</nav>
+		</div>
+	</header>
+	<div class="_demo--banner">
+		<div class="_demo--container">
+			<div class="banner--service-icon-container" style="height: 20px;">
+				<img class="banner--service-icon" src="images/livros.png"
+					alt="Retrieve and Rank API Icon"
+					style="width: 110px; height: 80px;">
+
+			</div>
+			<div class="banner--service-info" style="height: 74px;">
+				<h2></h2>
+				<h2></h2>
+				<h2 class="banner--service-title base--h2">Biblioteca</h2>
+			</div>
+		</div>
+	</div>
+	<div class="_demo--container">
+		<article class="_content base--article">
+			<div class="_content--choose-input-file">
+				<h3 id="top" class="base--h3">Empréstimo de Livros</h3>
+				<p class="_content--input-description base--p">Empreste ou Devolva um Livro, considerando a quantidade disponível. Importante: Para aparecer o livro para empréstimo é necessário pesquisa-lo na tela inicial (Pesquisa de Livros) e selecioná-lo.</p>
+			</div>
+			<div class="_content--choose-input-file">
+				<h4 id="top" class="base--h4">Dados do Livro</h4>
+			</div>
+			<table border="" style="width: 80%">
+				<tr>
+					<th scope="col" colspan="1" style="width: 150px;"><h5
+							class="base--h5">ID do Livro:</h5></th>
+					<th scope="col" colspan="5" style="width: 75%"><input
+						id="bookID" type="text" disabled="disabled"
+						class="input--question--manual--reduced base--a"
+						style="width: 188px;"></th>
+				</tr>
+				<tr>
+					<th scope="col" colspan="1" style="width: 150px;"><h5
+							class="base--h5">ISBN:</h5></th>
+					<th scope="col" colspan="5" style="width: 75%"><input
+						id="isbn" disabled="disabled" type="text"
+						class="input--question--manual--reduced base--a"
+						style="width: 188px;"></th>
+				</tr>
+				<tr>
+					<td scope="col" colspan="1" style="width: 150px"><h5
+							class="base--h5" style="width: 200px;">Autor:</h5></td>
+					<td scope="col" colspan="5" style="width: 75%"><input
+						id="author" disabled="disabled" type="text" placeholder="Campo Requerido"
+						class="input--question--manual--reduced base--a"
+						style="width: 750px;"></td>
+				</tr>
+				<tr>
+					<td scope="col" colspan="1" style="width: 150px"><h5
+							class="base--h5">Autor Espiritual:</h5></td>
+					<td scope="col" colspan="5" style="width: 75%"><input
+						id="espAuthor" disabled="disabled" type="text"
+						class="input--question--manual--reduced base--a"
+						style="width: 750px;"></td>
+				</tr>
+				<tr>
+					<td scope="col" colspan="1" style="width: 150px"><h5
+							class="base--h5">Nome do Livro:</h5></td>
+					<td scope="col" colspan="5" style="width: 75%"><input
+						id="bookName" disabled="disabled" type="text"
+						class="input--question--manual--reduced base--a"
+						style="width: 750px;" placeholder="Campo Requerido"></td>
+				</tr>
+				<tr>
+					<td style="width: 150px">
+						<h5 class="base--h5" style="width: 80px;">Categoria:</h5>
+					</td>
+					<td style="width: 75%" colspan="5"><input
+						id="category" disabled="disabled" type="text"
+						class="input--question--manual--reduced base--a"
+						style="width: 188px;" placeholder="Campo Requerido"></td>
+				</tr>
+				<tr>
+					<td colspan="1"><h5 class="base--h5">Quantidade Total:</h5></td>
+					<td colspan="5">
+						<table border="" style="width: 100%">
+						<tr>
+						<td>
+							<input id="amount" disabled="disabled" type="text"
+										class="input--question--manual base--a" style="width: 80px;" placeholder="Requerido">
+						</td>
+						<td align="right"><h5 class="base--h5">Emprestados:</h5></td>
+					<td colspan="1"><input id="loan" type="text" disabled="disabled"
+									class="input--question--manual base--a" style="width: 80px;">
+					</td>
+					<td align="right" colspan="1"><h5 class="base--h5">Disponíveis:</h5></td>
+					<td><input id="available" type="text" disabled="disabled"
+									class="input--question--manual base--a" style="width: 80px;">
+					</td>
+						</tr>
+						</table>
+					</td>					
+				</tr>				
+			</table>
+			
+			<div class="_content--choose-input-file">
+				<h4 id="top" class="base--h4">Dados do Empréstimo</h4>
+			</div>
+			<table border="" style="width: 80%">
+			
+			<tr>
+					<td style="width: 150px;;"><h5 class="base--h5">Nome do
+							participante:</h5></td>
+					<td colspan="2" style="width: 402px;"><input id="fullName" type="text"
+						class="input--question--manual--reduced base--a"
+						style="width: 498px;"></td>
+					<td><input type="button" class="input--request-button base--a"
+						id="search" value="Pesquisar"></td>
+				</tr>
+				<tr>
+					<td scope="col" colspan="1" style="width: 25%"><h5
+							class="base--h5" style="width: 150px;">ID do participante:</h5></td>
+					<td>
+						<input id="userID" type="text" disabled="disabled"
+							class="input--question--manual--reduced base--a"
+							style="width: 188px;">
+					</td>
+					<td align="right" scope="col" colspan="1" style="width: 25%"><h5
+							class="base--h5" style="width: 220px;">Número de Empréstimos:</h5></td>
+					<td>
+						<input id="loanNumber" type="text" disabled="disabled"
+							class="input--question--manual--reduced base--a"
+							style="width: 188px;">
+					</td>
+				</tr>	
+				<tr>
+					<td scope="col" colspan="1" style="width: 25%"><h5
+							class="base--h5" style="width: 150px;">ID  do empréstimo:</h5></td>
+					<td>
+						<input id="loanID" type="text" disabled="disabled"
+							class="input--question--manual--reduced base--a"
+							style="width: 188px;">
+					</td>
+					<td align="right" scope="col" colspan="1" style="width: 25%"><h5
+							class="base--h5" style="width: 220px;">Número de Renovações:</h5></td>
+					<td>
+						<input id="renovationNr" type="text" disabled="disabled"
+							class="input--question--manual--reduced base--a"
+							style="width: 188px;">
+					</td>
+				</tr>						
+				<tr>
+					<td colspan="1" style="width: 150px;"><h5 class="base--h5">Data
+							Empréstimo:</h5></td>
+					<td colspan="1" style="width: 90px;">
+						<table border="" style="width: 50%" cellspacing="0">
+							<tr>
+								<td><input id="loanDay" maxlength="2" type="text"
+									disabled="disabled" class="input--question--manual base--a" style="width: 30px;">
+								</td>
+								<td>/</td>
+								<td><input id="loanMonth" maxlength="2" type="text"
+									disabled="disabled" class="input--question--manual base--a" style="width: 30px;">
+								</td>
+								<td>/</td>
+								<td><input id="loanYear" type="text" maxlength="4"
+									disabled="disabled" class="input--question--manual base--a" style="width: 60px;">
+								</td>								
+							</tr>
+						</table>
+					</td>
+					
+					<td colspan="1">
+						<table border="" style="width: 100%" cellspacing="0">
+							<tr>
+							 	<td colspan="1"><h5 align="right"  style="width: 135px;" class="base--h5">Data   de Entrega:</h5></td>
+								<td><input id="limitDay" maxlength="2" type="text"
+									class="input--question--manual base--a" style="width: 30px;">
+								</td>
+								<td>/</td>
+								<td><input id="limitMonth" maxlength="2" type="text"
+									class="input--question--manual base--a" style="width: 30px;">
+								</td>
+								<td>/</td>
+								<td><input id="limitYear" type="text" maxlength="4"
+									class="input--question--manual base--a" style="width: 60px;">
+								</td>
+								
+							</tr>
+						</table>
+					</td>
+					<td colspan="1" style="width: 90px;">
+						<table border="" style="width: 50%" cellspacing="0">
+							<tr>
+								<td colspan="1"><h5 align="right" style="width: 135px;" class="base--h5">Data Atual:</h5></td>
+								<td><input id="returnDay" maxlength="2" type="text"
+									disabled="disabled" class="input--question--manual base--a" style="width: 30px;">
+								</td>
+								<td>/</td>
+								<td><input id="returnMonth" maxlength="2" type="text"
+									disabled="disabled" class="input--question--manual base--a" style="width: 30px;">
+								</td>
+								<td>/</td>
+								<td><input id="returnYear" type="text" maxlength="4"
+									disabled="disabled" class="input--question--manual base--a" style="width: 60px;">
+								</td>								
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td scope="col" colspan="1" style="width: 150px"><h5
+							class="base--h5" style="width: 200px;">Observações:</h5></td>
+					<td scope="col" colspan="5" style="width: 75%"><input
+						id="notes" type="text" placeholder="Campo Opcional"
+						class="input--question--manual--reduced base--a"
+						style="width: 750px;"></td>
+				</tr>			
+			</table>
+			
+			<div class="output2" style="display: none;'">
+				<div class="_demo--container" style="width: 950px;">
+						<form>
+						<table class="table" id="tableResultPerson" style="border: 1px solid grey">
+							<tr>
+								<th class="th" style="border: 1px solid grey" colspan="7"><h5 class="base--h5">Principais Dados</h5></th>
+							</tr>
+							<tr>
+								<th class="th" style="border: 1px solid grey"><h5 class="base--h5">Sel</h5></th>
+								<th class="th" style="border: 1px solid grey"><h5 class="base--h5">Código</h5></th>
+								<th class="th" style="border: 1px solid grey" colspan="2"><h5 class="base--h5">Nome Completo</h5></th>
+								<th class="th" style="border: 1px solid grey"><h5 class="base--h5">Telefone</h5></th>
+								<th class="th" style="border: 1px solid grey"><h5 class="base--h5">Email</h5></th>
+								<th class="th" style="border: 1px solid grey"><h5 class="base--h5">Nr. Empréstimos</h5></th>
+							</tr>
+							<!-- <tr>
+								<td width="40"><input type="radio"></td>
+								<td width="40">1234</td>
+								<td colspan="2">&nbsp;</td>
+								<td width="40">&nbsp;</td>
+								<td width="40">&nbsp;</td>
+								<td width="40">&nbsp;</td>
+								<td width="40">&nbsp;</td>
+							</tr> -->							
+						</table>
+						</form>
+				</div>
+			</div>
+			
+			<input type="button" class="input--request-button base--a"
+				id="previous" value="<Estoque de Livros"> 
+			<input type="button" class="input--request-button base--a"
+				id="loanBook" value="Emprestar"> 
+			<input type="button" class="input--request-button base--a"
+				id="renewLoanBook" value="Renovar">
+			<input type="button"
+				class="input--request-button base--a" id="return" value="Devolver">
+			<input type="button" class="input--request-button base--a" id="next"
+				value="Admin. de Usuários>">
+			<div class="processing" style="display: none;'">
+				<div class="_demo--container">
+					<p class="base--p">
+						<img src="images/processing.gif" alt="processing"
+							style="width: 96px; height: 96px; align: middle">
+					</p>
+				</div>
+			</div>
+			<div class="output">
+				<div class="_demo--container" style="width: 960px;">
+					<form>
+						<table class="table" id="tableResult" 
+						style="border: 1px solid grey">
+							<tr>
+								<th class="th" style="border: 1px solid grey" colspan="9"><h5
+										class="base--h5">Empréstimos</h5></th>
+							</tr>
+							<tr>
+								<th class="th" style="border: 1px solid grey"><h5
+										class="base--h5">Sel</h5></th>
+								<th class="th" style="border: 1px solid grey"><h5
+										class="base--h5">ID Emprest.</h5></th>
+								<th class="th" style="border: 1px solid grey"><h5
+										class="base--h5">ID partic.</h5></th>
+								<th colspan="3" class="th" style="border: 1px solid grey"><h5
+										class="base--h5">Participante</h5></th>
+								<th class="th" style="border: 1px solid grey"><h5
+										class="base--h5">Data Empréstimo</h5></th>
+								<th class="th" style="border: 1px solid grey"><h5
+										class="base--h5">Data de Entrega</h5></th>
+								<th colspan="1" class="th" style="border: 1px solid grey"><h5
+										class="base--h5">Nr. Renovações</h5></th>
+							</tr>
+							<!-- <tr>
+								<td width="40"><input type="radio"></td>
+								<td width="40">1234</td>
+								<td colspan="2">&nbsp;</td>
+								<td width="40">&nbsp;</td>
+								<td width="40">&nbsp;</td>
+								<td width="40">&nbsp;</td>
+								<td width="40">&nbsp;</td>
+							</tr> -->
+						</table>
+					</form>
+				</div>
+				<input type="button" class="input--request-button base--a"
+				id="cleanLoanSelection" value="Limpar Seleção">
+			</div>			
+			<div class="message" style="display: none;'">
+				<div class="_demo--container">
+					<h3 class="base--h3">Mensagem do Sistema:</h3>
+					<span id="message" style="color: red">No message</span>
+				</div>
+			</div>
+		</article>
+	</div>
+	<script type="text/javascript"
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	<script type="text/javascript" src="js/loan.js"></script>
+</body>
+</html>

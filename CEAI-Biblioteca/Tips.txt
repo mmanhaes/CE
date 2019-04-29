@@ -1,0 +1,86 @@
+1 - For while didn´t find a way to get rid of this exception
+	
+2 - Create an index for all
+
+{ "index": {}, "type": "text"}
+
+3 - Buildpack 
+
+https://github.com/cloudfoundry/nodejs-buildpack
+
+4 - Create Index
+
+{
+  "index": {
+    "selector": {},
+    "fields": [
+      {"name": "firstName", "type": "string"},
+      {"name": "middleName", "type": "string"},
+      {"name": "lastName", "type": "string"}
+    ]
+  },
+  "type": "text",
+  "name": "my-index"
+}
+
+5 -  Create Index
+
+{
+  "index": {
+    "fields": [
+  "firstName" : "asc"   ]
+  },
+  "type": "json"
+}
+
+{
+  "index": {
+    "fields": [
+  "middleName" : "asc"  ]
+  },
+  "type": "json"
+}
+
+{
+  "index": {
+    "fields": [
+  "lastName" : "asc"  ]
+  },
+  "type": "json"
+}
+
+6 - Selector by author
+
+{
+   "selector": {
+      "$or": [
+         {
+            "bookName": {
+               "$regex": ".*(?i)(livro dos espíritos)"
+            }
+         },
+         {
+            "bookName": {
+               "$regex": "(?i)(livro dos espíritos).*"
+            }
+         }
+      ]
+   },
+   "fields": [
+      "_id",
+      "bookID",
+      "isbn",
+      "author",
+      "espAuthor",
+      "category",
+      "bookName",
+      "amount"
+   ],
+   "sort": [
+      {
+         "_id": "asc"
+      }
+   ]
+}
+
+7 - fazer tela de empréstimo inicialmente pelo nome do livro and after searching the participant to loan the book.

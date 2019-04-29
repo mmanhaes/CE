@@ -1,0 +1,32 @@
+{
+  "name": "ceai",
+  "description": "ceai description",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "bootstrap": "^3.4.0",
+    "cloudant": "^1.10.0",
+    "connect-ensure-login": "^0.1.1",
+    "connect-redis": "^3.4.1",
+    "cookie-parser": "^1.4.4",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "morgan": "^1.9.1",
+    "passport": "^0.2.2",
+    "passport-local": "^1.0.0",
+    "promise": "^8.0.3",
+    "randomstring": "^1.1.5",
+    "uuid": "^3.3.2",
+    "vcap_services": "^0.3.4",
+    "xlsx": "^0.14.2"
+  },
+  "engines": {
+    "node": ">= 10.0.15",
+    "npm": ">= 4.2.0"
+  }
+}

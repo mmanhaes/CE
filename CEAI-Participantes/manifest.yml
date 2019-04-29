@@ -1,0 +1,8 @@
+---
+applications:
+- name: ceai-participantes
+  memory: 256M
+  host: ceai-participantes
+  domain: mybluemix.net
+  buildpack: https://github.com/cloudfoundry/nodejs-buildpack
+
