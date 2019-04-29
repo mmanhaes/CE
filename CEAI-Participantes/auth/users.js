@@ -1,6 +1,6 @@
 var records = [
-    { id: 1, username: 'ceai-geral', password: 'geral2018', role: 'user', displayName: 'ceai-geral', emails: [ { value: 'marcelo.manhaes@hotmail.com' } ] }
-  , { id: 2, username: 'ceai-admin', password: 'nancy2018',  role: 'admin', displayName: 'ceai-admin', emails: [ { value: 'marcelo.manhaes@hotmail.com' } ] }
+    { id: 1, username: 'XXXXXX', password: 'XXXXXX', role: 'user', displayName: 'ceai-geral', emails: [ { value: 'XXXXXX' } ] }
+  , { id: 2, username: 'XXXXXX', password: 'XXXXXX',  role: 'admin', displayName: 'ceai-admin', emails: [ { value: 'XXXXXX' } ] }
 ];
 
 exports.findById = function(id, cb) {
