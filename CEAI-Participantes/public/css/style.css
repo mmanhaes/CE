@@ -1046,6 +1046,12 @@ pre[class^="language-"] > code[class^="language-"], pre[class^="language-"] > co
 .description--answer-unit.active {
   display: block;
 }
+@media (min-width: 1200px) {
+  .userData {
+    width: 992px;
+    margin: 0rem auto;
+  }
+}
 @media (min-width: 768px) {
   ._demo--container {
     width: 760px;
@@ -1135,8 +1141,39 @@ pre[class^="language-"] > code[class^="language-"], pre[class^="language-"] > co
 	border: 1em;
     text-align: center;
 }
-
+.processingSearch {
+  background-color: #f4f4f4;
+  padding: 1rem;
+}
+.processingAssociation {
+  background-color: #f4f4f4;
+  padding: 1rem;
+}
+.processingStudy {
+  background-color: #f4f4f4;
+  padding: 1rem;
+}
+.processingWork {
+  background-color: #f4f4f4;
+  padding: 1rem;
+}
 .output {
+  background-color: #f4f4f4;
+  padding: 1rem;
+}
+.newRecord{
+  background-color: #f4f4f4;
+  padding: 1rem;
+}
+.outputGeneral {
+  background-color: #f4f4f4;
+  padding: 1rem;
+}
+.outputAssociation{
+  background-color: #f4f4f4;
+  padding: 1rem;
+}
+.outputWork{
   background-color: #f4f4f4;
   padding: 1rem;
 }
@@ -1287,7 +1324,22 @@ pre[class^="language-"] > code[class^="language-"], pre[class^="language-"] > co
   display: inline
 }
 
-.error {
+.messageSearchPanel {
+	color: #a53725;
+	padding-left: 10px;
+}
+
+.messageWorkPanel {
+	color: #a53725;
+	padding-left: 10px;
+}
+
+.messageStudyPanel {
+	color: #a53725;
+	padding-left: 10px;
+}
+
+.messageAssociationPanel {
 	color: #a53725;
 	padding-left: 10px;
 }

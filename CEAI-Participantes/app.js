@@ -76,39 +76,47 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //parse application/json
 app.use(bodyParser.json());
 
-var buildSelectorSearchPerson = function(data,callback){
+
+var buildSelectorSearchPerson = function(type,data,callback){
+	
+	var configFound = config.searchPerson.filter(function(item) {
+		  return item.type == type;
+	});
+	
+	console.log(JSON.stringify(configFound[0]));
+	
 	if (data.lastName!=="" && data.firstName!=="" && data.middleName!=="")
 	{
-		config.fullName_selector.selector.firstName.$regex = case_ins+data.firstName;
-		config.fullName_selector.selector.middleName.$regex  = case_ins+data.middleName;
-		config.fullName_selector.selector.lastName.$regex  = case_ins+data.lastName;
+		configFound[0].fullName_selector.selector.firstName.$regex = case_ins+data.firstName;
+		configFound[0].fullName_selector.selector.middleName.$regex  = case_ins+data.middleName;
+		configFound[0].fullName_selector.selector.lastName.$regex  = case_ins+data.lastName;
 		
-		return callback(false,config.fullName_selector);
+		return callback(false,configFound[0].fullName_selector);
 	}	
 	else{
 		if (data.lastName!=="" && data.firstName!=="")
 		{
-			config.firstAndlastName_selector.selector.firstName.$regex  = case_ins+data.firstName;
-			config.firstAndlastName_selector.selector.lastName.$regex  = case_ins+data.lastName;
+			configFound[0].firstAndlastName_selector.selector.firstName.$regex  = case_ins+data.firstName;
+			configFound[0].firstAndlastName_selector.selector.lastName.$regex  = case_ins+data.lastName;
 			
-			return callback(false,config.firstAndlastName_selector);
+			return callback(false,configFound[0].firstAndlastName_selector);
 		}
 		else
 		{
 			if (data.middleName!=="" && data.firstName!=="")
 			{
-				config.firstAndlastName_selector.selector.firstName.$regex  = case_ins+data.firstName;
-				config.fullName_selector.selector.middleName.$regex  = case_ins+data.middleName;
+				configFound[0].firstAndlastName_selector.selector.firstName.$regex  = case_ins+data.firstName;
+				configFound[0].fullName_selector.selector.middleName.$regex  = case_ins+data.middleName;
 				
-				return callback(false,config.firstAndMiddleName_selector);
+				return callback(false,configFound[0].firstAndMiddleName_selector);
 			}
 			else
 			{	
 				if (data.firstName!=="")
 				{				
-					config.firstName_selector.selector.firstName.$regex  = case_ins+data.firstName;
+					configFound[0].firstName_selector.selector.firstName.$regex  = case_ins+data.firstName;
 					
-					return callback(false,config.firstName_selector);
+					return callback(false,configFound[0].firstName_selector);
 				}
 			}	
 		}			
@@ -151,7 +159,7 @@ app.post('/services/ceai/loadSessionData', function(req, res){
 		
 		if (req.body.searchKey === "general" || req.body.searchKey === "contact" 
 			|| req.body.searchKey === "association" || req.body.searchKey === "work" 
-				|| req.body.searchKey === "study"){
+				|| req.body.searchKey === "study" || req.body.searchKey ==="forUpdates"){
 			db = cloudant.db.use(config.database.person.name);
 		}	
 		
@@ -177,26 +185,62 @@ app.post('/services/ceai/loadSessionData', function(req, res){
 	}
 });
 
+app.post('/services/ceai/searchCPF', function(req, res){
+	res.setHeader('Content-Type', 'application/json');
+	
+	var db = cloudant.db.use(config.database.person.name);
+	
+	var sel = config.userID.selectors.cpf;
+	
+	sel.selector.cpf = req.body.cpf;
+	
+	//Search with FirstName and LastName or FullName
+	db.find(sel, function(err, result) {
+			if (err) {
+			    console.log(err);
+			    config.config.searchError.error = err;
+			    res.end(config.searchError);
+			}
+			else{
+				  console.log('Found %d documents with %s', result.docs.length,JSON.stringify(sel));
+    			  var response = {};
+				  if (result.docs.length>0)
+				  {
+					  response.data = result;
+					  res.end(JSON.stringify(response));
+				  }
+				  else {
+					  response.message = 'NOT FOUND';
+					  res.end(JSON.stringify(response));		
+				 }
+			}
+	});
+});
+
+
 app.post('/services/ceai/searchPerson', function(req, res){
 	res.setHeader('Content-Type', 'text/plain');
 	
 	var db = cloudant.db.use(config.database.person.name);
 	
 	var selector = "";
-	buildSelectorSearchPerson(req.body,function(err,response){
+	var type = req.body.type;
+	delete req.body.type;
+	buildSelectorSearchPerson(type,req.body,function(err,response){
 		if (err){
 			console.log(err);
-			config.config.config.searchError.error = err;
+			config.searchError.error = err;
 		    res.end(config.searchError);
 		}
 		else
 		{	
 			//Search with FirstName and LastName or FullName
 			selector = response;
+			console.log("Using selector "+JSON.stringify(selector)+ " to find into database");
 			db.find(selector, function(err, result) {
 				  if (err) {
 				    console.log(err);
-				    config.config.searchError.error = err;
+				    config.searchError.error = err;
 				    res.end(config.searchError);
 				  }
 				  else{
@@ -206,25 +250,49 @@ app.post('/services/ceai/searchPerson', function(req, res){
 					  	  for (var i = 0; i < result.docs.length; i++) {
 					  		  console.log('  Doc userIDs: %s', result.docs[i].userID);
 					  	  }
-					  	  console.log(JSON.stringify(result));
+					  	  console.log('Final response from searchPerson',JSON.stringify(result));
 					  	  res.end(JSON.stringify(result));
 					  }
 					  else {
-						 //If not success in FullName or First/Last Name it goes to First and MiddleName 
-						  if (req.body.firstName !=="" && req.body.middleName === "" && req.body.lastName !==""){
-							  req.body.middleName = req.body.lastName;
-							  req.body.lastName = "";
+						  //If not success in FullName or First/Last Name it goes to First and MiddleName 
+						  if (req.body.firstName !=="" && req.body.lastName !==""){
+							  req.body.middleName = "";
 							  buildSelectorSearchPerson(req.body,function(err,response){
 								  selector = response;
 									db.find(selector, function(err, result) {
-										console.log('Found %d documents with %s', result.docs.length,JSON.stringify(selector));
+										 if (result.docs.length>0)
+										 {
+											  console.log('Found %d documents with %s', result.docs.length,JSON.stringify(selector));
 										  	  for (var i = 0; i < result.docs.length; i++) {
 										  		  console.log('  Doc userIDs: %s', result.docs[i].userID);
 										  	  }
-										  	  console.log(JSON.stringify(result));
-										  	  res.end(JSON.stringify(result));										
+										  	  console.log('Final response from searchPerson',JSON.stringify(result));
+										  	  res.end(JSON.stringify(result));		
+										 }
+										 else{
+										  	//If not success in FullName or First/Last Name it goes to First and MiddleName 
+											req.body.middleName = "";
+											req.body.lastName = "";
+											buildSelectorSearchPerson(req.body,function(err,response){
+											  selector = response;
+												db.find(selector, function(err, result) {
+													console.log('Found %d documents with %s', result.docs.length,JSON.stringify(selector));
+												  	for (var i = 0; i < result.docs.length; i++) {
+												  		  console.log('  Doc userIDs: %s', result.docs[i].userID);
+												  	}
+												  	console.log('Final response from searchPerson',JSON.stringify(result));
+													res.end(JSON.stringify(result));
+												});
+   											});  
+										 }	  
 									});
 							  });
+						  }
+						  else{
+							  var result = {};
+							  result.message = "Not Found";								   
+							  console.log("Not Found for query",req.body);
+							  res.end(JSON.stringify(result));
 						  }
 					  }						  
 				  }	  
@@ -427,6 +495,11 @@ app.get('/Association',
 		require('connect-ensure-login').ensureLoggedIn(),
 		function(req, res){
 	res.sendFile(__dirname + "/public/association.html");
+});
+
+app.get('/cadastro',	
+		function(req, res){
+	res.sendFile(__dirname + "/public/register.html");
 });
 
 app.listen(port,function(){

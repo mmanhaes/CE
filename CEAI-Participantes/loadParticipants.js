@@ -12,16 +12,23 @@ const uuidv1 = require('uuid/v1');
 const REPLACEMENT_KEY = '<ENTRY>';
 const case_ins = "(?i)"; 
 var nInserts = 0;
+var randomstring = require("randomstring");
 
 function getParticipantID(){
 	var currentdate = new Date(); 
+	
+	var padding = randomstring.generate({
+		  length: 4,
+		  charset: 'numeric'
+	});
+	
 	return  currentdate.getFullYear() 
 					+ "-" + (currentdate.getMonth()+1) 
 					+ "-" + currentdate.getDay()					 
 					+ "-" + currentdate.getHours()  
 	                + "-" + currentdate.getMinutes() 
 	                + "-" + currentdate.getSeconds()
-	                + "-" + currentdate.getMilliseconds();
+	                + "-" + padding;
 }
 
 function insertParticipant(data,callback){

@@ -349,8 +349,6 @@ function insert(){
 			var association = {};
 		    association["associationType"] = associationType.options[associationType.selectedIndex].value;
 		    association["proposeDate"] = $.trim($('#propDay').val()) + '-' + $.trim($('#propMonth').val()) + '-' + $.trim($('#propYear').val());
-		    association["analysisDate"] = $.trim($('#anDay').val()) + '-' + $.trim($('#anMonth').val()) + '-' + $.trim($('#anYear').val());;
-		    association["approved"] = approved.options[approved.selectedIndex].value;
 		    if ($.trim($('#exitDay').val())!==''){
 		    	association["exitDate"] = $.trim($('#exitDay').val()) + '-' + $.trim($('#exitMonth').val()) + '-' + $.trim($('#exitYear').val());
 		    }
@@ -358,6 +356,7 @@ function insert(){
 		    	association["exitDate"] = "";
 		    }
 		    association["contribution"] = $.trim($('#contribution').val());
+		    association["habilities"] = $.trim($('#habilities').val());
 		    association["notes"] = $.trim($('#notes').val());
 			
 		    buildAssociationRowTable(association);
@@ -371,7 +370,7 @@ function insert(){
 
 $(document).ready(function() {
 	$('#associationType').change(function(){
-		alert("Changed");
+		//alert("Changed");
 	});
 	$('#previous').click(function(){
 		window.location = "/Contact";

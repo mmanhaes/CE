@@ -7,7 +7,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
 <link rel="icon" href="images/favicon.ico" type="image/x-icon">
-<link rel="stylesheet" href="/css/bootstrap.min.css">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body onload="loadSessionData();checkUserAccess();">
@@ -68,12 +67,12 @@
 			<table border="" style="width: 80%">
 				<tr>
 
-					<th scope="col" colspan="1" style="width: 25%"><h5
-							class="base--h5" style="width: 160px;">Código do Sistema:</h5></th>
-					<th scope="col" colspan="6" style="width: 75%"><input
+					<td scope="col" colspan="1" style="width: 25%"><h5
+							class="base--h5" style="width: 160px;">Código do Sistema:</h5></td>
+					<td scope="col" colspan="6" style="width: 75%"><input
 						id="userID" type="text" disabled="disabled"
 						class="input--question--manual--reduced base--a"
-						style="width: 188px;"></th>
+						style="width: 188px;"></td>
 				</tr>
 				<tr>
 					<td scope="col" colspan="1" style="width: 25%"><h5
@@ -94,9 +93,11 @@
 					</td>
 					<td style="width: 100%" colspan="1"><select id="associationType"
 						style="color: #a53725";width: 55px">
-							<option value="Efetivo">Efetivo</option>
-							<option value="Efetivo">Participante</option>
+							<option value="Assistido">Assistido</option>
 							<option selected="selected" value="Colaborador">Colaborador</option>
+							<option value="Efetivo">Efetivo</option>
+							<option value="Inativo">Inativo</option>
+							<option value="Participante">Participante</option>
 					</select></td>
 					<td colspan="2" style="width: 150px;"><h5 class="base--h5">Data
 							da Proposta:</h5></td>
@@ -118,36 +119,7 @@
 						</table>
 					</td>
 					<td colspan="1" style="width: 150px;"><h5 class="base--h5">Data
-							da Análise:</h5></td>
-					<td colspan="1" style="width: 90px;">
-						<table border="" style="width: 100%" cellspacing="0">
-							<tr>
-								<td><input id="anDay" maxlength="2" type="text"
-									class="input--question--manual base--a" style="width: 30px;">
-								</td>
-								<td>/</td>
-								<td><input id="anMonth" maxlength="2" type="text"
-									class="input--question--manual base--a" style="width: 30px;">
-								</td>
-								<td>/</td>
-								<td><input id="anYear" type="text" maxlength="4"
-									class="input--question--manual base--a" style="width: 60px;">
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="1""width: 25%">
-						<h5 class="base--h5" style="width: 140px;">Aprovado:</h5>
-					</td>
-					<td style="width: 100%" colspan="1"><select id="approved"
-						style="color: #a53725";width: 55px">
-							<option selected="selected" value="Sim">Sim</option>
-							<option value="Não">Não</option>
-					</select></td>
-					<td colspan="2" style="width: 150px;"><h5 class="base--h5">Data
-							de Saída:</h5></td>
+							da Saída:</h5></td>
 					<td colspan="1" style="width: 90px;">
 						<table border="" style="width: 100%" cellspacing="0">
 							<tr>
@@ -165,21 +137,42 @@
 							</tr>
 						</table>
 					</td>
+				</tr>
+				<tr>
 					<td colspan="1" style="width: 50px;"><h5 class="base--h5">Valor
 							Contribuição:</h5></td>
-					<td colspan="1"><input id="contribution" type="text"
-						class="input--question--manual--reduced base--a"
-						style="width: 80px;"></td>
+					<td scope="col" colspan="6" style="width: 75%">
+						<table border="" style="width: 100%">
+						<tr>
+							<td colspan="1"><input id="contribution" type="text"
+								class="input--question--manual--reduced base--a"
+								style="width: 220px;"></td>
+						</tr>
+						</table>
+					</td>
 				</tr>
 				<tr>
 					<td scope="col" colspan="1" style="width: 25%"><h5
-							class="base--h5" style="width: 160px;">Observações :</h5></td>
+							class="base--h5" style="width: 160px;">Habilidades:</h5></td>
 					<td scope="col" colspan="6" style="width: 75%">
 						<table border="" style="width: 100%">
 							<tr>
-								<td><input id="notes" type="text" 
-									class="input--question--manual--reduced base--a"
-									style="width: 750px;"></td>
+								<td><textarea placeholder="Não Obrigatório"
+							id="notes" class="output-spam" id="habilities"
+							style="height: 80px;color: #a53725; width: 810px;"></textarea></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td scope="col" colspan="1" style="width: 25%"><h5
+							class="base--h5" style="width: 160px;">Informações Complementares:</h5></td>
+					<td scope="col" colspan="6" style="width: 75%">
+						<table border="" style="width: 100%">
+							<tr>
+								<td><textarea placeholder="Não Obrigatório"
+							id="notes" class="output-spam" id="results"
+							style="height: 100px;color: #a53725; width: 810px;"></textarea></td>
 							</tr>
 						</table>
 					</td>

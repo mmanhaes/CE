@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
 <link rel="icon" href="images/favicon.ico" type="image/x-icon">
-<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/bootstrap.css">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body onload="loadSessionData();checkUserAccess();">
@@ -75,7 +75,7 @@
 				</tr>
 				<tr>
 					<td scope="col" colspan="1" style="width: 25%"><h5
-							class="base--h5" style="width: 200px;">Nome completo :</h5></td>
+							class="base--h5" style="width: 170px;">Nome completo :</h5></td>
 					<td scope="col" colspan="6" style="width: 75%"><input
 						id="fullName" type="text"
 						class="input--question--manual--reduced base--a"
@@ -83,7 +83,7 @@
 				</tr>
 				<tr>
 					<td scope="col" colspan="1" style="width: 25%"><h5
-							class="base--h5" style="width: 200px;">RG:</h5></td>
+							class="base--h5" style="width: 170px;">RG:</h5></td>
 					<td colspan="1"><input id="rg" type="text"
 						class="input--question--manual--reduced base--a"
 						style="width: 250px;"></td>
@@ -139,10 +139,10 @@
 					</td>
 				<tr>
 					<td scope="col" colspan="1" style="width: 25%"><h5
-							class="base--h5" style="width: 200px;">CPF:</h5></td>
+							class="base--h5" style="width: 170px;">CPF:</h5></td>
 					<td colspan="1"><input id="cpf" type="text"
 						class="input--question--manual--reduced base--a"
-						style="width: 250px;"></td>
+						style="width: 250px;" placeholder="Somente Números"></td>
 					<td colspan="1" style="width: 180px;"><h5 class="base--h5">Data
 							de Nascimento:</h5></td>
 					<td colspan="2">
@@ -172,7 +172,7 @@
 						style="width: 750px;"></td>
 				</tr>
 				<tr>
-					<td colspan="1" style="width: 300px;"><h5 class="base--h5">Número:</h5></td>
+					<td colspan="1" style="width: 200px;"><h5 class="base--h5">Número:</h5></td>
 					<td colspan="6">
 						<table border="" style="width: 100%">
 							<tr>
@@ -182,13 +182,13 @@
 								<td style="width: 25%"><h5 class="base--h5">Complemento:</h5></td>
 								<td style="width: 75%" colspan="1"><input id="complement"
 									type="text" class="input--question--manual--reduced base--a"
-									style="width: 535px;"></td>
+									style="width: 510px;"></td>
 							</tr>
 						</table>
 					</td>
 				</tr>
 				<tr>
-					<td colspan="1" style="width: 300px;"><h5 class="base--h5">Bairro:</h5></td>
+					<td colspan="1" style="width: 200px;"><h5 class="base--h5">Bairro:</h5></td>
 					<td colspan="1"><input id="neighborhood" type="text"
 						class="input--question--manual--reduced base--a"
 						style="width: 250px;"></td>
@@ -247,11 +247,23 @@
 							<tr>
 								<td><input id="postCode-1" type="text" maxlength="5"
 									class="input--question--manual--reduced base--a"
-									style="width: 119px;"></td>
+									style="width: 79px;"></td>
 								<td>-</td>
 								<td><input id="postCode-2" type="text" maxlength="3"
 									class="input--question--manual--reduced base--a"
-									style="width: 60px;"></td>
+									style="width: 50px;"></td>
+								<td style="width: 25%"><h5 class="base--h5" style="width: 140px;">Parentesco CPF:</h5></td>
+								<td style="width: 75%" colspan="1"><input id="parentCpf"
+									type="text" class="input--question--manual--reduced base--a"
+									style="width: 110px;"></td>
+								<td style="width: 75%" colspan="1">
+									<input type="button" class="input--request-button base--a"
+									id="searchParent" value="Pesquisar">
+								</td>
+								<td colspan="1" style="width: 60px;"><h5 class="base--h5">Nome:</h5></td>
+					<td colspan="1"><input id="parentName" type="text"
+						class="input--question--manual--reduced base--a" disabled="disabled"
+						style="width: 230px;"></td>
 							</tr>
 						</table>
 						</td>

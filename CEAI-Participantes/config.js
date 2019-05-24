@@ -12,54 +12,6 @@ exports.database = {
 		person : {name: "ceai"}
 };
 
-exports.fullName_selector ={
-		  "selector": {
-			  	  "firstName": {
-			         "$regex": "(?i)marcelo"
-			      },
-			      "middleName": {
-			         "$regex": "(?i)mota"
-			      },
-			      "lastName": {
-			         "$regex": "(?i)manhães"
-			      }
-			  },
-			  "fields": [
-				  "firstName",
-				  "middleName",
-				  "lastName",
-				  "userID",
-				  "phone1",
-				  "email1",
-			  ],
-			  "sort": [
-			    {
-			      "firstName": "asc"
-			    }
-			  ]
-};
-
-exports.firstName_selector ={
-		  "selector": {
-			  	"firstName": {
-			         "$regex": "(?i)marcelo"
-			      }
-		  	    },
-			  "fields": [
-				  "firstName",
-				  "middleName",
-				  "lastName",
-				  "userID",
-				  "phone1",
-				  "email1",
-			  ],
-			  "sort": [
-			    {
-			      "firstName": "asc"
-			    }
-			  ]
-};
-
 exports.userID ={};
 
 exports.userID.selectors = { 
@@ -215,55 +167,47 @@ exports.userID.selectors = {
 					      "firstName": "asc"
 					    }
 					  ]
+			},
+		"cpf":{
+				 "selector": {
+					    "cpf" : ""
+					  },
+					  "fields": [
+						    "_id",
+						    "_rev",
+						    "firstName",
+						    "middleName",
+						    "lastName",
+						    "userID",
+						    "cpf",
+						    "rg",
+						    "rgExp",
+						    "rgState",
+						    "birthDate",
+						    "address",
+						    "number",
+						    "complement",
+						    "neighborhood",
+						    "city",
+						    "state",
+						    "postCode",
+						    "phone1",
+						    "whatsup1",
+						    "phone2",
+						    "whatsup2",
+						    "email1",
+						    "email2",
+						    "association",
+						    "work",
+						    "study",
+						    "book"			    
+					  ],
+					  "sort": [
+					    {
+					      "firstName": "asc"
+					    }
+					  ]
 			}
-};
-
-exports.firstAndlastName_selector ={
-		  "selector": {
-			  	  "firstName": {
-			         "$regex": "(?i)marcelo"
-			      },			      
-			      "lastName": {
-			         "$regex": "(?i)manhães"
-			      }
-			  },
-			  "fields": [
-				  "firstName",
-				  "middleName",
-				  "lastName",
-				  "userID",
-				  "phone1",
-				  "email1",
-			  ],
-			  "sort": [
-			    {
-			      "firstName": "asc"
-			    }
-			  ]
-};
-
-exports.firstAndMiddleName_selector ={
-		  "selector": {
-			  	  "firstName": {
-			         "$regex": "(?i)marcelo"
-			      },			      
-			      "middleName": {
-			         "$regex": "(?i)mota"
-			      }
-			  },
-			  "fields": [
-				  "firstName",
-				  "middleName",
-				  "lastName",
-				  "userID",
-				  "phone1",
-				  "email1",
-			  ],
-			  "sort": [
-			    {
-			      "firstName": "asc"
-			    }
-			  ]
 };
 
 exports.participant = {
@@ -308,3 +252,276 @@ exports.association = {
 exports.searchError = {
 		"error":""
 };
+
+exports.searchPerson = [
+	{
+		type:"register",
+		fullName_selector : {
+				  "selector": {
+					  	  "firstName": {
+					         "$regex": "(?i)marcelo"
+					      },
+					      "middleName": {
+					         "$regex": "(?i)mota"
+					      },
+					      "lastName": {
+					         "$regex": "(?i)manhães"
+					      }
+					  },
+					  "fields": [
+						    "firstName",
+						    "middleName",
+						    "lastName",
+						    "userID",
+						    "cpf",
+						    "rg",
+						    "rgExp",
+						    "rgState",
+						    "birthDate",
+						    "address",
+						    "number",
+						    "complement",
+						    "neighborhood",
+						    "city",
+						    "state",
+						    "postCode",
+						    "phone1",
+						    "whatsup1",
+						    "phone2",
+						    "whatsup2",
+						    "email1",
+						    "email2",
+						    "association",
+						    "work",
+						    "study",
+						    "book"
+					  ],
+					  "sort": [
+					    {
+					      "firstName": "asc"
+					    }
+					  ]
+		},
+		firstName_selector : {
+				  "selector": {
+					  	"firstName": {
+					         "$regex": "(?i)marcelo"
+					      }
+				  	    },
+					  "fields": [
+						    "firstName",
+						    "middleName",
+						    "lastName",
+						    "userID",
+						    "cpf",
+						    "rg",
+						    "rgExp",
+						    "rgState",
+						    "birthDate",
+						    "address",
+						    "number",
+						    "complement",
+						    "neighborhood",
+						    "city",
+						    "state",
+						    "postCode",
+						    "phone1",
+						    "whatsup1",
+						    "phone2",
+						    "whatsup2",
+						    "email1",
+						    "email2",
+						    "association",
+						    "work",
+						    "study",
+						    "book"
+					  ],
+					  "sort": [
+					    {
+					      "firstName": "asc"
+					    }
+					  ]
+		},
+		firstAndlastName_selector : {
+				  "selector": {
+					  	  "firstName": {
+					         "$regex": "(?i)marcelo"
+					      },			      
+					      "lastName": {
+					         "$regex": "(?i)manhães"
+					      }
+					  },
+					  "fields": [
+						    "firstName",
+						    "middleName",
+						    "lastName",
+						    "userID",
+						    "cpf",
+						    "rg",
+						    "rgExp",
+						    "rgState",
+						    "birthDate",
+						    "address",
+						    "number",
+						    "complement",
+						    "neighborhood",
+						    "city",
+						    "state",
+						    "postCode",
+						    "phone1",
+						    "whatsup1",
+						    "phone2",
+						    "whatsup2",
+						    "email1",
+						    "email2",
+						    "association",
+						    "work",
+						    "study",
+						    "book"
+					  ],
+					  "sort": [
+					    {
+					      "firstName": "asc"
+					    }
+					  ]
+		},
+		firstAndMiddleName_selector : {
+				  "selector": {
+					  	  "firstName": {
+					         "$regex": "(?i)marcelo"
+					      },			      
+					      "middleName": {
+					         "$regex": "(?i)mota"
+					      }
+					  },
+					  "fields": [
+						    "firstName",
+						    "middleName",
+						    "lastName",
+						    "userID",
+						    "cpf",
+						    "rg",
+						    "rgExp",
+						    "rgState",
+						    "birthDate",
+						    "address",
+						    "number",
+						    "complement",
+						    "neighborhood",
+						    "city",
+						    "state",
+						    "postCode",
+						    "phone1",
+						    "whatsup1",
+						    "phone2",
+						    "whatsup2",
+						    "email1",
+						    "email2",
+						    "association",
+						    "work",
+						    "study",
+						    "book"
+					  ],
+					  "sort": [
+					    {
+					      "firstName": "asc"
+					    }
+					  ]
+		}
+	},
+	{
+		type:"regular",
+		fullName_selector : {
+				  "selector": {
+					  	  "firstName": {
+					         "$regex": "(?i)marcelo"
+					      },
+					      "middleName": {
+					         "$regex": "(?i)mota"
+					      },
+					      "lastName": {
+					         "$regex": "(?i)manhães"
+					      }
+					  },
+					  "fields": [
+						  "firstName",
+						  "middleName",
+						  "lastName",
+						  "userID",
+						  "phone1",
+						  "email1",
+					  ],
+					  "sort": [
+					    {
+					      "firstName": "asc"
+					    }
+					  ]
+		},
+		firstName_selector : {
+				  "selector": {
+					  	"firstName": {
+					         "$regex": "(?i)marcelo"
+					      }
+				  	    },
+					  "fields": [
+						  "firstName",
+						  "middleName",
+						  "lastName",
+						  "userID",
+						  "phone1",
+						  "email1",
+					  ],
+					  "sort": [
+					    {
+					      "firstName": "asc"
+					    }
+					  ]
+		},
+		firstAndlastName_selector : {
+				  "selector": {
+					  	  "firstName": {
+					         "$regex": "(?i)marcelo"
+					      },			      
+					      "lastName": {
+					         "$regex": "(?i)manhães"
+					      }
+					  },
+					  "fields": [
+						  "firstName",
+						  "middleName",
+						  "lastName",
+						  "userID",
+						  "phone1",
+						  "email1",
+					  ],
+					  "sort": [
+					    {
+					      "firstName": "asc"
+					    }
+					  ]
+		},
+		firstAndMiddleName_selector : {
+				  "selector": {
+					  	  "firstName": {
+					         "$regex": "(?i)marcelo"
+					      },			      
+					      "middleName": {
+					         "$regex": "(?i)mota"
+					      }
+					  },
+					  "fields": [
+						  "firstName",
+						  "middleName",
+						  "lastName",
+						  "userID",
+						  "phone1",
+						  "email1",
+					  ],
+					  "sort": [
+					    {
+					      "firstName": "asc"
+					    }
+					  ]
+		}
+	}
+]

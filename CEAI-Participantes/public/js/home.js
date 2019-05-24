@@ -16,8 +16,6 @@
 /* global $ */
 'use strict';
 
-var fwDescriptions=[];
-
 function cleanSearchOutput(){
 	var table = document.getElementById("tableResult");
 	var length = table.rows.length;
@@ -30,15 +28,16 @@ function handleChangeRadioButton(){
 	
 	var radios = document.getElementsByName("group1");
 	var table = document.getElementById("tableResult");
-	var row,cell;
+	var row,cellID,cellFullName;
     for (var i = 0, len = radios.length; i < len; i++) {
          if (radios[i].checked) {
         	 row = table.rows[i+2];
-        	 cell = row.cells[1];
+        	 cellID = row.cells[1];
+        	 cellFullName = row.cells[2];
         	 break;
          }
     }
-    var searchSession = '{"userID" : "'+cell.innerHTML+'"}';
+    var searchSession = '{"userID" : "'+cellID.innerHTML+'"}';
     
     $.ajax({
   		url: '/services/ceai/saveSearchSession',
@@ -46,7 +45,8 @@ function handleChangeRadioButton(){
         data: searchSession,
         contentType: "application/json",
         success: function(data, textStatus, jqXHR){
-        	console.log("Saving Session Data "+cell.innerHTML+" "+data);    
+        	console.log("Session Data saved "+cellID.innerHTML+" "+data); 
+        	alert("Usuário "+cellFullName.innerHTML+" carregado para alterações");
         },
         error: function(jqXHR, textStatus, errorThrown){
         	console.log("Saving Session Data Failed "+errorThrown);
@@ -168,6 +168,7 @@ $(document).ready(function() {
 	});
   	  		
   	var inputSearch = '{'
+  		+'"type" : "regular",'
   		+'"firstName" : "'+$.trim(respNames.firstName)+'",'
 		+'"middleName" : "'+$.trim(respNames.middleName)+'",'
 		+'"lastName" : "'+$.trim(respNames.lastName)+'"}';
@@ -180,11 +181,16 @@ $(document).ready(function() {
         data: inputSearch,
         contentType: "application/json",
         success: function(data, textStatus, jqXHR){
-        	//alert(data);
-        	buildSearhOutput(JSON.parse(data));
+        	data = JSON.parse(data);
             $process.hide();
-            $output.show();        
-        },
+        	if (typeof(data.message)=='undefined'){
+            	buildSearhOutput(data);
+            	$output.show(); 
+        	}
+        	else{
+        		$('#results').text('Pesquisa por participante '+$.trim($('#fullName').val())+' não econtrou dados');
+        		$error.show(); 
+        	}        },
         error: function(jqXHR, textStatus, errorThrown){
         	$('#results').text('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
         	//alert('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);

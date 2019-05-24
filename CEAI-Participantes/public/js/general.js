@@ -17,6 +17,7 @@
 'use strict';
 
 var fwDescriptions=[];
+var parentId = '';
 
 function populateData(person){
 	$('#userID').val(person.userID);
@@ -151,6 +152,38 @@ function getCustomerID(){
 }
 
 $(document).ready(function() {
+	$("#parentCpf").focusout(function(){
+		var val = $.trim($('#cpf').val())
+		var isnum = /^\d+$/.test(val);
+		if (!isnum){
+			alert("Coloque somente números sem separadores");
+			$('#cpf').val("");
+		}
+	});
+	$( "#parentCpf" ).keypress(function() {
+		var val = $.trim($('#cpf').val())
+		var isnum = /^\d+$/.test(val);
+		if (!isnum){
+			alert("Coloque somente números sem separadores");
+			$('#cpf').val("");
+		}
+	});	
+	$("#cpf").focusout(function(){
+		var val = $.trim($('#cpf').val())
+		var isnum = /^\d+$/.test(val);
+		if (!isnum){
+			alert("Coloque somente números sem separadores");
+			$('#cpf').val("");
+		}
+	});
+	$( "#cpf" ).keypress(function() {
+		var val = $.trim($('#cpf').val())
+		var isnum = /^\d+$/.test(val);
+		if (!isnum){
+			alert("Coloque somente números sem separadores");
+			$('#cpf').val("");
+		}
+	});	
 	$('#previous').click(function(){
 		window.location = "/home";
 	});
@@ -166,59 +199,60 @@ $(document).ready(function() {
 				if (response !== "")
 					alert(response);
 				else
-					alert('Preencha todos os campos !');
-				return;
+					alert('Preencha todos os campos !');				
+			}
+			else{
+				$process.show();
+				$output.hide();
+				var rg_state = document.getElementById("rgState");
+				var state = document.getElementById("state");
+				var respNames = "";
+				splitFullName($.trim($('#fullName').val()),function(response){
+					respNames = response;
+				});
+				
+				//+'"confidential" : "'+confidential.options[confidential.selectedIndex].value+'",'
+				var updateGeneral = '{'
+					+'"type" : "general",'
+					+'"userID" : "'+$.trim($('#userID').val())+'",'
+					+'"firstName" : "'+$.trim(respNames.firstName)+'",'
+					+'"middleName" : "'+$.trim(respNames.middleName)+'",'
+					+'"lastName" : "'+$.trim(respNames.lastName)+'",'
+					+'"cpf" : "'+$.trim($('#cpf').val())+'",'
+					+'"rg" : "'+$.trim($('#rg').val())+'",'
+					+'"rgExp" : "'+$.trim($('#rgExp').val())+'",'
+					+'"rgState" : "'+rg_state.options[rg_state.selectedIndex].value+'",'
+					+'"birthDate" : "'+$.trim($('#day').val())+'-'+$.trim($('#month').val())+'-'+$.trim($('#year').val())+'",'
+					+'"address" : "'+$.trim($('#address').val())+'",'
+					+'"number" : "'+$.trim($('#number').val())+'",'
+					+'"complement" : "'+$.trim($('#complement').val())+'",'
+					+'"neighborhood" : "'+$.trim($('#neighborhood').val())+'",'
+					+'"city" : "'+$.trim($('#city').val())+'",'
+					+'"state" : "'+state.options[state.selectedIndex].value+'",'
+					+'"postCode" : "'+$.trim($('#postCode-1').val())+'-'+$.trim($('#postCode-2').val())+'"}';
+
+				console.log(JSON.stringify(updateGeneral));
+
+				$.ajax({
+					url: '/services/ceai/update',
+					type: 'POST',
+					data: updateGeneral,
+					contentType: "application/json",
+					success: function(data, textStatus, jqXHR){
+							console.log(data);
+							$('#results').text(data);
+							$process.hide();
+							$output.show(); 				      	           
+					},
+					error: function(jqXHR, textStatus, errorThrown){
+						$('#results').text('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
+						//alert('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
+						$process.hide();
+						$output.show(); 
+					}
+				});
 			}
 		}); 
-		$process.show();
-		$output.hide();
-		var rg_state = document.getElementById("rgState");
-		var state = document.getElementById("state");
-		var respNames = "";
-		splitFullName($.trim($('#fullName').val()),function(response){
-			respNames = response;
-		});
-		
-		//+'"confidential" : "'+confidential.options[confidential.selectedIndex].value+'",'
-		var updateGeneral = '{'
-			+'"type" : "general",'
-			+'"userID" : "'+$.trim($('#userID').val())+'",'
-			+'"firstName" : "'+$.trim(respNames.firstName)+'",'
-			+'"middleName" : "'+$.trim(respNames.middleName)+'",'
-			+'"lastName" : "'+$.trim(respNames.lastName)+'",'
-			+'"cpf" : "'+$.trim($('#cpf').val())+'",'
-			+'"rg" : "'+$.trim($('#rg').val())+'",'
-			+'"rgExp" : "'+$.trim($('#rgExp').val())+'",'
-			+'"rgState" : "'+rg_state.options[rg_state.selectedIndex].value+'",'
-			+'"birthDate" : "'+$.trim($('#day').val())+'-'+$.trim($('#month').val())+'-'+$.trim($('#year').val())+'",'
-			+'"address" : "'+$.trim($('#address').val())+'",'
-			+'"number" : "'+$.trim($('#number').val())+'",'
-			+'"complement" : "'+$.trim($('#complement').val())+'",'
-			+'"neighborhood" : "'+$.trim($('#neighborhood').val())+'",'
-			+'"city" : "'+$.trim($('#city').val())+'",'
-			+'"state" : "'+state.options[state.selectedIndex].value+'",'
-			+'"postCode" : "'+$.trim($('#postCode-1').val())+'-'+$.trim($('#postCode-2').val())+'"}';
-
-		console.log(JSON.stringify(updateGeneral));
-
-		$.ajax({
-			url: '/services/ceai/update',
-			type: 'POST',
-			data: updateGeneral,
-			contentType: "application/json",
-			success: function(data, textStatus, jqXHR){
-					console.log(data);
-					$('#results').text(data);
-					$process.hide();
-					$output.show(); 				      	           
-			},
-			error: function(jqXHR, textStatus, errorThrown){
-				$('#results').text('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
-				//alert('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
-				$process.hide();
-				$output.show(); 
-			}
-		});
 	});		
 	$('#insert').click(function(){
 		//alert('Insert Button'); 
@@ -229,57 +263,101 @@ $(document).ready(function() {
 				if (response !== "")
 					alert(response);
 				else
-					alert('It needs to have all fields filled');
-				return;
+					alert('Preencha todos os campos !');				
 			}
-		}); 
-		$process.show();
-		$output.hide();
-		var rg_state = document.getElementById("rgState");
-		var state = document.getElementById("state");
-		var respNames = "";
-		splitFullName($.trim($('#fullName').val()),function(response){
-			respNames = response;
-		});
-		
-		//+'"confidential" : "'+confidential.options[confidential.selectedIndex].value+'",'
-		var inputGeneral = '{'
-			+'"userID" : "'+getCustomerID()+'",'
-			+'"firstName" : "'+$.trim(respNames.firstName)+'",'
-			+'"middleName" : "'+$.trim(respNames.middleName)+'",'
-			+'"lastName" : "'+$.trim(respNames.lastName)+'",'
-			+'"cpf" : "'+$.trim($('#cpf').val())+'",'
-			+'"rg" : "'+$.trim($('#rg').val())+'",'
-			+'"rgExp" : "'+$.trim($('#rgExp').val())+'",'
-			+'"rgState" : "'+rg_state.options[rg_state.selectedIndex].value+'",'
-			+'"birthDate" : "'+$.trim($('#day').val())+'-'+$.trim($('#month').val())+'-'+$.trim($('#year').val())+'",'
-			+'"address" : "'+$.trim($('#address').val())+'",'
-			+'"number" : "'+$.trim($('#number').val())+'",'
-			+'"complement" : "'+$.trim($('#complement').val())+'",'
-			+'"neighborhood" : "'+$.trim($('#neighborhood').val())+'",'
-			+'"city" : "'+$.trim($('#city').val())+'",'
-			+'"state" : "'+state.options[state.selectedIndex].value+'",'
-			+'"postCode" : "'+$.trim($('#postCode-1').val())+'-'+$.trim($('#postCode-2').val())+'"}';
+			else{
+				$process.show();
+				$output.hide();
+				var rg_state = document.getElementById("rgState");
+				var state = document.getElementById("state");
+				var respNames = "";
+				splitFullName($.trim($('#fullName').val()),function(response){
+					respNames = response;
+				});
+				
+				//+'"confidential" : "'+confidential.options[confidential.selectedIndex].value+'",'
+				var inputGeneral = '{'
+					+'"userID" : "'+getCustomerID()+'",'
+					+'"firstName" : "'+$.trim(respNames.firstName)+'",'
+					+'"middleName" : "'+$.trim(respNames.middleName)+'",'
+					+'"lastName" : "'+$.trim(respNames.lastName)+'",'
+					+'"cpf" : "'+$.trim($('#cpf').val())+'",'
+					+'"rg" : "'+$.trim($('#rg').val())+'",'
+					+'"rgExp" : "'+$.trim($('#rgExp').val())+'",'
+					+'"rgState" : "'+rg_state.options[rg_state.selectedIndex].value+'",'
+					+'"birthDate" : "'+$.trim($('#day').val())+'-'+$.trim($('#month').val())+'-'+$.trim($('#year').val())+'",'
+					+'"address" : "'+$.trim($('#address').val())+'",'
+					+'"number" : "'+$.trim($('#number').val())+'",'
+					+'"complement" : "'+$.trim($('#complement').val())+'",'
+					+'"neighborhood" : "'+$.trim($('#neighborhood').val())+'",'
+					+'"city" : "'+$.trim($('#city').val())+'",'
+					+'"state" : "'+state.options[state.selectedIndex].value+'",'
+					+'"parentId" : "'+parentId+'",'
+					+'"postCode" : "'+$.trim($('#postCode-1').val())+'-'+$.trim($('#postCode-2').val())+'"}';
 
-		console.log(JSON.stringify(inputGeneral));
+				console.log(JSON.stringify(inputGeneral));
 
-		$.ajax({
-			url: '/services/ceai/inputGeneral',
-			type: 'POST',
-			data: inputGeneral,
-			contentType: "application/json",
-			success: function(data, textStatus, jqXHR){
-					console.log(data);
-					$('#results').text(data);
+				$.ajax({
+					url: '/services/ceai/inputGeneral',
+					type: 'POST',
+					data: inputGeneral,
+					contentType: "application/json",
+					success: function(data, textStatus, jqXHR){
+							console.log(data);
+							$('#results').text(data);
+							$process.hide();
+							$output.show(); 				      	           
+					},
+					error: function(jqXHR, textStatus, errorThrown){
+						$('#results').text('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
+						//alert('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
+						$process.hide();
+						$output.show(); 
+					}
+				});
+			}
+		}); 		
+	});	
+	$('#searchParent').click(function(){
+		//alert('Insert Button'); 
+		var $output = $('.output'),
+		$process = $('.processing');	
+		if ($.trim($('#parentCpf').val()) === ''){
+			alert('Preencha o campo Parentesco CPF com o CPF do pai ou da Mãe antes de pesquisar! Esta pesquisa é somente necessária quando o participante é menor');
+		}		
+		else{
+			$process.show();
+			$output.hide();
+			var inputParent = '{'
+				+'"parentCpf" : "'+$.trim($('#parentCpf').val())+'"}';
+
+			console.log(JSON.stringify(inputParent));
+
+			$.ajax({
+				url: '/services/ceai/searchParent',
+				type: 'POST',
+				data: inputParent,
+				contentType: "application/json",
+				success: function(response, textStatus, jqXHR){
+						console.log(response);
+						if (response.message =='NOT FOUND'){
+							$('#results').text("Responsável com o CPF: "+$.trim($('#parentCpf').val())+" não foi encontrado");
+						}
+						else{
+							$('#parentName').val(response.data.firstName+" "+response.data.middleName+" "+response.data.lastName);
+							$('#results').text("Responsável Encontrado !");
+						}
+						$process.hide();
+						$output.show(); 				      	           
+				},
+				error: function(jqXHR, textStatus, errorThrown){
+					$('#results').text('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
+					//alert('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
 					$process.hide();
-					$output.show(); 				      	           
-			},
-			error: function(jqXHR, textStatus, errorThrown){
-				$('#results').text('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
-				//alert('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
-				$process.hide();
-				$output.show(); 
-			}
-		});
+					$output.show(); 
+				}
+			});
+		}
+		
 	});	
 });

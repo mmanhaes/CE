@@ -91,3 +91,4 @@ https://github.com/cloudfoundry/nodejs-buildpack
 }
 7 - if you put a variable that was not assigned jquery/javascript tries to mach some component into HTML
 	
+8 - Work with searchParent
