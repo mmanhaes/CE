@@ -1141,6 +1141,14 @@ pre[class^="language-"] > code[class^="language-"], pre[class^="language-"] > co
 	border: 1em;
     text-align: center;
 }
+.processing {
+  background-color: #f4f4f4;
+  padding: 1rem;
+}
+.processingCreateOrUpdate {
+  background-color: #f4f4f4;
+  padding: 1rem;
+}
 .processingSearch {
   background-color: #f4f4f4;
   padding: 1rem;
@@ -1161,6 +1169,10 @@ pre[class^="language-"] > code[class^="language-"], pre[class^="language-"] > co
   background-color: #f4f4f4;
   padding: 1rem;
 }
+.outputCreateOrUpdate {
+  background-color: #f4f4f4;
+  padding: 1rem;
+}
 .newRecord{
   background-color: #f4f4f4;
   padding: 1rem;
@@ -1174,6 +1186,10 @@ pre[class^="language-"] > code[class^="language-"], pre[class^="language-"] > co
   padding: 1rem;
 }
 .outputWork{
+  background-color: #f4f4f4;
+  padding: 1rem;
+}
+.outputStudy{
   background-color: #f4f4f4;
   padding: 1rem;
 }

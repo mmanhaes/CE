@@ -218,7 +218,7 @@
 									<td colspan="1"><input id="number" type="text"
 										class="input--question--manual base--a" style="width: 100px;">
 									</td>
-									<td style="width: 25%"><h5 class="base--h5">Complemento:</h5></td>
+									<td style="width: 25%"><h5 align="right" class="base--h5">Complemento:</h5></td>
 									<td style="width: 75%" colspan="1"><input id="complement"
 										type="text" class="input--question--manual--reduced base--a"
 										style="width: 510px;"></td>
@@ -291,7 +291,7 @@
 									<td><input id="postCode-2" type="text" maxlength="3"
 										class="input--question--manual--reduced base--a"
 										style="width: 50px;"></td>
-									<td style="width: 25%"><h5 class="base--h5" style="width: 140px;">Parentesco CPF:</h5></td>
+									<td style="width: 25%"><h5 align="right" class="base--h5" style="width: 140px;">Parentesco CPF:</h5></td>
 									<td style="width: 75%" colspan="1"><input id="parentCpf"
 										type="text" class="input--question--manual--reduced base--a"
 										style="width: 110px;"></td>
@@ -301,7 +301,7 @@
 									</td>
 									<td colspan="1" style="width: 60px;"><h5 class="base--h5">Nome:</h5></td>
 						<td colspan="1"><input id="parentName" type="text"
-							class="input--question--manual--reduced base--a" disabled="disabled"
+							class="input--question--manual--reduced base--a"
 							style="width: 230px;"></td>
 								</tr>
 							</table>
@@ -336,6 +336,7 @@
 									<td style="width: 15%"><h5
 								class="base--h5" style="width: 70px;">Whatsup:</h5></td>
 									<td style="width: 15%"><select id="whatsup1" style="color: #a53725" width="50px">
+											<option value="No Selection">Sel</option>
 											<option value="YES">SIM</option>
 											<option value="NO">NÃO</option>																			
 									</select></td>
@@ -351,6 +352,7 @@
 										style="width: 90px;"></td>
 									<td style="width: 10%"><h5 align="right" class="base--h5" style="width: 80px;">Whatsup:</h5>
 									<td style="width: 10%"><select id="whatsup2" style="color: #a53725" width="50px">
+											<option value="No Selection">Sel</option>
 											<option value="YES">SIM</option>
 											<option value="NO">NÃO</option>																			
 									</select></td>
@@ -580,6 +582,7 @@
 						</td>
 						<td style="width: 100%" colspan="2"><select id="studyType"
 							style="color: #a53725";width: 90px">
+								<option value="No Selection">Selecione</option>
 								<option value="EIDE I">EIDE I</option>
 								<option value="EIDE II">EIDE II</option>
 								<option value="ESDE I">ESDE I</option>
@@ -596,9 +599,10 @@
 						<td colspan="1""width: 25%">
 							<h5 align="right" class="base--h5" style="width: 130px;">Dia da Semana:</h5>
 						</td>
-						<td style="width: 100%" colspan="1"><select id="weekDay"
+						<td style="width: 100%" colspan="1"><select id="weekDayStudy"
 							style="color: #a53725";width: 55px">
-								<option selected="selected" value="Segunda">Segunda</option>
+								<option value="No Selection">Selecione</option>
+								<option value="Segunda">Segunda</option>
 								<option value="Terça">Terça</option>
 								<option value="Quarta">Quarta</option>
 								<option value="Quinta">Quinta</option>
@@ -609,9 +613,10 @@
 						<td colspan="1""width: 25%">
 							<h5 align="right"  class="base--h5" style="width: 90px;">Período:</h5>
 						</td>
-						<td style="width: 100%" colspan="1"><select id="period"
+						<td style="width: 100%" colspan="1"><select id="periodStudy"
 							style="color: #a53725";width: 75px">
-								<option selected="selected" value="Manhã">Manhã</option>
+								<option value="No Selection">Selecione</option>
+								<option value="Manhã">Manhã</option>
 								<option value="Tarde">Tarde</option>
 								<option value="Noite">Noite</option>
 						</select></td>
@@ -622,15 +627,15 @@
 						<td colspan="1" style="width: 90px;">
 							<table border="" style="width: 100%" cellspacing="0">
 								<tr>
-									<td><input id="initDay" maxlength="2" type="text"
+									<td><input id="initStudyDay" maxlength="2" type="text"
 										class="input--question--manual base--a" style="width: 30px;">
 									</td>
 									<td>/</td>
-									<td><input id="initMonth" maxlength="2" type="text"
+									<td><input id="initStudyMonth" maxlength="2" type="text"
 										class="input--question--manual base--a" style="width: 30px;">
 									</td>
 									<td>/</td>
-									<td><input id="initYear" type="text" maxlength="4"
+									<td><input id="initStudyYear" type="text" maxlength="4"
 										class="input--question--manual base--a" style="width: 60px;">
 									</td>
 								</tr>
@@ -641,15 +646,15 @@
 						<td colspan="1" style="width: 90px;">
 							<table border="" style="width: 100%" cellspacing="0">
 								<tr>
-									<td><input id="finalDay" maxlength="2" type="text"
+									<td><input id="finalStudyDay" maxlength="2" type="text"
 										class="input--question--manual base--a" style="width: 30px;">
 									</td>
 									<td>/</td>
-									<td><input id="finalMonth" maxlength="2" type="text"
+									<td><input id="finalStudyMonth" maxlength="2" type="text"
 										class="input--question--manual base--a" style="width: 30px;">
 									</td>
 									<td>/</td>
-									<td><input id="finalYear" type="text" maxlength="4"
+									<td><input id="finalStudyYear" type="text" maxlength="4"
 										class="input--question--manual base--a" style="width: 60px;">
 									</td>
 								</tr>
@@ -664,7 +669,7 @@
 						<td scope="col" colspan="6" style="width: 75%">
 							<table border="" style="width: 100%">
 								<tr>
-									<td><input id="notes" type="text" 
+									<td><input id="notesStudy" type="text" 
 										class="input--question--manual--reduced base--a"
 										style="width: 750px;"></td>
 								</tr>
@@ -685,7 +690,7 @@
 						</p>
 					</div>
 				</div>
-				<div class="output">
+				<div class="outputStudy">
 					<div class="_demo--container" style="width: 960px;">
 						<form>
 							<table class="table" id="tableResultStudy" 
@@ -922,6 +927,21 @@
 				id="update" value="Alterar dados do Participante">
 		  <input type="button" title="Limpa todos os Campos para criar um novo Registro" class="input--request-button base--a"
 				id="cleanFields" value="Limpar todos os campos">
+		  <div class="processingCreateOrUpdate" style="display:none;'">
+	 			<div class="_demo--container">
+	 				<p class="base--p">
+						<img src="images/processing.gif" alt="processing"
+							style="width:96px;height:96px;align:middle">
+					</p>	
+	 			</div>
+  			</div>   			
+  				
+			<div class="outputCreateOrUpdate" style="display:none;'">
+    			<div class="_demo--container">
+      				<h4 class="base--h4">Mensagem:</h4>
+      				<span id="resultsCreateOrUpdate" style="color:red">No message</span>      			
+      			</div>
+    		</div>	
    </div>
    <script type="text/javascript"
 		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>

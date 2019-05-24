@@ -38,6 +38,8 @@ exports.userID.selectors = {
 			    "city",
 			    "state",
 			    "postCode",
+			    "parentCpf",
+			    "parentName",
 			    "phone1",
 			    "whatsup1",
 			    "phone2",
@@ -45,6 +47,8 @@ exports.userID.selectors = {
 			    "email1",
 			    "email2",
 			    "association",
+			    "habilities",
+			    "habilitesNotes",
 			    "work",
 			    "study",
 			    "book"
@@ -70,7 +74,9 @@ exports.userID.selectors = {
 			    "neighborhood",
 			    "city",
 			    "state",
-			    "postCode"
+			    "postCode",
+			    "parentCpf",
+			    "parentName",
 			  ],
 			  "sort": [
 			    {
@@ -173,7 +179,7 @@ exports.userID.selectors = {
 					    "cpf" : ""
 					  },
 					  "fields": [
-						    "_id",
+							"_id",
 						    "_rev",
 						    "firstName",
 						    "middleName",
@@ -191,6 +197,8 @@ exports.userID.selectors = {
 						    "city",
 						    "state",
 						    "postCode",
+						    "parentCpf",
+						    "parentName",
 						    "phone1",
 						    "whatsup1",
 						    "phone2",
@@ -198,9 +206,11 @@ exports.userID.selectors = {
 						    "email1",
 						    "email2",
 						    "association",
+						    "habilities",
+						    "habilitesNotes",
 						    "work",
 						    "study",
-						    "book"			    
+						    "book"
 					  ],
 					  "sort": [
 					    {
@@ -226,6 +236,8 @@ exports.participant = {
 		  "city": "",
 		  "state": "",
 		  "postCode": "",
+		  "parentCpf":"",
+		  "parentName":"",
 		  "phone1": "",
 		  "whatsup1": "",
 		  "phone2": "",
@@ -233,7 +245,8 @@ exports.participant = {
 		  "email1": "",
 		  "email2": "",
 		  "parent":"",
-		  "habilities":[],
+		  "habilities":"",
+		  "habilitiesNotes":"",
 		  "association": [],
 		  "work": [],
 		  "study": [],
@@ -269,6 +282,8 @@ exports.searchPerson = [
 					      }
 					  },
 					  "fields": [
+						  "_id",
+						    "_rev",
 						    "firstName",
 						    "middleName",
 						    "lastName",
@@ -285,6 +300,8 @@ exports.searchPerson = [
 						    "city",
 						    "state",
 						    "postCode",
+						    "parentCpf",
+						    "parentName",
 						    "phone1",
 						    "whatsup1",
 						    "phone2",
@@ -292,6 +309,8 @@ exports.searchPerson = [
 						    "email1",
 						    "email2",
 						    "association",
+						    "habilities",
+						    "habilitesNotes",
 						    "work",
 						    "study",
 						    "book"
@@ -309,6 +328,8 @@ exports.searchPerson = [
 					      }
 				  	    },
 					  "fields": [
+						  "_id",
+						    "_rev",
 						    "firstName",
 						    "middleName",
 						    "lastName",
@@ -325,6 +346,8 @@ exports.searchPerson = [
 						    "city",
 						    "state",
 						    "postCode",
+						    "parentCpf",
+						    "parentName",
 						    "phone1",
 						    "whatsup1",
 						    "phone2",
@@ -332,6 +355,8 @@ exports.searchPerson = [
 						    "email1",
 						    "email2",
 						    "association",
+						    "habilities",
+						    "habilitesNotes",
 						    "work",
 						    "study",
 						    "book"
@@ -352,6 +377,8 @@ exports.searchPerson = [
 					      }
 					  },
 					  "fields": [
+						  "_id",
+						    "_rev",
 						    "firstName",
 						    "middleName",
 						    "lastName",
@@ -368,6 +395,8 @@ exports.searchPerson = [
 						    "city",
 						    "state",
 						    "postCode",
+						    "parentCpf",
+						    "parentName",
 						    "phone1",
 						    "whatsup1",
 						    "phone2",
@@ -375,6 +404,8 @@ exports.searchPerson = [
 						    "email1",
 						    "email2",
 						    "association",
+						    "habilities",
+						    "habilitesNotes",
 						    "work",
 						    "study",
 						    "book"
@@ -395,6 +426,8 @@ exports.searchPerson = [
 					      }
 					  },
 					  "fields": [
+						  "_id",
+						    "_rev",
 						    "firstName",
 						    "middleName",
 						    "lastName",
@@ -411,6 +444,8 @@ exports.searchPerson = [
 						    "city",
 						    "state",
 						    "postCode",
+						    "parentCpf",
+						    "parentName",
 						    "phone1",
 						    "whatsup1",
 						    "phone2",
@@ -418,6 +453,8 @@ exports.searchPerson = [
 						    "email1",
 						    "email2",
 						    "association",
+						    "habilities",
+						    "habilitesNotes",
 						    "work",
 						    "study",
 						    "book"

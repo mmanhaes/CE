@@ -78,12 +78,13 @@ app.use(bodyParser.json());
 
 
 var buildSelectorSearchPerson = function(type,data,callback){
+	console.log('Checking contiguration by type',type);
 	
 	var configFound = config.searchPerson.filter(function(item) {
 		  return item.type == type;
 	});
 	
-	console.log(JSON.stringify(configFound[0]));
+	console.log('Configuration Found',JSON.stringify(configFound[0]));
 	
 	if (data.lastName!=="" && data.firstName!=="" && data.middleName!=="")
 	{
@@ -224,8 +225,9 @@ app.post('/services/ceai/searchPerson', function(req, res){
 	var db = cloudant.db.use(config.database.person.name);
 	
 	var selector = "";
-	var type = req.body.type;
+	var type = JSON.parse(JSON.stringify(req.body.type));
 	delete req.body.type;
+	console.log("Searching Person by type",type);
 	buildSelectorSearchPerson(type,req.body,function(err,response){
 		if (err){
 			console.log(err);
@@ -257,7 +259,7 @@ app.post('/services/ceai/searchPerson', function(req, res){
 						  //If not success in FullName or First/Last Name it goes to First and MiddleName 
 						  if (req.body.firstName !=="" && req.body.lastName !==""){
 							  req.body.middleName = "";
-							  buildSelectorSearchPerson(req.body,function(err,response){
+							  buildSelectorSearchPerson(type,req.body,function(err,response){
 								  selector = response;
 									db.find(selector, function(err, result) {
 										 if (result.docs.length>0)
@@ -273,7 +275,7 @@ app.post('/services/ceai/searchPerson', function(req, res){
 										  	//If not success in FullName or First/Last Name it goes to First and MiddleName 
 											req.body.middleName = "";
 											req.body.lastName = "";
-											buildSelectorSearchPerson(req.body,function(err,response){
+											buildSelectorSearchPerson(type,req.body,function(err,response){
 											  selector = response;
 												db.find(selector, function(err, result) {
 													console.log('Found %d documents with %s', result.docs.length,JSON.stringify(selector));
@@ -425,6 +427,45 @@ app.post('/services/ceai/inputGeneral', function(req, res){
 	});
 	res.write('Requisicão Salva com Sucesso com o ID :'+req.body.userID +'\n');
 	res.end('para o participante : '+ req.body.firstName+ " "+ req.body.middleName+" "+req.body.lastName);	 
+});
+
+app.post('/services/ceai/register', function(req, res){
+	res.setHeader('Content-Type', 'text/plain');
+	cloudant.db.list(function(err, allDbs) {
+		console.log('All my databases: %s', allDbs.join(', '));
+	});
+	console.log(JSON.stringify(req.body, null, 2));
+	var db = cloudant.db.use(config.database.person.name);
+	
+	if (req.body.type == "insert"){
+		var id =  uuidv1();
+		delete req.body._id;
+		delete req.body._rev;
+		db.insert(req.body, id, function(err, body, header) {
+			if (err) {
+				return console.log('[db.insert from public Register Error] ', err.message);
+			}
+	
+			console.log('You have inserted the record.');
+			console.log(body);
+			console.log('With Content :');
+			console.log(JSON.stringify(req.body, null, 2));
+		});
+	}
+	else{
+		db.insert(req.body, function(err, body, header) {
+			
+			if (err) {
+				return console.log('[db.update from public Register Error] ', err.message);
+			}
+	
+			console.log('You have updated the record.');
+			console.log(body);
+			console.log('With Content :');
+			console.log(JSON.stringify(req.body, null, 2));
+		});
+	}
+	res.end('Dados Cadastrados com Sucesso com o participante :'+req.body.firstName+' '+req.body.middleName+' '+ req.body.lastName+'\n');
 });
 
 app.get('/',

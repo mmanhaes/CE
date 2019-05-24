@@ -92,29 +92,49 @@ function loadSessionData(){
 }
 
 function validateFields(callback){
-	if ($.trim($('#fullName').val()) === '' || $.trim($('#rg').val()) === '' || $.trim($('#rgExp').val()) === '' ||
-		 $.trim($('#day').val()) === '' || $.trim($('#month').val()) === '' || $.trim($('#year').val()) === '' || 
-			$.trim($('#address').val()) === '' || $.trim($('#number').val()) === '' || 
-			  $.trim($('#complement').val()) === '' || $.trim($('#neighborhood').val()) === '' ||
-				   $.trim($('#neighborhood').val()) === '' || $.trim($('#postCode-1').val()) === ''-1 ||
-				   $.trim($('#postCode-2').val()) === '')  
-	{
-		return callback(false,"");
-	}	
+	if ($.trim($('#fullName').val()) === ''){
+		return callback(false,"Insira o nome completo do participante");
+	}  
 	
 	var res = $.trim($('#fullName')).split(" ");
 	if (res.length ===1){
 		return callback(false,"Nome do participante precisa estar completo");
 	}
 	
-	var rg_state = document.getElementById("rgState");
+	if ($.trim($('#day').val()) === '' || $.trim($('#month').val()) === '' || $.trim($('#year').val()) === ''){
+		return callback(false,"Preencha a data de nascimento completa");
+	} 
+	
+	if ($.trim($('#address').val()) === ''){
+		return callback(false,"Preencha o endereço, colocando o número, bairro e cidade nos campos específicos");
+	}
+	if ($.trim($('#number').val()) === ''){
+		return callback(false,"Preencha o número do seu endereço");
+	}
+	if ($.trim($('#neighborhood').val()) === ''){
+		return callback(false,"Preencha o bairro onde mora");
+	} 
+	if ($.trim($('#city').val()) === ''){
+		return callback(false,"Preencha a cidade onde mora");
+	} 
 	var state = document.getElementById("state");
 	
-	if (rg_state.selectedIndex === 0 || state.selectedIndex === 0 ){
+	if (state.selectedIndex === 0 ){
 
-		return callback(false,"");
+		return callback(false,"Preencha a cidade onde mora");
 	}
-
+	
+	var rg_state = document.getElementById("rgState");
+	
+	if ($.trim($('#postCode-1').val()) === '' || $.trim($('#postCode-2').val()) === '')  
+	{
+		return callback(false,"Coloque a caixa postal nos campos específicos exemplo CEP: 82315-340 (campo 1:82315) (campo 2:340)");
+	}	
+	
+	if (($.trim($('#rg').val()) === '' || $.trim($('#rgExp').val()) === '' || rg_state.selectedIndex === 0) && $.trim($('#cpf').val()) === '' && $.trim($('#parentCpf').val() === ''){
+		return callback(false,"Se for maior de idade coloque CPF ou RG (Numero, Orgão Expeditor, Estado do RG), se for menor colocar o CPF do pai ou da mãe e o nome, pode-se usar o botão pesquisar para prenchar automaticamente");
+	}
+	
 	return callback(true,"");
 }
 

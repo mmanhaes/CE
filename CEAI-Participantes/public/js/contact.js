@@ -112,7 +112,7 @@ function validateFields(callback){
 	
 	if (whatsup1.selectedIndex < 0){
 
-		return callback(false,"Selecione de o telefone 1 tem whatsup ou não");
+		return callback(false,"Selecione se o telefone 1 tem whatsup ou não");
 	}
 
 	return callback(true,"");

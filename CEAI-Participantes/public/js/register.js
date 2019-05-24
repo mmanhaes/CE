@@ -18,8 +18,10 @@
 var parentId = '';
 
 var searchCache = [];
+var cachedPosition;
 var association = [];
 var work = [];
+var study = [];
 
 function cleanSearchOutput(table){
 	var length = table.rows.length;
@@ -43,6 +45,7 @@ function handleChangeRadioButton(){
     }
     alert("Usuário "+cellFullName.innerHTML+" carregado para alterações.");
     populateData(searchCache.docs[pos]);
+    cachedPosition = pos;
 	var $userData = $('.userData');
 	var $output = $('.outputGeneral');
 	var $newRecordButton = $('.newRecord');
@@ -89,7 +92,7 @@ function buildSearhOutput(data){
 	    }
 }
 
-function validateFields(){
+function validateFieldsSearch(){
 	if ($.trim($('#fullName').val()) === '' && $.trim($('#cpf').val()) === '' )  
 	{
 		return 0;
@@ -130,7 +133,7 @@ function splitFullName(name,callback){
 
 function populateAssociationData(association){
 	$('#associationType').val(association.associationType);
-	var date =association.proposeDate.split("-");
+	var date =association.initDate.split("-");
 	$('#initAssociationDay').val(date[0]);
 	$('#initAssociationMonth').val(date[1]);
 	$('#initAssociationYear').val(date[2]);
@@ -178,7 +181,11 @@ function populateData(person){
 	var postCode = person.postCode.split("-");
 	$('#postCode-1').val(postCode[0]);
 	$('#postCode-2').val(postCode[1]);
-
+	$('#parentCpf').val(person.parentCpf);
+	$('#parentName').val(person.parentName);
+	$('#habilities').val(person.habilities);
+	$('#notesHabilities').val(person.habilitiesNotes);
+		
 	var phone = [];
 	if (typeof(person.phone1) !== 'undefined')
 	{
@@ -224,6 +231,40 @@ function populateData(person){
 			radios[0].checked = true;
 		}
 	}
+	if (typeof(person.study)!='undefined'){	
+		for(var i=person.study.length-1;i>=0;--i){
+			if (i===person.study.length-1){
+				populateStudyData(person.study[i]);
+			}
+			buildStudyRowTable(person.study[i]);
+		}
+		var radios = document.getElementsByName("groupStudy");
+		if (radios.length > 0){
+			radios[0].checked = true;
+		}
+	}
+}
+
+function validateFieldsStudy(callback){
+	
+	if ($('#studyType').val() === "No Selection"){
+		return callback(false,"Selecione um tipo de estudo");
+	}
+	if ($('#weekDayStudy').val() === "No Selection"){
+		return callback(false,"Selecione o dia da semana de estudo");
+	}
+	if ($('#periodStudy').val() === "No Selection"){
+		return callback(false,"Selecione o período de estudo");
+	}
+
+
+	if ($.trim($('#initStudyDay').val()) === '' || $.trim($('#initStudyMonth').val()) === '' || $.trim($('#initStudyYear').val())==='')  
+	{
+		return callback(false,"Preencha o campo data inicial corretamente dd-MM-YYYY");
+	}	
+	
+	
+	return callback(true,"");
 }
 
 function validateFieldsWork(callback){
@@ -325,30 +366,63 @@ function checkUserAccess(){
       });	
 }
 
-
-
 function validateFieldsForGeneral(callback){
-	if ($.trim($('#fullName').val()) === '' || $.trim($('#rg').val()) === '' || $.trim($('#rgExp').val()) === '' ||
-		 $.trim($('#day').val()) === '' || $.trim($('#month').val()) === '' || $.trim($('#year').val()) === '' || 
-			$.trim($('#address').val()) === '' || $.trim($('#number').val()) === '' || 
-			  $.trim($('#complement').val()) === '' || $.trim($('#neighborhood').val()) === '' ||
-				   $.trim($('#neighborhood').val()) === '' || $.trim($('#postCode-1').val()) === ''-1 ||
-				   $.trim($('#postCode-2').val()) === '')  
-	{
-		return callback(false,"");
-	}	
+	if ($.trim($('#fullName').val()) === ''){
+		return callback(false,"Insira o nome completo do participante");
+	}  
 	
 	var res = $.trim($('#fullName')).split(" ");
 	if (res.length ===1){
 		return callback(false,"Nome do participante precisa estar completo");
 	}
 	
-	var rg_state = document.getElementById("rgState");
+	if ($.trim($('#day').val()) === '' || $.trim($('#month').val()) === '' || $.trim($('#year').val()) === ''){
+		return callback(false,"Preencha a data de nascimento completa");
+	} 
+	
+	if ($.trim($('#address').val()) === ''){
+		return callback(false,"Preencha o endereço, colocando o número, bairro e cidade nos campos específicos");
+	}
+	if ($.trim($('#number').val()) === ''){
+		return callback(false,"Preencha o número do seu endereço");
+	}
+	if ($.trim($('#neighborhood').val()) === ''){
+		return callback(false,"Preencha o bairro onde mora");
+	} 
+	if ($.trim($('#city').val()) === ''){
+		return callback(false,"Preencha a cidade onde mora");
+	} 
 	var state = document.getElementById("state");
 	
-	if (rg_state.selectedIndex === 0 || state.selectedIndex === 0 ){
+	if (state.selectedIndex === 0 ){
 
-		return callback(false,"");
+		return callback(false,"Preencha a cidade onde mora");
+	}
+	
+	var rg_state = document.getElementById("rgState");
+	
+	if ($.trim($('#postCode-1').val()) === '' || $.trim($('#postCode-2').val()) === '')  
+	{
+		return callback(false,"Coloque a caixa postal nos campos específicos exemplo CEP: 82315-340 (campo 1:82315) (campo 2:340)");
+	}	
+	
+	if (($.trim($('#rg').val()) === '' || $.trim($('#rgExp').val()) === '' || rg_state.selectedIndex === 0) && $.trim($('#cpfInput').val()) === '' && $.trim($('#parentCpf').val()) === ''){
+		return callback(false,"Se for maior de idade coloque CPF ou RG (Numero, Orgão Expeditor, Estado do RG), se for menor colocar o CPF do pai ou da mãe e o nome, pode-se usar o botão pesquisar para prenchar automaticamente");
+	}
+	
+	return callback(true,"");
+}
+
+function validateFieldsContact(callback){
+	if ($.trim($('#phone1').val()) === '')  
+	{
+		return callback(false,"Pelo menos o campo telefone 1 precisa ser preenchido");
+	}	
+	var whatsup1 = document.getElementById("whatsup1");
+	
+	if (whatsup1.selectedIndex === 0){
+
+		return callback(false,"Selecione se o telefone 1 tem whatsup ou não");
 	}
 
 	return callback(true,"");
@@ -378,13 +452,18 @@ function splitFullName(name,callback){
 
 function getCustomerID(){
 	var currentdate = new Date(); 
+	
+	var min=1000; 
+    var max=9999;  
+    var padding = Math.floor(Math.random() * (+max - +min) + +min); 
+	
 	return  currentdate.getFullYear() 
 					+ "-" + (currentdate.getMonth()+1) 
-					+ "-" + currentdate.getDay()					 
+					+ "-" + currentdate.getDate()					 
 					+ "-" + currentdate.getHours()  
 	                + "-" + currentdate.getMinutes() 
 	                + "-" + currentdate.getSeconds()
-	                + "-" + currentdate.getMilliseconds();
+	                + "-" + padding;
 }
 
 function handleChangeRadioButtonAssociation(){
@@ -425,6 +504,15 @@ function buildAssociationRowTable(data){
     row.insertCell(5).innerHTML= data.notes;  
 }
 
+function validateAssociationSave(callback){
+
+	var table = document.getElementById("tableResultAssociation");
+	if (table.rows.length<=2){
+		return callback(false,"É necessario que seja cadastrada pelo menos uma associação ao CEIA (Participante, Assistivo, Sócio Efetivo, Sócio Colaborador ou Inativo");
+    }
+ 	
+	return callback(true,"");
+}
 
 function validateFieldsForAssociation(callback){
 
@@ -480,7 +568,7 @@ function updateAssociation(){
 			    associationItem["associationType"] = associationType.options[associationType.selectedIndex].value;
 			    row.cells[2].innerHTML = $.trim($('#initAssociationDay').val()) + '-' + $.trim($('#initAssociationMonth').val()) + '-' + $.trim($('#initAssociationYear').val());
 			    associationItem["initDate"] = $.trim($('#initAssociationDay').val()) + '-' + $.trim($('#initAssociationMonth').val()) + '-' + $.trim($('#initAssociationYear').val());
-			    if ($.trim($('#exitAssociationDay').val())!==''){
+			    if ($.trim($('#exitAssociationDay').val())!=='' && $.trim($('#exitAssociationMonth').val()) !=='' && $.trim($('#exitAssociationYear').val()) !==''){
 			    	row.cells[3].innerHTML = $.trim($('#exitAssociationDay').val()) + '-' + $.trim($('#exitAssociationMonth').val()) + '-' + $.trim($('#exitAssociationYear').val());
 			    	associationItem["exitDate"] = $.trim($('#exitAssociationDay').val()) + '-' + $.trim($('#exitAssociationMonth').val()) + '-' + $.trim($('#exitAssociationYear').val());
 			    }
@@ -562,10 +650,42 @@ function cleanUpWorkFields(){
 	$('#initWorkMonth').val('');
 	$('#initWorkYear').val('');
     $('#finalWorkDay').val('');
-    $('#finalWorkDay').val('');
     $('#finalWorkMonth').val('');
     $('#finalWorkYear').val('');
     $('#notesWork').val('');
+}
+
+function cleanUpStudyFields(){
+	
+	var workType = document.getElementById("studyType");
+	var weekDay = document.getElementById("weekDayStudy");
+	var period = document.getElementById("periodStudy");
+	workType.selectedIndex = 0;
+	weekDay.selectedIndex = 0;
+	period.selectedIndex = 0;
+	$('#initStudyDay').val('');
+	$('#initStudyMonth').val('');
+	$('#initStudyYear').val('');
+    $('#finalStudyDay').val('');
+    $('#finalStudyMonth').val('');
+    $('#finalStudyYear').val('');
+    $('#notesStudy').val('');
+}
+
+function cleanUpContactFields(){
+	$('#ddd1').val('');
+	$('#phone1').val('');
+	$('#whatsup1').val("No Selection");
+	$('#ddd2').val('');
+	$('#phone2').val('');
+	$('#whatsup2').val("No Selection");
+	$('#email1').val('');
+	$('#email2').val('');
+}
+
+function cleanUpHabilitiesFields(){
+	$('#habilities').val('');
+	$('#habilitiesNotes').val('');
 }
 
 function cleanUpGeneralFields(){
@@ -623,6 +743,9 @@ function cleanupAllFields(){
 	cleanUpGeneralFields();
 	cleanUpAssociationFields();
 	cleanUpWorkFields();
+	cleanUpStudyFields();
+	cleanUpContactFields();
+	cleanUpHabilitiesFields();
 	cleanSearchOutput(document.getElementById("tableResultAssociation"));
 	cleanSearchOutput(document.getElementById("tableResultWork"));
 	cleanSearchOutput(document.getElementById("tableResultStudy"));
@@ -700,7 +823,7 @@ function updateWork(){
 			    workItem.period = period.options[period.selectedIndex].value;
 			    row.cells[4].innerHTML = $.trim($('#initWorkDay').val()) + '-' + $.trim($('#initWorkMonth').val()) + '-' + $.trim($('#initWorkYear').val());
 			    workItem.initDate = $.trim($('#initWorkDay').val()) + '-' + $.trim($('#initWorkMonth').val()) + '-' + $.trim($('#initWorkYear').val());
-			    if ($.trim($('#finalWorkDay').val())!==''){
+			    if ($.trim($('#finalWorkDay').val())!=='' && $.trim($('#finalWorkMonth').val()) !=='' && $.trim($('#finalWorkYear').val()) !=='' ){
 			    	row.cells[5].innerHTML = $.trim($('#finalWorkDay').val()) + '-' + $.trim($('#finalWorkMonth').val()) + '-' + $.trim($('#finalWorkYear').val());
 			    	workItem.finalDate =  $.trim($('#finalWorkDay').val()) + '-' + $.trim($('#finalWorkMonth').val()) + '-' + $.trim($('#finalWorkYear').val());
 			    }
@@ -762,6 +885,141 @@ function insertWork(){
 	
 }
 
+function removeStudy(){
+	
+	var $output = $('.outputStudy'),
+	$process = $('.processingStudy');
+	
+	$process.show();
+	$output.hide();
+	
+	var radios = document.getElementsByName("groupStudy");
+	var table = document.getElementById("tableResultStudy");
+	var rowIndex=-1;
+    for (var i = 0, len = radios.length; i < len; i++) {
+         if (radios[i].checked) {
+        	 rowIndex = i+2;
+         }
+    }
+    
+    if (rowIndex != -1){
+	    table.deleteRow(rowIndex);
+	    study.splice(rowIndex-2, 1);
+	           
+	    if (table.rows.length > 2){
+	    	radios[0].checked = "true";
+	    }	
+    }
+    
+    $process.hide();
+	$output.show()
+}
+
+function updateStudy(){
+	//alert('Insert Button'); 
+	var $output = $('.outputStudy'),
+	$process = $('.processingStudy');	
+	validateFieldsStudy(function(valid,response){
+		if (valid === false){
+			if (response !== "")
+				alert(response);
+			else
+				alert('Preencha todos os campos !');
+			return;
+		}
+		else
+		{
+			$process.show();
+			$output.hide();
+			var radios = document.getElementsByName("groupStudy");
+			var table = document.getElementById("tableResultStudy");
+			var row;
+			var index=-1;
+		    for (var i = 0, len = radios.length; i < len; i++) {
+		         if (radios[i].checked) {
+		        	 row = table.rows[i+2]; 
+		        	 index = i;
+		        	 break;
+		         }
+		    }
+		    if (index != -1){
+				var studyType = document.getElementById("studyType");
+				var weekDay = document.getElementById("weekDayStudy");
+				var period = document.getElementById("periodStudy");
+				var studyItem = {};
+			    row.cells[1].innerHTML = studyType.options[studyType.selectedIndex].value;
+			    studyItem.studyType = studyType.options[studyType.selectedIndex].value;
+			    row.cells[2].innerHTML = weekDay.options[weekDay.selectedIndex].value;
+			    studyItem.weekDay = weekDay.options[weekDay.selectedIndex].value;
+			    row.cells[3].innerHTML = period.options[period.selectedIndex].value;
+			    studyItem.period = period.options[period.selectedIndex].value;
+			    row.cells[4].innerHTML = $.trim($('#initStudyDay').val()) + '-' + $.trim($('#initStudyMonth').val()) + '-' + $.trim($('#initStudyYear').val());
+			    studyItem.initDate = $.trim($('#initStudyDay').val()) + '-' + $.trim($('#initStudyMonth').val()) + '-' + $.trim($('#initStudyYear').val()); 
+			    if ($.trim($('#finalStudyDay').val())!=='' && $.trim($('#finalStudyMonth').val()) !=='' && $.trim($('#finalStudyYear').val()) !=='' ){
+			    	row.cells[5].innerHTML = $.trim($('#finalStudyDay').val()) + '-' + $.trim($('#finalStudyMonth').val()) + '-' + $.trim($('#finalStudyYear').val());
+			    	studyItem.finalDate = $.trim($('#finalStudyDay').val()) + '-' + $.trim($('#finalStudyMonth').val()) + '-' + $.trim($('#finalStudyYear').val());
+			    }
+			    else{
+			    	row.cells[5].innerHTML = '';
+			    	studyItem.finalDate = '';
+			    }
+			    row.cells[6].innerHTML = $.trim($('#notesStudy').val());
+			    studyItem.study = $.trim($('#notesStudy').val());
+			    study[index] = studyItem;
+		    }			
+		    
+		    $process.hide();
+			$output.show();
+		}	
+	}); 	
+}
+
+function insertStudy(){
+
+	var $output = $('.outputStudy'),
+	$process = $('.processingStudy');	
+	validateFieldsStudy(function(valid,response){
+		if (valid === false){
+			if (response !== "")
+				alert(response);
+			else
+				alert('Preencha todos os campos !');
+			return;
+		}
+		else
+		{
+			$process.show();
+			$output.hide();
+			var studyType = document.getElementById("studyType");
+			var weekDay = document.getElementById("weekDayStudy");
+			var period = document.getElementById("periodStudy");
+			var studyItem = {};
+			studyItem.studyType = studyType.options[studyType.selectedIndex].value;
+			studyItem.weekDay = weekDay.options[weekDay.selectedIndex].value
+			studyItem.period = period.options[period.selectedIndex].value;
+			studyItem.initDate = $.trim($('#initStudyDay').val()) + '-' + $.trim($('#initStudyMonth').val()) + '-' + $.trim($('#initStudyYear').val());
+		    if ($.trim($('#finalStudyDay').val())!==''){
+		    	studyItem.finalDate = $.trim($('#finalStudyDay').val()) + '-' + $.trim($('#finalStudyMonth').val()) + '-' + $.trim($('#finalStudyYear').val());
+		    }
+		    else{
+		    	studyItem.finalDate = "";
+		    }
+		    studyItem.notes = $.trim($('#notesStudy').val());
+			study.push(studyItem);
+		    buildStudyRowTable(studyItem);
+
+			var radios = document.getElementsByName("groupStudy");
+			radios[radios.length-1].checked = "true";
+			
+			$process.hide();
+			$output.show();
+		}	
+	}); 	
+	
+}
+
+
+
 function newRecord(){
 	$('#create').prop("disabled",false).css('opacity',1.0);
 	$('#update').prop("disabled",true).css('opacity',0.5);
@@ -774,6 +1032,173 @@ function newRecord(){
 	$message.hide();	
 }
 
+function populateStudyData(study){
+	   
+	$('#studyType').val(study.studyType);
+	$('#dayWeekStudy').val(study.dayWeek);
+	$('#periodStudy').val(study.period);
+	var initDate =  study.initDate.split("-");
+	$('#initStudyDay').val(initDate[0]);
+	$('#initStudyMonth').val(initDate[1]);
+	$('#initStudyYear').val(initDate[2]);
+	var finalDate =  study.finalDate.split("-");
+	$('#finalStudyDay').val(finalDate[0]);
+	$('#finalStudyMonth').val(finalDate[1]);
+	$('#finalStudyYear').val(finalDate[2]);
+	$('#notesStudy').val(study.notes);	
+}
+
+function handleChangeRadioButtonStudy(){
+	
+	var radios = document.getElementsByName("groupStudy");
+	var table = document.getElementById("tableResultStudy");
+	var row;
+    for (var i = 0, len = radios.length; i < len; i++) {
+         if (radios[i].checked) {
+        	 row = table.rows[i+2];         	 
+        	 break;
+         }
+    }
+    console.log(row.cells[1]);
+    var study = {};
+    study["studyType"] = row.cells[1].innerHTML;
+    study["dayWeek"] = row.cells[2].innerHTML;
+    study["period"] = row.cells[3].innerHTML; 
+    study["initDate"] = row.cells[4].innerHTML;
+    study["finalDate"] = row.cells[5].innerHTML;
+    study["notes"] = row.cells[6].innerHTML;
+    
+    console.log(JSON.stringify(study));
+    populateStudyData(study);
+}
+
+function buildStudyRowTable(data){
+	 
+    var table = document.getElementById("tableResultStudy");
+
+    var rowCount = table.rows.length;
+    var row = table.insertRow(rowCount);
+
+    row.insertCell(0).innerHTML= '<input type="radio" name="groupStudy" onchange="handleChangeRadioButtonStudy();">';
+    row.insertCell(1).innerHTML= data.studyType;
+    row.insertCell(2).innerHTML= data.weekDay;
+    row.insertCell(3).innerHTML= data.period;
+    row.insertCell(4).innerHTML= data.initDate;
+    row.insertCell(5).innerHTML= data.finalDate;
+    row.insertCell(6).innerHTML= data.notes;  
+}
+
+function createOrUpdate(type){
+	//alert('Insert Button'); 
+	var $output = $('.outputCreateOrUpdate'),
+	$process = $('.outputCreateOrUpdate');	
+	validateFieldsForGeneral(function(validGeneral,response){
+		if (validGeneral === false){
+			if (response !== "")
+				alert(response);
+			else
+				alert('Preencha os campos requiridos para os dados pessoais !');				
+		}
+		else{
+			validateFieldsContact(function(validContact,response){
+				
+				if (validContact === false){
+					if (response !== "")
+						alert(response);
+					else
+						alert('Preencha os campos requiridos para os dados de contato !');				
+				}
+				else{
+					validateAssociationSave(function(validAssociation,response){
+						if (validAssociation === false){						
+							if (response != "")
+								alert(response);
+							else
+								alert("Preencha pelo menos uma associação ao CEAI");
+						}
+						else{
+							$process.show();
+							$output.hide();
+							var state = document.getElementById("state");
+							var respNames = "";
+							splitFullName($.trim($('#fullNameInput').val()),function(response){
+								respNames = response;
+								console.log("Full Name to be updated",JSON.stringify(respNames));
+							});
+							var userId,_id,_rev;
+							if (type === "insert"){
+								userId = getCustomerID();
+								_id = '';
+								_rev = '';
+							}
+							else{
+								userId = $.trim($('#userID').val());
+								_id = searchCache.docs[cachedPosition]._id;
+								_rev = searchCache.docs[cachedPosition]._rev;
+							}
+							
+							var input = '{'
+								+'"type" : "'+type+'",'
+								+'"_id" : "'+_id+'",'
+								+'"_rev" : "'+_rev+'",'
+								+'"userID" : "'+userId+'",'
+								+'"firstName" : "'+$.trim(respNames.firstName)+'",'
+								+'"middleName" : "'+$.trim(respNames.middleName)+'",'
+								+'"lastName" : "'+$.trim(respNames.lastName)+'",'
+								+'"cpf" : "'+$.trim($('#cpfInput').val())+'",'
+								+'"rg" : "'+$.trim($('#rg').val())+'",'
+								+'"rgExp" : "'+$.trim($('#rgExp').val())+'",'
+								+'"rgState" : "'+$.trim($('#rgState').val())+'",'
+								+'"birthDate" : "'+$.trim($('#day').val())+'-'+$.trim($('#month').val())+'-'+$.trim($('#year').val())+'",'
+								+'"address" : "'+$.trim($('#address').val())+'",'
+								+'"number" : "'+$.trim($('#number').val())+'",'
+								+'"complement" : "'+$.trim($('#complement').val())+'",'
+								+'"neighborhood" : "'+$.trim($('#neighborhood').val())+'",'
+								+'"city" : "'+$.trim($('#city').val())+'",'
+								+'"state" : "'+state.options[state.selectedIndex].value+'",'
+								+'"postCode" : "'+$.trim($('#postCode-1').val())+'-'+$.trim($('#postCode-2').val())+'",'
+								+'"parentCpf" : "'+$.trim($('#parentCpf').val())+'",'
+								+'"parentName" : "'+$.trim($('#parentName').val())+'",'
+								+'"lastName" : "'+$.trim(respNames.lastName)+'",'
+								+'"phone1" : "'+$.trim($('#ddd1').val())+"-"+$.trim($('#phone1').val())+'",'
+								+'"whatsup1" : "'+whatsup1.options[whatsup1.selectedIndex].value+'",'
+								+'"phone2" : "'+($.trim($('#phone2').val())!==""? $.trim($('#ddd2').val())+"-"+$.trim($('#phone2').val()):'')+'",'
+								+'"whatsup2" : "'+(whatsup2.selectedIndex >=0 ?  whatsup2.options[whatsup2.selectedIndex].value : '')+'",'
+								+'"email1" : "'+$.trim($('#email1').val())+'",'
+								+'"email2" : "'+$.trim($('#email2').val())+'",'
+								+'"association" : '+JSON.stringify(association)+','
+								+'"habilities" : "'+$.trim($('#habilities').val())+'",'
+								+'"habilitiesNotes" : "'+$.trim($('#notesHabilities').val())+'",'
+								+'"study" : '+JSON.stringify(study)+','
+								+'"work" : '+JSON.stringify(work)+'}';
+											
+							console.log(JSON.stringify(input));
+			
+							$.ajax({
+								url: '/services/ceai/register',
+								type: 'POST',
+								data: input,
+								contentType: "application/json",
+								success: function(data, textStatus, jqXHR){
+										console.log(data);
+										$('#resultsCreateOrUpdate').text(data);
+										$process.hide();
+										$output.show(); 
+								},
+								error: function(jqXHR, textStatus, errorThrown){
+									$('#resultsCreateOrUpdate').text('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
+									$process.hide();
+									$output.show(); 
+								}
+							});
+						}
+					});
+				}
+			});
+		}
+	}); 
+}
+
 $(document).ready(function() {
 	  $('#newRegister').click(function(){
 		  newRecord();
@@ -784,7 +1209,7 @@ $(document).ready(function() {
 		$message = $('.messageSearchPanel'),
 		$process = $('.processingSearch'),	
 		$userData = $('.userData');
-		var validate = validateFields();
+		var validate = validateFieldsSearch();
 		if (validate==0){	
 			alert('Favor preencher um nome para pesquisar, pode ser o primeiro nome ou nome completo ou coloque o CPF');
 			return;
@@ -919,132 +1344,10 @@ $(document).ready(function() {
 		window.location = "/Contact";
 	});
 	$('#update').click(function(){
-		//alert('Insert Button'); 
-		var $output = $('.output'),
-		$process = $('.processing');	
-		validateFieldsForGeneral(function(valid,response){
-			if (valid === false){
-				if (response !== "")
-					alert(response);
-				else
-					alert('Preencha todos os campos !');				
-			}
-			else{
-				$process.show();
-				$output.hide();
-				var rg_state = document.getElementById("rgState");
-				var state = document.getElementById("state");
-				var respNames = "";
-				splitFullName($.trim($('#fullName').val()),function(response){
-					respNames = response;
-				});
-				
-				//+'"confidential" : "'+confidential.options[confidential.selectedIndex].value+'",'
-				var updateGeneral = '{'
-					+'"type" : "general",'
-					+'"userID" : "'+$.trim($('#userID').val())+'",'
-					+'"firstName" : "'+$.trim(respNames.firstName)+'",'
-					+'"middleName" : "'+$.trim(respNames.middleName)+'",'
-					+'"lastName" : "'+$.trim(respNames.lastName)+'",'
-					+'"cpf" : "'+$.trim($('#cpf').val())+'",'
-					+'"rg" : "'+$.trim($('#rg').val())+'",'
-					+'"rgExp" : "'+$.trim($('#rgExp').val())+'",'
-					+'"rgState" : "'+rg_state.options[rg_state.selectedIndex].value+'",'
-					+'"birthDate" : "'+$.trim($('#day').val())+'-'+$.trim($('#month').val())+'-'+$.trim($('#year').val())+'",'
-					+'"address" : "'+$.trim($('#address').val())+'",'
-					+'"number" : "'+$.trim($('#number').val())+'",'
-					+'"complement" : "'+$.trim($('#complement').val())+'",'
-					+'"neighborhood" : "'+$.trim($('#neighborhood').val())+'",'
-					+'"city" : "'+$.trim($('#city').val())+'",'
-					+'"state" : "'+state.options[state.selectedIndex].value+'",'
-					+'"postCode" : "'+$.trim($('#postCode-1').val())+'-'+$.trim($('#postCode-2').val())+'"}';
-
-				console.log(JSON.stringify(updateGeneral));
-
-				$.ajax({
-					url: '/services/ceai/update',
-					type: 'POST',
-					data: updateGeneral,
-					contentType: "application/json",
-					success: function(data, textStatus, jqXHR){
-							console.log(data);
-							$('#results').text(data);
-							$process.hide();
-							$output.show(); 				      	           
-					},
-					error: function(jqXHR, textStatus, errorThrown){
-						$('#results').text('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
-						//alert('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
-						$process.hide();
-						$output.show(); 
-					}
-				});
-			}
-		}); 
+		createOrUpdate("update");
 	});		
-	$('#insert').click(function(){
-		//alert('Insert Button'); 
-		var $output = $('.output'),
-		$process = $('.processing');	
-		validateFieldsForGeneral(function(valid,response){
-			if (valid === false){
-				if (response !== "")
-					alert(response);
-				else
-					alert('Preencha todos os campos !');				
-			}
-			else{
-				$process.show();
-				$output.hide();
-				var rg_state = document.getElementById("rgState");
-				var state = document.getElementById("state");
-				var respNames = "";
-				splitFullName($.trim($('#fullName').val()),function(response){
-					respNames = response;
-				});
-				
-				//+'"confidential" : "'+confidential.options[confidential.selectedIndex].value+'",'
-				var inputGeneral = '{'
-					+'"userID" : "'+getCustomerID()+'",'
-					+'"firstName" : "'+$.trim(respNames.firstName)+'",'
-					+'"middleName" : "'+$.trim(respNames.middleName)+'",'
-					+'"lastName" : "'+$.trim(respNames.lastName)+'",'
-					+'"cpf" : "'+$.trim($('#cpf').val())+'",'
-					+'"rg" : "'+$.trim($('#rg').val())+'",'
-					+'"rgExp" : "'+$.trim($('#rgExp').val())+'",'
-					+'"rgState" : "'+rg_state.options[rg_state.selectedIndex].value+'",'
-					+'"birthDate" : "'+$.trim($('#day').val())+'-'+$.trim($('#month').val())+'-'+$.trim($('#year').val())+'",'
-					+'"address" : "'+$.trim($('#address').val())+'",'
-					+'"number" : "'+$.trim($('#number').val())+'",'
-					+'"complement" : "'+$.trim($('#complement').val())+'",'
-					+'"neighborhood" : "'+$.trim($('#neighborhood').val())+'",'
-					+'"city" : "'+$.trim($('#city').val())+'",'
-					+'"state" : "'+state.options[state.selectedIndex].value+'",'
-					+'"parentId" : "'+parentId+'",'
-					+'"postCode" : "'+$.trim($('#postCode-1').val())+'-'+$.trim($('#postCode-2').val())+'"}';
-
-				console.log(JSON.stringify(inputGeneral));
-
-				$.ajax({
-					url: '/services/ceai/inputGeneral',
-					type: 'POST',
-					data: inputGeneral,
-					contentType: "application/json",
-					success: function(data, textStatus, jqXHR){
-							console.log(data);
-							$('#results').text(data);
-							$process.hide();
-							$output.show(); 				      	           
-					},
-					error: function(jqXHR, textStatus, errorThrown){
-						$('#results').text('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
-						//alert('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
-						$process.hide();
-						$output.show(); 
-					}
-				});
-			}
-		}); 		
+	$('#create').click(function(){
+		createOrUpdate("insert");
 	});	
 	$('#cleanFields').click(function(){
 		newRecord();
@@ -1122,4 +1425,13 @@ $(document).ready(function() {
 	$('#deleteWork').click(function(){
 		removeWork();
 	});	
+	$('#updateStudy').click(function(){
+		updateStudy();
+	});		
+	$('#insertStudy').click(function(){
+		insertStudy();
+	});	
+	$('#deleteStudy').click(function(){
+		removeStudy();
+	});
 });
