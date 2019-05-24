@@ -133,16 +133,21 @@ function splitFullName(name,callback){
 
 function populateAssociationData(association){
 	$('#associationType').val(association.associationType);
-	var date =association.initDate.split("-");
-	$('#initAssociationDay').val(date[0]);
-	$('#initAssociationMonth').val(date[1]);
-	$('#initAssociationYear').val(date[2]);
+	var date = '';
+	if (typeof(association.initDate)!=='undefined'){
+		var date =association.initDate.split("-");
+		$('#initAssociationDay').val(date[0]);
+		$('#initAssociationMonth').val(date[1]);
+		$('#initAssociationYear').val(date[2]);
+	}
 	date = association.exitDate.split("-");
-	$('#exitAssociationDay').val(date[0]);
-	$('#exitAssociationMonth').val(date[1]);
-	$('#exitAssociationYear').val(date[2]);			
-	$('#contribution').val(association.contribution);
-	$('#notesAssociation').val(association.notes);	
+	if (typeof(association.initDate)!=='undefined'){
+		$('#exitAssociationDay').val(date[0]);
+		$('#exitAssociationMonth').val(date[1]);
+		$('#exitAssociationYear').val(date[2]);			
+		$('#contribution').val(association.contribution);
+		$('#notesAssociation').val(association.notes);
+	}
 }
 
 function buildAssociationRowTable(data){
@@ -178,9 +183,11 @@ function populateData(person){
 	$('#neighborhood').val(person.neighborhood);
 	$('#city').val(person.city);
 	$('#state').val(person.state);
-	var postCode = person.postCode.split("-");
-	$('#postCode-1').val(postCode[0]);
-	$('#postCode-2').val(postCode[1]);
+	if (typeof(person.postCode)!=='undefined'){
+		var postCode = person.postCode.split("-");
+		$('#postCode-1').val(postCode[0]);
+		$('#postCode-2').val(postCode[1]);
+	}
 	$('#parentCpf').val(person.parentCpf);
 	$('#parentName').val(person.parentName);
 	$('#habilities').val(person.habilities);

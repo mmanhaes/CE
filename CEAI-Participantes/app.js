@@ -282,8 +282,16 @@ app.post('/services/ceai/searchPerson', function(req, res){
 												  	for (var i = 0; i < result.docs.length; i++) {
 												  		  console.log('  Doc userIDs: %s', result.docs[i].userID);
 												  	}
-												  	console.log('Final response from searchPerson',JSON.stringify(result));
-													res.end(JSON.stringify(result));
+												  	if (result.docs.length>0){
+												  		  	console.log('Final response from searchPerson',JSON.stringify(result));
+												  		  	res.end(JSON.stringify(result));
+												  	}
+												  	else{
+														  var result = {};
+														  result.message = "Not Found";								   
+														  console.log("Not Found for query",req.body);
+														  res.end(JSON.stringify(result));
+													}
 												});
    											});  
 										 }	  
