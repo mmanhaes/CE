@@ -254,49 +254,6 @@ function populateData(person){
 	}
 }
 
-function validateFieldsStudy(callback){
-	
-	if ($('#studyType').val() === "No Selection"){
-		return callback(false,"Selecione um tipo de estudo");
-	}
-	if ($('#weekDayStudy').val() === "No Selection"){
-		return callback(false,"Selecione o dia da semana de estudo");
-	}
-	if ($('#periodStudy').val() === "No Selection"){
-		return callback(false,"Selecione o período de estudo");
-	}
-
-
-	if ($.trim($('#initStudyDay').val()) === '' || $.trim($('#initStudyMonth').val()) === '' || $.trim($('#initStudyYear').val())==='')  
-	{
-		return callback(false,"Preencha o campo data inicial corretamente dd-MM-YYYY");
-	}	
-	
-	
-	return callback(true,"");
-}
-
-function validateFieldsWork(callback){
-	
-	if ($('#workType').val() === "No Selection"){
-		return callback(false,"Selecione um tipo de Atividade voluntária");
-	}
-	if ($('#weekDayWork').val() === "No Selection"){
-		return callback(false,"Selecione o dia da semana da atividade voluntária");
-	}
-	if ($('#periodWork').val() === "No Selection"){
-		return callback(false,"Selecione o período da Atividade voluntária");
-	}
-
-	if ($.trim($('#initWorkDay').val()) === '' || $.trim($('#initWorkMonth').val()) === '' || $.trim($('#initWorkYear').val())==='')  
-	{
-		return callback(false,"Preencha o campo data inicial corretamente dd-MM-YYYY");
-	}	
-	
-	
-	return callback(true,"");
-}
-
 
 function populateWorkData(work){
 	   
@@ -427,6 +384,7 @@ function validateFieldsContact(callback){
 	{
 		return callback(false,"Pelo menos o campo telefone 1 precisa ser preenchido");
 	}	
+	
 	var whatsup1 = document.getElementById("whatsup1");
 	
 	if (whatsup1.selectedIndex === 0){
@@ -513,127 +471,6 @@ function buildAssociationRowTable(data){
     row.insertCell(5).innerHTML= data.notes;  
 }
 
-function validateAssociationSave(callback){
-
-	var table = document.getElementById("tableResultAssociation");
-	if (table.rows.length<=2){
-		return callback(false,"É necessario que seja cadastrada pelo menos uma associação ao CEIA (Participante, Assistivo, Sócio Efetivo, Sócio Colaborador ou Inativo");
-    }
- 	
-	return callback(true,"");
-}
-
-function validateFieldsForAssociation(callback){
-
-	var associationType = $('#associationType').val();
-	if (associationType == "No Selection"){
-		return callback(false,"Insira um tipo de associação ao CEAI");
-	}
-	
-	if ($.trim($('#initAssociationDay').val()) === '' || $.trim($('#initAssociationMonth').val()) === '' || $.trim($('#initAssociationYear').val())==='')  
-	{
-		return callback(false,"Preencha o campo de início da associação corretamente no formato dia/mes/ano");
-	}
-	
-	if (associationType == "Efetivo" || associationType == "Colaborador" ){
-		if ($('#contribution').val() == ""){
-			return callback(false,"Insira por favor o valor de sua contribuicão mensal");
-		}	
-	}
-	
-	return callback(true,"");
-}
-
-function updateAssociation(){
-	var $output = $('.outputAssociation'),
-	$process = $('.processingAssociation');	
-	validateFieldsForAssociation(function(valid,response){
-		if (valid === false){
-			if (response !== "")
-				alert(response);
-			else
-				alert('Preencha todos os campos !');
-			return;
-		}
-		else
-		{
-			$process.show();
-			$output.hide();
-			var radios = document.getElementsByName("groupAssociation");
-			var table = document.getElementById("tableResultAssociation");
-			var row;
-			var index=-1;
-		    for (var i = 0, len = radios.length; i < len; i++) {
-		         if (radios[i].checked) {
-		        	 row = table.rows[i+2];         	 
-		        	 index = i;
-		        	 break;
-		         }
-		    }
-		    if (index != -1){
-			    var associationItem = association[index];
-				var associationType = document.getElementById("associationType");
-			    row.cells[1].innerHTML = associationType.options[associationType.selectedIndex].value;
-			    associationItem["associationType"] = associationType.options[associationType.selectedIndex].value;
-			    row.cells[2].innerHTML = $.trim($('#initAssociationDay').val()) + '-' + $.trim($('#initAssociationMonth').val()) + '-' + $.trim($('#initAssociationYear').val());
-			    associationItem["initDate"] = $.trim($('#initAssociationDay').val()) + '-' + $.trim($('#initAssociationMonth').val()) + '-' + $.trim($('#initAssociationYear').val());
-			    if ($.trim($('#exitAssociationDay').val())!=='' && $.trim($('#exitAssociationMonth').val()) !=='' && $.trim($('#exitAssociationYear').val()) !==''){
-			    	row.cells[3].innerHTML = $.trim($('#exitAssociationDay').val()) + '-' + $.trim($('#exitAssociationMonth').val()) + '-' + $.trim($('#exitAssociationYear').val());
-			    	associationItem["exitDate"] = $.trim($('#exitAssociationDay').val()) + '-' + $.trim($('#exitAssociationMonth').val()) + '-' + $.trim($('#exitAssociationYear').val());
-			    }
-			    else{
-			    	row.cells[3].innerHTML = '';
-			    	associationItem["exitDate"] = '';
-			    }
-			    row.cells[4].innerHTML = $.trim($('#contribution').val());
-			    associationItem["contribution"] = $.trim($('#contribution').val());
-			    row.cells[5].innerHTML = $.trim($('#notes').val());
-			    associationItem["notes"] = $('#notesAssociation').val();
-			    association[index] = associationItem;
-		    }
-			$process.hide();
-			$output.show();
-		}	
-	}); 	
-}
-
-function insertAssociation(){
-	var $output = $('.outputAssociation'),
-	$process = $('.processingAssociation');		
-	validateFieldsForAssociation(function(valid,response){
-		if (valid === false){
-			if (response !== "")
-				alert(response);
-			else
-				alert('Preencha todos os campos !');
-			return;
-		}
-		else
-		{
-			$process.show();
-			$output.hide();
-			var associationType = document.getElementById("associationType");
-			var associationItem = {};
-			associationItem["associationType"] = associationType.options[associationType.selectedIndex].value;
-			associationItem["initDate"] = $.trim($('#initAssociationDay').val()) + '-' + $.trim($('#initAssociationMonth').val()) + '-' + $.trim($('#initAssociationYear').val());
-		    if ($.trim($('#exitAssociationDay').val())!==''){
-		    	associationItem["exitDate"] = $.trim($('#exitAssociationDay').val()) + '-' + $.trim($('#exitAssociationMonth').val()) + '-' + $.trim($('#exitAssociationYear').val());
-		    }
-		    else{
-		    	associationItem["exitDate"] = "";
-		    }
-		    associationItem["contribution"] = $.trim($('#contribution').val());
-		    associationItem["notes"] = $('#notesAssociation').val();
-		    association.push(associationItem);
-		    buildAssociationRowTable(associationItem);
-			var radios = document.getElementsByName("groupAssociation");
-			radios[radios.length-1].checked = "true";
-			$process.hide();
-			$output.show();
-		}	
-	});	
-}
-
 function cleanUpAssociationFields(){
 	var associationType = document.getElementById("associationType");
 	associationType.selectedIndex = 0;
@@ -717,37 +554,6 @@ function cleanUpGeneralFields(){
 	$('#postCode-2').val('');
 }
 
-function removeAssociation(){
-	
-	var $output = $('.outputAssociation'),
-	$process = $('.processingAssociation');	
-	
-	$process.show();
-	$output.hide();
-	
-	var radios = document.getElementsByName("groupAssociation");
-	var table = document.getElementById("tableResultAssociation");
-	var rowIndex=-1;
-    for (var i = 0, len = radios.length; i < len; i++) {
-         if (radios[i].checked) {
-        	 rowIndex = i+2;
-         }
-    }
-    
-    if (rowIndex != -1){
-    
-	    table.deleteRow(rowIndex);
-	    association.splice(rowIndex-2, 1);
-	    
-	    if (table.rows.length > 2){
-	    	radios[0].checked = "true";
-	    }	
-
-    }
-    $process.hide();
-	$output.show();
-}
-
 function cleanupAllFields(){
 	cleanUpGeneralFields();
 	cleanUpAssociationFields();
@@ -758,287 +564,6 @@ function cleanupAllFields(){
 	cleanSearchOutput(document.getElementById("tableResultAssociation"));
 	cleanSearchOutput(document.getElementById("tableResultWork"));
 	cleanSearchOutput(document.getElementById("tableResultStudy"));
-}
-
-function removeWork(){
-	
-	var $output = $('.outputWork'),
-	$process = $('.processingWork');
-	
-	$process.show();
-	$output.hide();
-	
-	var radios = document.getElementsByName("groupWork");
-	var table = document.getElementById("tableResultWork");
-	var rowIndex=-1;
-    for (var i = 0, len = radios.length; i < len; i++) {
-         if (radios[i].checked) {
-        	 rowIndex = i+2;
-         }
-    }
-    if (rowIndex != -1){
-	    table.deleteRow(rowIndex);
-	    work.splice(rowIndex-2, 1);
-	           
-	    if (table.rows.length > 2){
-	    	radios[0].checked = "true";
-	    }
-
-    }
-    
-    $process.hide();
-	$output.show()
-}
-
-
-
-function updateWork(){
-	//alert('Insert Button'); 
-	var $output = $('.outputWork'),
-	$process = $('.processingWork');	
-	validateFieldsWork(function(valid,response){
-		if (valid === false){
-			if (response !== "")
-				alert(response);
-			else
-				alert('Preencha todos os campos !');
-			return;
-		}
-		else
-		{
-			$process.show();
-			$output.hide();
-			var radios = document.getElementsByName("groupWork");
-			var table = document.getElementById("tableResultWork");
-			var row;
-			var index=-1;
-		    for (var i = 0, len = radios.length; i < len; i++) {
-		         if (radios[i].checked) {
-		        	 row = table.rows[i+2];         	 
-		        	 index = i;
-		        	 break;
-		         }
-		    }
-		    if (index != -1){
-			    var workType = document.getElementById("workType");
-				var weekDay = document.getElementById("weekDayWork");
-				var period = document.getElementById("periodWork");
-				var workItem = {};
-				row.cells[1].innerHTML = workType.options[workType.selectedIndex].value;
-			    workItem.workType = workType.options[workType.selectedIndex].value;
-			    row.cells[2].innerHTML = weekDay.options[weekDay.selectedIndex].value;
-			    workItem.weekDay = weekDay.options[weekDay.selectedIndex].value
-			    row.cells[3].innerHTML = period.options[period.selectedIndex].value;
-			    workItem.period = period.options[period.selectedIndex].value;
-			    row.cells[4].innerHTML = $.trim($('#initWorkDay').val()) + '-' + $.trim($('#initWorkMonth').val()) + '-' + $.trim($('#initWorkYear').val());
-			    workItem.initDate = $.trim($('#initWorkDay').val()) + '-' + $.trim($('#initWorkMonth').val()) + '-' + $.trim($('#initWorkYear').val());
-			    if ($.trim($('#finalWorkDay').val())!=='' && $.trim($('#finalWorkMonth').val()) !=='' && $.trim($('#finalWorkYear').val()) !=='' ){
-			    	row.cells[5].innerHTML = $.trim($('#finalWorkDay').val()) + '-' + $.trim($('#finalWorkMonth').val()) + '-' + $.trim($('#finalWorkYear').val());
-			    	workItem.finalDate =  $.trim($('#finalWorkDay').val()) + '-' + $.trim($('#finalWorkMonth').val()) + '-' + $.trim($('#finalWorkYear').val());
-			    }
-			    else{
-			    	row.cells[5].innerHTML = '';
-			    	workItem.finalDate =  '';
-			    }
-			    row.cells[6].innerHTML = $.trim($('#notesWork').val());
-			    workItem.notes = $.trim($('#notesWork').val());
-			    work[index] = workItem;
-		    }
-			    
-		    $process.hide();
-			$output.show();	
-		}	
-	}); 	
-}
-
-function insertWork(){
-	
-	//alert('Insert Button'); 
-	var $output = $('.outputWork'),
-	$process = $('.processingWork');	
-	validateFieldsWork(function(valid,response){
-		if (valid === false){
-			if (response !== "")
-				alert(response);
-			else
-				alert('Preencha todos os campos !');
-			return;
-		}
-		else
-		{
-			$process.show();
-			$output.hide();
-			var workType = document.getElementById("workType");
-			var weekDay = document.getElementById("weekDayWork");
-			var period = document.getElementById("periodWork");
-			var workItem = {};
-			workItem.workType = workType.options[workType.selectedIndex].value;
-			workItem.weekDay = weekDay.options[weekDay.selectedIndex].value
-			workItem.period = period.options[period.selectedIndex].value;
-			workItem.initDate = $.trim($('#initWorkDay').val()) + '-' + $.trim($('#initWorkMonth').val()) + '-' + $.trim($('#initWorkYear').val());
-		    if ($.trim($('#finalWorkDay').val())!==''){
-		    	workItem.finalDate = $.trim($('#finalWorkDay').val()) + '-' + $.trim($('#finalWorkMonth').val()) + '-' + $.trim($('#finalWorkYear').val());
-		    }
-		    else{
-		    	workItem.finalDate = "";
-		    }
-		    workItem.notes = $.trim($('#notesWork').val());
-			work.push(workItem)
-		    buildWorkRowTable(workItem);
-			var radios = document.getElementsByName("groupWork");
-			radios[radios.length-1].checked = "true";
-			$process.hide();
-			$output.show();
-		}	
-	}); 	
-	
-}
-
-function removeStudy(){
-	
-	var $output = $('.outputStudy'),
-	$process = $('.processingStudy');
-	
-	$process.show();
-	$output.hide();
-	
-	var radios = document.getElementsByName("groupStudy");
-	var table = document.getElementById("tableResultStudy");
-	var rowIndex=-1;
-    for (var i = 0, len = radios.length; i < len; i++) {
-         if (radios[i].checked) {
-        	 rowIndex = i+2;
-         }
-    }
-    
-    if (rowIndex != -1){
-	    table.deleteRow(rowIndex);
-	    study.splice(rowIndex-2, 1);
-	           
-	    if (table.rows.length > 2){
-	    	radios[0].checked = "true";
-	    }	
-    }
-    
-    $process.hide();
-	$output.show()
-}
-
-function updateStudy(){
-	//alert('Insert Button'); 
-	var $output = $('.outputStudy'),
-	$process = $('.processingStudy');	
-	validateFieldsStudy(function(valid,response){
-		if (valid === false){
-			if (response !== "")
-				alert(response);
-			else
-				alert('Preencha todos os campos !');
-			return;
-		}
-		else
-		{
-			$process.show();
-			$output.hide();
-			var radios = document.getElementsByName("groupStudy");
-			var table = document.getElementById("tableResultStudy");
-			var row;
-			var index=-1;
-		    for (var i = 0, len = radios.length; i < len; i++) {
-		         if (radios[i].checked) {
-		        	 row = table.rows[i+2]; 
-		        	 index = i;
-		        	 break;
-		         }
-		    }
-		    if (index != -1){
-				var studyType = document.getElementById("studyType");
-				var weekDay = document.getElementById("weekDayStudy");
-				var period = document.getElementById("periodStudy");
-				var studyItem = {};
-			    row.cells[1].innerHTML = studyType.options[studyType.selectedIndex].value;
-			    studyItem.studyType = studyType.options[studyType.selectedIndex].value;
-			    row.cells[2].innerHTML = weekDay.options[weekDay.selectedIndex].value;
-			    studyItem.weekDay = weekDay.options[weekDay.selectedIndex].value;
-			    row.cells[3].innerHTML = period.options[period.selectedIndex].value;
-			    studyItem.period = period.options[period.selectedIndex].value;
-			    row.cells[4].innerHTML = $.trim($('#initStudyDay').val()) + '-' + $.trim($('#initStudyMonth').val()) + '-' + $.trim($('#initStudyYear').val());
-			    studyItem.initDate = $.trim($('#initStudyDay').val()) + '-' + $.trim($('#initStudyMonth').val()) + '-' + $.trim($('#initStudyYear').val()); 
-			    if ($.trim($('#finalStudyDay').val())!=='' && $.trim($('#finalStudyMonth').val()) !=='' && $.trim($('#finalStudyYear').val()) !=='' ){
-			    	row.cells[5].innerHTML = $.trim($('#finalStudyDay').val()) + '-' + $.trim($('#finalStudyMonth').val()) + '-' + $.trim($('#finalStudyYear').val());
-			    	studyItem.finalDate = $.trim($('#finalStudyDay').val()) + '-' + $.trim($('#finalStudyMonth').val()) + '-' + $.trim($('#finalStudyYear').val());
-			    }
-			    else{
-			    	row.cells[5].innerHTML = '';
-			    	studyItem.finalDate = '';
-			    }
-			    row.cells[6].innerHTML = $.trim($('#notesStudy').val());
-			    studyItem.study = $.trim($('#notesStudy').val());
-			    study[index] = studyItem;
-		    }			
-		    
-		    $process.hide();
-			$output.show();
-		}	
-	}); 	
-}
-
-function insertStudy(){
-
-	var $output = $('.outputStudy'),
-	$process = $('.processingStudy');	
-	validateFieldsStudy(function(valid,response){
-		if (valid === false){
-			if (response !== "")
-				alert(response);
-			else
-				alert('Preencha todos os campos !');
-			return;
-		}
-		else
-		{
-			$process.show();
-			$output.hide();
-			var studyType = document.getElementById("studyType");
-			var weekDay = document.getElementById("weekDayStudy");
-			var period = document.getElementById("periodStudy");
-			var studyItem = {};
-			studyItem.studyType = studyType.options[studyType.selectedIndex].value;
-			studyItem.weekDay = weekDay.options[weekDay.selectedIndex].value
-			studyItem.period = period.options[period.selectedIndex].value;
-			studyItem.initDate = $.trim($('#initStudyDay').val()) + '-' + $.trim($('#initStudyMonth').val()) + '-' + $.trim($('#initStudyYear').val());
-		    if ($.trim($('#finalStudyDay').val())!==''){
-		    	studyItem.finalDate = $.trim($('#finalStudyDay').val()) + '-' + $.trim($('#finalStudyMonth').val()) + '-' + $.trim($('#finalStudyYear').val());
-		    }
-		    else{
-		    	studyItem.finalDate = "";
-		    }
-		    studyItem.notes = $.trim($('#notesStudy').val());
-			study.push(studyItem);
-		    buildStudyRowTable(studyItem);
-
-			var radios = document.getElementsByName("groupStudy");
-			radios[radios.length-1].checked = "true";
-			
-			$process.hide();
-			$output.show();
-		}	
-	}); 	
-	
-}
-
-
-
-function newRecord(){
-	$('#create').prop("disabled",false).css('opacity',1.0);
-	$('#update').prop("disabled",true).css('opacity',0.5);
-	var $userData = $('.userData');
-	var $output = $('.outputGeneral');
-	var $message = $('.messageSearchPanel')
-	cleanupAllFields();
-	$userData.show();
-	$output.hide();
-	$message.hide();	
 }
 
 function populateStudyData(study){
@@ -1117,90 +642,77 @@ function createOrUpdate(type){
 					else
 						alert('Preencha os campos requiridos para os dados de contato !');				
 				}
-				else{
-					validateAssociationSave(function(validAssociation,response){
-						if (validAssociation === false){						
-							if (response != "")
-								alert(response);
-							else
-								alert("Preencha pelo menos uma associação ao CEAI");
-						}
-						else{
-							$process.show();
-							$output.hide();
-							var state = document.getElementById("state");
-							var respNames = "";
-							splitFullName($.trim($('#fullNameInput').val()),function(response){
-								respNames = response;
-								console.log("Full Name to be updated",JSON.stringify(respNames));
-							});
-							var userId,_id,_rev;
-							if (type === "insert"){
-								userId = getCustomerID();
-								_id = '';
-								_rev = '';
-							}
-							else{
-								userId = $.trim($('#userID').val());
-								_id = searchCache.docs[cachedPosition]._id;
-								_rev = searchCache.docs[cachedPosition]._rev;
-							}
-							
-							var input = '{'
-								+'"operation" : "'+type+'",'
-								+'"type" : "all",'
-								+'"_id" : "'+_id+'",'
-								+'"_rev" : "'+_rev+'",'
-								+'"userID" : "'+userId+'",'
-								+'"firstName" : "'+$.trim(respNames.firstName)+'",'
-								+'"middleName" : "'+$.trim(respNames.middleName)+'",'
-								+'"lastName" : "'+$.trim(respNames.lastName)+'",'
-								+'"cpf" : "'+$.trim($('#cpfInput').val())+'",'
-								+'"rg" : "'+$.trim($('#rg').val())+'",'
-								+'"rgExp" : "'+$.trim($('#rgExp').val())+'",'
-								+'"rgState" : "'+$.trim($('#rgState').val())+'",'
-								+'"birthDate" : "'+$.trim($('#day').val())+'-'+$.trim($('#month').val())+'-'+$.trim($('#year').val())+'",'
-								+'"address" : "'+$.trim($('#address').val())+'",'
-								+'"number" : "'+$.trim($('#number').val())+'",'
-								+'"complement" : "'+$.trim($('#complement').val())+'",'
-								+'"neighborhood" : "'+$.trim($('#neighborhood').val())+'",'
-								+'"city" : "'+$.trim($('#city').val())+'",'
-								+'"state" : "'+state.options[state.selectedIndex].value+'",'
-								+'"postCode" : "'+$.trim($('#postCode-1').val())+'-'+$.trim($('#postCode-2').val())+'",'
-								+'"parentCpf" : "'+$.trim($('#parentCpf').val())+'",'
-								+'"parentName" : "'+$.trim($('#parentName').val())+'",'
-								+'"lastName" : "'+$.trim(respNames.lastName)+'",'
-								+'"phone1" : "'+$.trim($('#ddd1').val())+"-"+$.trim($('#phone1').val())+'",'
-								+'"whatsup1" : "'+whatsup1.options[whatsup1.selectedIndex].value+'",'
-								+'"phone2" : "'+($.trim($('#phone2').val())!==""? $.trim($('#ddd2').val())+"-"+$.trim($('#phone2').val()):'')+'",'
-								+'"whatsup2" : "'+(whatsup2.selectedIndex >=0 ?  whatsup2.options[whatsup2.selectedIndex].value : '')+'",'
-								+'"email1" : "'+$.trim($('#email1').val())+'",'
-								+'"email2" : "'+$.trim($('#email2').val())+'",'
-								+'"association" : '+JSON.stringify(association)+','
-								+'"habilities" : "'+$.trim($('#habilities').val())+'",'
-								+'"habilitiesNotes" : "'+$.trim($('#notesHabilities').val())+'",'
-								+'"study" : '+JSON.stringify(study)+','
-								+'"work" : '+JSON.stringify(work)+'}';
-											
-							console.log(JSON.stringify(input));
-			
-							$.ajax({
-								url: '/services/ceai/register',
-								type: 'POST',
-								data: input,
-								contentType: "application/json",
-								success: function(data, textStatus, jqXHR){
-										console.log(data);
-										$('#resultsCreateOrUpdate').text(data);
-										$process.hide();
-										$output.show(); 
-								},
-								error: function(jqXHR, textStatus, errorThrown){
-									$('#resultsCreateOrUpdate').text('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
-									$process.hide();
-									$output.show(); 
-								}
-							});
+				else{					
+					$process.show();
+					$output.hide();
+					var state = document.getElementById("state");
+					var respNames = "";
+					splitFullName($.trim($('#fullNameInput').val()),function(response){
+						respNames = response;
+						console.log("Full Name to be updated",JSON.stringify(respNames));
+					});
+					var userId,_id,_rev;
+					if (type === "insert"){
+						userId = getCustomerID();
+						_id = '';
+						_rev = '';
+					}
+					else{
+						userId = $.trim($('#userID').val());
+						_id = searchCache.docs[cachedPosition]._id;
+						_rev = searchCache.docs[cachedPosition]._rev;
+					}
+					
+					var input = '{'
+						+'"operation" : "'+type+'",'
+						+'"type" : "public",'
+						+'"_id" : "'+_id+'",'
+						+'"_rev" : "'+_rev+'",'
+						+'"userID" : "'+userId+'",'
+						+'"firstName" : "'+$.trim(respNames.firstName)+'",'
+						+'"middleName" : "'+$.trim(respNames.middleName)+'",'
+						+'"lastName" : "'+$.trim(respNames.lastName)+'",'
+						+'"cpf" : "'+$.trim($('#cpfInput').val())+'",'
+						+'"rg" : "'+$.trim($('#rg').val())+'",'
+						+'"rgExp" : "'+$.trim($('#rgExp').val())+'",'
+						+'"rgState" : "'+$.trim($('#rgState').val())+'",'
+						+'"birthDate" : "'+$.trim($('#day').val())+'-'+$.trim($('#month').val())+'-'+$.trim($('#year').val())+'",'
+						+'"address" : "'+$.trim($('#address').val())+'",'
+						+'"number" : "'+$.trim($('#number').val())+'",'
+						+'"complement" : "'+$.trim($('#complement').val())+'",'
+						+'"neighborhood" : "'+$.trim($('#neighborhood').val())+'",'
+						+'"city" : "'+$.trim($('#city').val())+'",'
+						+'"state" : "'+state.options[state.selectedIndex].value+'",'
+						+'"postCode" : "'+$.trim($('#postCode-1').val())+'-'+$.trim($('#postCode-2').val())+'",'
+						+'"parentCpf" : "'+$.trim($('#parentCpf').val())+'",'
+						+'"parentName" : "'+$.trim($('#parentName').val())+'",'
+						+'"lastName" : "'+$.trim(respNames.lastName)+'",'
+						+'"phone1" : "'+$.trim($('#ddd1').val())+"-"+$.trim($('#phone1').val())+'",'
+						+'"whatsup1" : "'+whatsup1.options[whatsup1.selectedIndex].value+'",'
+						+'"phone2" : "'+($.trim($('#phone2').val())!==""? $.trim($('#ddd2').val())+"-"+$.trim($('#phone2').val()):'')+'",'
+						+'"whatsup2" : "'+(whatsup2.selectedIndex >=0 ?  whatsup2.options[whatsup2.selectedIndex].value : '')+'",'
+						+'"email1" : "'+$.trim($('#email1').val())+'",'
+						+'"email2" : "'+$.trim($('#email2').val())+'",'
+						+'"habilities" : "'+$.trim($('#habilities').val())+'",'
+						+'"habilitiesNotes" : "'+$.trim($('#notesHabilities').val())+'"}';
+									
+					console.log(JSON.stringify(input));
+	
+					$.ajax({
+						url: '/services/ceai/register',
+						type: 'POST',
+						data: input,
+						contentType: "application/json",
+						success: function(data, textStatus, jqXHR){
+								console.log(data);
+								$('#resultsCreateOrUpdate').text(data);
+								$process.hide();
+								$output.show(); 
+						},
+						error: function(jqXHR, textStatus, errorThrown){
+							$('#resultsCreateOrUpdate').text('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
+							$process.hide();
+							$output.show(); 
 						}
 					});
 				}
@@ -1210,9 +722,6 @@ function createOrUpdate(type){
 }
 
 $(document).ready(function() {
-	  $('#newRegister').click(function(){
-		  newRecord();
-	  });	
 	  $('#search').click(function(){
 		//alert('Search Button'); 
 		var $output = $('.outputGeneral'),
@@ -1356,12 +865,6 @@ $(document).ready(function() {
 	$('#update').click(function(){
 		createOrUpdate("update");
 	});		
-	$('#create').click(function(){
-		createOrUpdate("insert");
-	});	
-	$('#cleanFields').click(function(){
-		newRecord();
-	});
 	$('#searchParent').click(function(){
 		//alert('Insert Button'); 
 		var $output = $('.output'),
@@ -1405,15 +908,6 @@ $(document).ready(function() {
 		}
 		
 	});
-	$('#updateAssociation').click(function(){
-		updateAssociation();
-	});		
-	$('#insertAssociation').click(function(){
-		insertAssociation();
-	});	
-	$('#deleteAssociation').click(function(){
-		removeAssociation();
-	});	
 	$('#associationType').change(function(){
 		
 		var associationType = $('#associationType').val();
@@ -1425,23 +919,5 @@ $(document).ready(function() {
 			$('#contribution').val('');
 			$('#contribution').prop("disabled",false);
 		}
-	});
-	$('#updateWork').click(function(){
-		updateWork();
-	});		
-	$('#insertWork').click(function(){
-		insertWork();
-	});	
-	$('#deleteWork').click(function(){
-		removeWork();
-	});	
-	$('#updateStudy').click(function(){
-		updateStudy();
-	});		
-	$('#insertStudy').click(function(){
-		insertStudy();
-	});	
-	$('#deleteStudy').click(function(){
-		removeStudy();
 	});
 });

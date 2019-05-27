@@ -314,6 +314,65 @@ app.post('/services/ceai/searchPerson', function(req, res){
 function prepareUpdate(dbSource,request,callback){
 	
 	switch (request.type){
+		case  "all":	
+			dbSource.userID= request.userID;
+			dbSource.firstName = request.firstName;
+			dbSource.middleName = request.middleName;
+			dbSource.lastName = request.lastName;
+			dbSource.cpf = request.cpf;
+			dbSource.rg = request.rg;
+			dbSource.rgExp = request.rgExp;
+			dbSource.rgState = request.rgState;
+			dbSource.birthDate = request.birthDate;
+			dbSource.address = request.address;
+			dbSource.number = request.number;
+			dbSource.complement = request.complement;
+			dbSource.neighborhood = request.neighborhood;
+			dbSource.city = request.city;
+			dbSource.state = request.state;
+			dbSource.postCode = request.postCode;
+			dbSource.parentCpf = request.parentCpf;
+			dbSource.parentName = request.parentName;
+			dbSource.phone1 = request.phone1;
+			dbSource.whatsup1 = request.whatsup1;
+			dbSource.phone2 = request.phone2;
+			dbSource.whatsup2 = request.whatsup2;
+			dbSource.email1 = request.email1;
+			dbSource.email2 = request.email2;
+			dbSource.habilities= request.habilities;
+			dbSource.habilitesNotes= request.habilitesNotes;
+			dbSource.association= request.association;
+			dbSource.work = request.work;
+			dbSource.study = request.study;
+			break;
+		case  "public":	
+			dbSource.userID= request.userID;
+			dbSource.firstName = request.firstName;
+			dbSource.middleName = request.middleName;
+			dbSource.lastName = request.lastName;
+			dbSource.cpf = request.cpf;
+			dbSource.rg = request.rg;
+			dbSource.rgExp = request.rgExp;
+			dbSource.rgState = request.rgState;
+			dbSource.birthDate = request.birthDate;
+			dbSource.address = request.address;
+			dbSource.number = request.number;
+			dbSource.complement = request.complement;
+			dbSource.neighborhood = request.neighborhood;
+			dbSource.city = request.city;
+			dbSource.state = request.state;
+			dbSource.postCode = request.postCode;
+			dbSource.parentCpf = request.parentCpf;
+			dbSource.parentName = request.parentName;
+			dbSource.phone1 = request.phone1;
+			dbSource.whatsup1 = request.whatsup1;
+			dbSource.phone2 = request.phone2;
+			dbSource.whatsup2 = request.whatsup2;
+			dbSource.email1 = request.email1;
+			dbSource.email2 = request.email2;
+			dbSource.habilities= request.habilities;
+			dbSource.habilitesNotes= request.habilitesNotes;
+			break;
 		case  "general":
 			dbSource.userID= request.userID;
 			dbSource.firstName = request.firstName;
@@ -445,7 +504,7 @@ app.post('/services/ceai/register', function(req, res){
 	console.log(JSON.stringify(req.body, null, 2));
 	var db = cloudant.db.use(config.database.person.name);
 	
-	if (req.body.type == "insert"){
+	if (req.body.operation == "insert"){
 		var id =  uuidv1();
 		delete req.body._id;
 		delete req.body._rev;
@@ -458,27 +517,53 @@ app.post('/services/ceai/register', function(req, res){
 			console.log(body);
 			console.log('With Content :');
 			console.log(JSON.stringify(req.body, null, 2));
+			
+			res.end('Dados Cadastrados com Sucesso com o participante :'+req.body.firstName+' '+req.body.middleName+' '+ req.body.lastName+'\n');
 		});
 	}
 	else{
-		db.insert(req.body, function(err, body, header) {
-			
-			if (err) {
-				return console.log('[db.update from public Register Error] ', err.message);
-			}
-	
-			console.log('You have updated the record.');
-			console.log(body);
-			console.log('With Content :');
-			console.log(JSON.stringify(req.body, null, 2));
-		});
+
+		var db = cloudant.db.use(config.database.person.name);
+		var selector = config.userID.selectors.forUpdates;
+		selector.selector.userID = req.body.userID;
+		db.find(selector, function(err, result) {
+			  if (err) {
+			    console.log(err);
+			    config.config.searchError.error = err;
+			    res.end(config.searchError);
+			  }
+			  else{
+				    console.log('Found %d documents with %s', result.docs.length,JSON.stringify(selector));
+				    console.log('Result %s', JSON.stringify(result));
+				    if (result.docs.length>0)
+				    {					  	
+				    	prepareUpdate(result.docs[0],req.body,function(response){
+				    		db.insert(response, function(err, body, header) {
+								if (err) {
+									console.log('[db.update] ', err.message);
+									res.end('[db.update] ', err.message);
+								}
+								else{
+									console.log('You have updated the record.');
+									console.log(body);
+									console.log('With Content :');
+									console.log(JSON.stringify(req.body, null, 2));
+									res.end('Dados Cadastrados com Sucesso com o participante :'+req.body.firstName+' '+req.body.middleName+' '+ req.body.lastName+'\n');								}	
+							});								    		
+				    	});
+				    }
+				    else
+				    {
+				    	res.end('Erro na Atualização para o participante : '+ req.body.firstName+ " "+ req.body.middleName+" "+req.body.lastName);
+				    }	
+			  }
+		});	 
 	}
-	res.end('Dados Cadastrados com Sucesso com o participante :'+req.body.firstName+' '+req.body.middleName+' '+ req.body.lastName+'\n');
 });
 
 app.get('/',
 		function(req, res){
-	res.redirect('/home');
+	res.redirect('/cadastro');
 });
 
 app.get('/home',
@@ -546,10 +631,17 @@ app.get('/Association',
 	res.sendFile(__dirname + "/public/association.html");
 });
 
-app.get('/cadastro',	
+app.get('/cadastro',
+		require('connect-ensure-login').ensureLoggedIn(),
 		function(req, res){
 	res.sendFile(__dirname + "/public/register.html");
 });
+
+app.get('/publico',
+		function(req, res){
+	res.sendFile(__dirname + "/public/public.html");
+});
+
 
 app.listen(port,function(){
 	console.log('CEAI Cadastro de Participantes Server running on port:'+port);

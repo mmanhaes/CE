@@ -59,10 +59,6 @@
 					</p>
 				</div>
 			</div>
-			<div class="newRecord" style="display: none;'">
-							<input type="button" class="input--request-button base--a"
-				id="newRegister" value="Novo Cadastro">
-			</div>	
 			<div class="outputGeneral" style="display: none;'">
 				<div class="_demo--container" style="width: 950px;">
 						<form>
@@ -434,7 +430,7 @@
 						<td colspan="1">
 							<h5 class="base--h5" style="width: 180px;">Tipo Associado:</h5>
 						</td>
-						<td style="width: 150px;"><select id="associationType"
+						<td style="width: 150px;"><select id="associationType" disabled="disabled"
 							style="color: #a53725";width: 55px">
 								<option selected="selected" value="No Selection">Selecione</option>
 								<option value="Assistido">Assistido</option>
@@ -447,15 +443,15 @@
 						<td colspan="1" style="width: 200px;">
 							<table border="" style="width: 100%" cellspacing="0">
 								<tr>
-									<td><input id="initAssociationDay" maxlength="2" type="text"
+									<td><input id="initAssociationDay" maxlength="2" type="text" disabled="disabled"
 										class="input--question--manual base--a" style="width: 30px;">
 									</td>
 									<td>/</td>
-									<td><input id="initAssociationMonth" maxlength="2" type="text"
+									<td><input id="initAssociationMonth" maxlength="2" type="text" disabled="disabled"
 										class="input--question--manual base--a" style="width: 30px;">
 									</td>
 									<td>/</td>
-									<td><input id="initAssociationYear" type="text" maxlength="4"
+									<td><input id="initAssociationYear" type="text" maxlength="4" disabled="disabled"
 										class="input--question--manual base--a" style="width: 60px;">
 									</td>
 								</tr>
@@ -465,15 +461,15 @@
 						<td colspan="1" style="width: 90px;">
 							<table border="" style="width: 100%" cellspacing="0">
 								<tr>
-									<td><input id="exitAssociationDay" maxlength="2" type="text"
+									<td><input id="exitAssociationDay" maxlength="2" type="text" disabled="disabled"
 										class="input--question--manual base--a" style="width: 30px;">
 									</td>
 									<td>/</td>
-									<td><input id="exitAssociationMonth" maxlength="2" type="text"
+									<td><input id="exitAssociationMonth" maxlength="2" type="text" disabled="disabled"
 										class="input--question--manual base--a" style="width: 30px;">
 									</td>
 									<td>/</td>
-									<td><input id="exitAssociationYear" type="text" maxlength="4"
+									<td><input id="exitAssociationYear" type="text" maxlength="4" disabled="disabled"
 										class="input--question--manual base--a" style="width: 60px;">
 									</td>
 								</tr>
@@ -486,7 +482,7 @@
 						<td scope="col" colspan="6" style="width: 75%">
 							<table border="" style="width: 100%">
 							<tr>
-								<td colspan="1"><input id="contribution" type="text"
+								<td colspan="1"><input id="contribution" type="text" disabled="disabled"
 									class="input--question--manual--reduced base--a"
 									style="width: 220px;"></td>
 							</tr>
@@ -499,7 +495,7 @@
 						<td scope="col" colspan="6" style="width: 75%">
 							<table border="" style="width: 100%">
 								<tr>
-									<td><textarea placeholder="Não Obrigatório"
+									<td><textarea placeholder="Não Obrigatório" disabled="disabled"
 								id="notesAssociation" class="output-spam"
 								style="height: 100px;color: #a53725; width: 810px;"></textarea></td>
 								</tr>
@@ -507,11 +503,6 @@
 						</td>
 					</tr>
 				</table>
-				<input type="button"
-					class="input--request-button base--a" title="Inserir associação ao CEAI" id="insertAssociation" value="Inserir  Associação">
-				<input type="button" class="input--request-button base--a"
-					id="updateAssociation" value="Alterar Associação"> <input type="button"
-					class="input--request-button base--a" id="deleteAssociation" value="Excluir Associação">
 				<div class="processingAssociation" style="display: none;'">
 					<div class="_demo--container">
 						<p class="base--p">
@@ -581,7 +572,7 @@
 						<td colspan="1""width: 25%">
 							<h5 class="base--h5" style="width: 140px;">Estudo:</h5>
 						</td>
-						<td style="width: 100%" colspan="2"><select id="studyType"
+						<td style="width: 100%" colspan="2"><select id="studyType" disabled="disabled"
 							style="color: #a53725";width: 90px">
 								<option value="No Selection">Selecione</option>
 								<option value="EIDE I">EIDE I</option>
@@ -600,7 +591,7 @@
 						<td colspan="1""width: 25%">
 							<h5 align="right" class="base--h5" style="width: 130px;">Dia da Semana:</h5>
 						</td>
-						<td style="width: 100%" colspan="1"><select id="weekDayStudy"
+						<td style="width: 100%" colspan="1"><select id="weekDayStudy" disabled="disabled"
 							style="color: #a53725";width: 55px">
 								<option value="No Selection">Selecione</option>
 								<option value="Segunda">Segunda</option>
@@ -614,7 +605,7 @@
 						<td colspan="1""width: 25%">
 							<h5 align="right"  class="base--h5" style="width: 90px;">Período:</h5>
 						</td>
-						<td style="width: 100%" colspan="1"><select id="periodStudy"
+						<td style="width: 100%" colspan="1"><select id="periodStudy" disabled="disabled"
 							style="color: #a53725";width: 75px">
 								<option value="No Selection">Selecione</option>
 								<option value="Manhã">Manhã</option>
@@ -628,15 +619,15 @@
 						<td colspan="1" style="width: 90px;">
 							<table border="" style="width: 100%" cellspacing="0">
 								<tr>
-									<td><input id="initStudyDay" maxlength="2" type="text"
+									<td><input id="initStudyDay" maxlength="2" type="text" disabled="disabled"
 										class="input--question--manual base--a" style="width: 30px;">
 									</td>
 									<td>/</td>
-									<td><input id="initStudyMonth" maxlength="2" type="text"
+									<td><input id="initStudyMonth" maxlength="2" type="text" disabled="disabled"
 										class="input--question--manual base--a" style="width: 30px;">
 									</td>
 									<td>/</td>
-									<td><input id="initStudyYear" type="text" maxlength="4"
+									<td><input id="initStudyYear" type="text" maxlength="4" disabled="disabled"
 										class="input--question--manual base--a" style="width: 60px;">
 									</td>
 								</tr>
@@ -647,15 +638,15 @@
 						<td colspan="1" style="width: 90px;">
 							<table border="" style="width: 100%" cellspacing="0">
 								<tr>
-									<td><input id="finalStudyDay" maxlength="2" type="text"
+									<td><input id="finalStudyDay" maxlength="2" type="text" disabled="disabled"
 										class="input--question--manual base--a" style="width: 30px;">
 									</td>
 									<td>/</td>
-									<td><input id="finalStudyMonth" maxlength="2" type="text"
+									<td><input id="finalStudyMonth" maxlength="2" type="text" disabled="disabled"
 										class="input--question--manual base--a" style="width: 30px;">
 									</td>
 									<td>/</td>
-									<td><input id="finalStudyYear" type="text" maxlength="4"
+									<td><input id="finalStudyYear" type="text" maxlength="4" disabled="disabled"
 										class="input--question--manual base--a" style="width: 60px;">
 									</td>
 								</tr>
@@ -670,7 +661,7 @@
 						<td scope="col" colspan="6" style="width: 75%">
 							<table border="" style="width: 100%">
 								<tr>
-									<td><input id="notesStudy" type="text" 
+									<td><input id="notesStudy" type="text" disabled="disabled"
 										class="input--question--manual--reduced base--a"
 										style="width: 750px;"></td>
 								</tr>
@@ -678,11 +669,6 @@
 						</td>
 					</tr>
 				</table>
-				<input type="button" title="Inserir atividade de Estudo"
-					class="input--request-button base--a" id="insertStudy" value="Inserir Estudo">
-				<input type="button" title="Alterar atividade de Estudo" class="input--request-button base--a"
-					id="updateStudy" value="Alterar Estudo"> <input type="button" title="Excluir atividade de Estudo"
-					class="input--request-button base--a" id="deleteStudy" value="Excluir Estudo">
 				<div class="processingStudy" style="display: none;'">
 					<div class="_demo--container">
 						<p class="base--p">
@@ -752,7 +738,7 @@
 						<td colspan="1""width: 25%">
 							<h5 class="base--h5" style="width: 140px;">Trabalho:</h5>
 						</td>
-						<td style="width: 100%" colspan="2"><select id="workType"
+						<td style="width: 100%" colspan="2"><select id="workType" disabled="disabled"
 							style="color: #a53725";width: 90px">
 								<option value="No Selection">Selecione</option>
 								<option value="Recepção">Recepção</option>
@@ -783,7 +769,7 @@
 						<td colspan="1""width: 25%">
 							<h5 align="right"  class="base--h5" style="width: 171px;">Dia da Semana:</h5>
 						</td>
-						<td style="width: 100%" colspan="1"><select id="weekDayWork"
+						<td style="width: 100%" colspan="1"><select id="weekDayWork" disabled="disabled"
 							style="color: #a53725";width: 55px">
 								<option selected="selected" value="No Selection">Selecione</option>
 								<option value="Segunda">Segunda</option>
@@ -797,7 +783,7 @@
 						<td colspan="1""width: 25%">
 							<h5 align="right" class="base--h5" style="width: 90px;">Período:</h5>
 						</td>
-						<td style="width: 100%" colspan="1"><select id="periodWork"
+						<td style="width: 100%" colspan="1"><select id="periodWork" disabled="disabled"
 							style="color: #a53725";width: 75px">
 								<option selected="selected" value="No Selection">Selecione</option>
 								<option value="Manhã">Manhã</option>
@@ -811,15 +797,15 @@
 						<td colspan="1" style="width: 90px;">
 							<table border="" style="width: 100%" cellspacing="0">
 								<tr>
-									<td><input id="initWorkDay" maxlength="2" type="text"
+									<td><input id="initWorkDay" disabled="disabled" maxlength="2" type="text"
 										class="input--question--manual base--a" style="width: 30px;">
 									</td>
 									<td>/</td>
-									<td><input id="initWorkMonth" maxlength="2" type="text"
+									<td><input id="initWorkMonth" disabled="disabled" maxlength="2" type="text"
 										class="input--question--manual base--a" style="width: 30px;">
 									</td>
 									<td>/</td>
-									<td><input id="initWorkYear" type="text" maxlength="4"
+									<td><input id="initWorkYear" type="text" maxlength="4" disabled="disabled"
 										class="input--question--manual base--a" style="width: 60px;">
 									</td>
 								</tr>
@@ -830,15 +816,15 @@
 						<td colspan="1" style="width: 90px;">
 							<table border="" style="width: 100%" cellspacing="0">
 								<tr>
-									<td><input id="finalWorkDay" maxlength="2" type="text"
+									<td><input id="finalWorkDay" maxlength="2" type="text" disabled="disabled"
 										class="input--question--manual base--a" style="width: 30px;">
 									</td>
 									<td>/</td>
-									<td><input id="finalWorkMonth" maxlength="2" type="text"
+									<td><input id="finalWorkMonth" maxlength="2" type="text" disabled="disabled"
 										class="input--question--manual base--a" style="width: 30px;">
 									</td>
 									<td>/</td>
-									<td><input id="finalWorkYear" type="text" maxlength="4"
+									<td><input id="finalWorkYear" type="text" maxlength="4" disabled="disabled"
 										class="input--question--manual base--a" style="width: 60px;">
 									</td>
 								</tr>
@@ -853,7 +839,7 @@
 						<td scope="col" colspan="6" style="width: 75%">
 							<table border="" style="width: 100%">
 								<tr>
-									<td><input id="notesWork" type="text" 
+									<td><input id="notesWork" type="text" disabled="disabled"
 										class="input--question--manual--reduced base--a"
 										style="width: 750px;"></td>
 								</tr>
@@ -861,11 +847,6 @@
 						</td>
 					</tr>
 				</table>
-				 <input type="button"
-					class="input--request-button base--a" title="Inserir atividade de Voluntariado" id="insertWork" value="Inserir atividade voluntária">
-				<input type="button" class="input--request-button base--a" title="Alterar atividade de Voluntariado"
-					id="updateWork" value="Alterar atividade voluntária"> <input type="button" title="Excluir atividade de Voluntariado"
-					class="input--request-button base--a" id="deleteWork" value="Excluir atividade voluntaria">
 				<div class="processingWork" style="display: none;'">
 					<div class="_demo--container">
 						<p class="base--p">
@@ -922,12 +903,8 @@
 				</div>
 			</article>
 		</div>
-		  <input type="button" title="Criar um novo registro de participante"  class="input--request-button base--a"
-			id="create" value="Criar um Novo Participante">
    		  <input type="button" title="Altera dados de um participante existente" class="input--request-button base--a"
 				id="update" value="Alterar dados do Participante">
-		  <input type="button" title="Limpa todos os Campos para criar um novo Registro" class="input--request-button base--a"
-				id="cleanFields" value="Limpar todos os campos">
 		  <div class="processingCreateOrUpdate" style="display:none;'">
 	 			<div class="_demo--container">
 	 				<p class="base--p">
@@ -946,6 +923,6 @@
    </div>
    <script type="text/javascript"
 		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-   <script type="text/javascript" src="js/register.js"></script>
+   <script type="text/javascript" src="js/public.js"></script>
 </body>
 </html>
