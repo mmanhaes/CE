@@ -216,12 +216,12 @@ function populateData(person){
 	console.log(JSON.stringify(person));
 	
 	if (typeof(person.association)!='undefined'){
-	
-		for(var i=person.association.length-1;i>=0;--i){
-			if (i===person.association.length-1){
-				populateAssociationData(person.association[i]);
+	    association = person.association;
+		for(var i=association.length-1;i>=0;--i){
+			if (i===association.length-1){
+				populateAssociationData(association[i]);
 			}
-			buildAssociationRowTable(person.association[i]);
+			buildAssociationRowTable(association[i]);
 		}
 		var radios = document.getElementsByName("groupAssociation");
 		if (radios.length > 0){
@@ -229,11 +229,12 @@ function populateData(person){
 		}
 	}
 	if (typeof(person.work)!='undefined'){
-		for(var i=person.work.length-1;i>=0;--i){
-			if (i===person.work.length-1){
-				populateWorkData(person.work[i]);
+		work = person.work;
+		for(var i=work.length-1;i>=0;--i){
+			if (i===work.length-1){
+				populateWorkData(work[i]);
 			}
-			buildWorkRowTable(person.work[i]);
+			buildWorkRowTable(work[i]);
 		}
 		var radios = document.getElementsByName("groupWork");
 		if (radios.length > 0){
@@ -241,11 +242,12 @@ function populateData(person){
 		}
 	}
 	if (typeof(person.study)!='undefined'){	
-		for(var i=person.study.length-1;i>=0;--i){
-			if (i===person.study.length-1){
-				populateStudyData(person.study[i]);
+		study = person.study;
+		for(var i=study.length-1;i>=0;--i){
+			if (i===study.length-1){
+				populateStudyData(study[i]);
 			}
-			buildStudyRowTable(person.study[i]);
+			buildStudyRowTable(study[i]);
 		}
 		var radios = document.getElementsByName("groupStudy");
 		if (radios.length > 0){
@@ -311,6 +313,15 @@ function populateWorkData(work){
 	$('#finalWorkDay').val(finalDate[0]);
 	$('#finalWorkMonth').val(finalDate[1]);
 	$('#finalWorkYear').val(finalDate[2]);
+	if (typeof(work.classNumber)!='undefined'){
+		$('#classWorkLabel').css("display","block");
+		$('#classWork').css("display","block");
+		$('#classWork').val(work.classNumber);
+	}
+	else{
+		$('#classWorkLabel').css("display","none");
+		$('#classWork').css("display","none");
+	}
 	$('#notes').val(work.notes);	
 }
 
@@ -346,7 +357,7 @@ function handleChangeRadioButtonWork(){
 
     var work = {};
     work["workType"] = row.cells[1].innerHTML;
-    work["dayWeek"] = row.cells[2].innerHTML;
+    work["weekDay"] = row.cells[2].innerHTML;
     work["period"] = row.cells[3].innerHTML; 
     work["initDate"] = row.cells[4].innerHTML;
     work["finalDate"] = row.cells[5].innerHTML;
@@ -841,6 +852,9 @@ function updateWork(){
 			    	workItem.finalDate =  '';
 			    }
 			    row.cells[6].innerHTML = $.trim($('#notesWork').val());
+			    if ($('#classWork').css("display") != "none"){
+			    	workItem.classNumber = $('#classWork').val(); 
+			    }			    
 			    workItem.notes = $.trim($('#notesWork').val());
 			    work[index] = workItem;
 		    }
@@ -881,6 +895,9 @@ function insertWork(){
 		    }
 		    else{
 		    	workItem.finalDate = "";
+		    }
+		    if ($('#classWork').css("display") != "none"){
+		    	workItem.classNumber = $('#classWork').val(); 
 		    }
 		    workItem.notes = $.trim($('#notesWork').val());
 			work.push(workItem)
@@ -973,6 +990,9 @@ function updateStudy(){
 			    	studyItem.finalDate = '';
 			    }
 			    row.cells[6].innerHTML = $.trim($('#notesStudy').val());
+			    if ($('#classStudy').css("display") != "none"){
+			    	studyItem.classNumber = $('#classStudy').val(); 
+			    }
 			    studyItem.study = $.trim($('#notesStudy').val());
 			    study[index] = studyItem;
 		    }			
@@ -1014,6 +1034,9 @@ function insertStudy(){
 		    	studyItem.finalDate = "";
 		    }
 		    studyItem.notes = $.trim($('#notesStudy').val());
+		    if ($('#classStudy').css("display") != "none"){
+		    	studyItem.classNumber = $('#classStudy').val(); 
+		    }
 			study.push(studyItem);
 		    buildStudyRowTable(studyItem);
 
@@ -1054,6 +1077,15 @@ function populateStudyData(study){
 	$('#finalStudyDay').val(finalDate[0]);
 	$('#finalStudyMonth').val(finalDate[1]);
 	$('#finalStudyYear').val(finalDate[2]);
+	if (typeof(study.classNumber)!='undefined'){
+		$('#classStudyLabel').css("display","block");
+		$('#classStudy').css("display","block");
+		$('#classStudy').val(study.classNumber);
+	}
+	else{
+		$('#classStudyLabel').css("display","none");
+		$('#classStudy').css("display","none");
+	}
 	$('#notesStudy').val(study.notes);	
 }
 
@@ -1414,6 +1446,38 @@ $(document).ready(function() {
 	$('#deleteAssociation').click(function(){
 		removeAssociation();
 	});	
+	$('#workType').change(function(){
+		if ($('#workType').val()=="No Selection" || $('#workType').val()=="Recepção" || $('#workType').val()=="Ação Social"
+			|| $('#workType').val()=="Coordenação de Período" 
+				|| $('#workType').val()=="Expositor do Evangelho"
+				   || $('#workType').val()=="Dirigente de Exposição do Evangelho"
+					   || $('#workType').val()=="Atendimento Inicial"
+						   || $('#workType').val()=="Atividade de Passe"
+							   || $('#workType').val()=="Atendimento Diálogo Fraterno"
+								   || $('#workType').val()=="Participante do Mediúnico"
+									   || $('#workType').val()=="Coordenador de Evangelização e Juventude"
+										   || $('#workType').val()=="Coordenador de Diálogo Fraterno em Grupo"
+											   || $('#workType').val()=="Coordenação de Apoio a diretoria"
+												   || $('#workType').val()=="Conselho Fiscal"
+													   || $('#workType').val()=="Diretoria"){
+			$('#classWorkLabel').css("display","none");
+			$('#classWork').css("display","none");
+		}
+		else{
+			$('#classWorkLabel').css("display","block");
+			$('#classWork').css("display","block");
+		}
+	});
+	$('#studyType').change(function(){
+		if ($('#studyType').val()=="No Selection"){
+			$('#classStudyLabel').css("display","none");
+			$('#classStudy').css("display","none");
+		}
+		else{
+			$('#classStudyLabel').css("display","block");
+			$('#classStudy').css("display","block");
+		}
+	});
 	$('#associationType').change(function(){
 		
 		var associationType = $('#associationType').val();

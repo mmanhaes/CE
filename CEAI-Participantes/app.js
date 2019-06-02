@@ -548,7 +548,7 @@ app.post('/services/ceai/register', function(req, res){
 									console.log(body);
 									console.log('With Content :');
 									console.log(JSON.stringify(req.body, null, 2));
-									res.end('Dados Cadastrados com Sucesso com o participante :'+req.body.firstName+' '+req.body.middleName+' '+ req.body.lastName+'\n');								}	
+									res.end('Dados Cadastrados com Sucesso para o participante :'+req.body.firstName+' '+req.body.middleName+' '+ req.body.lastName+'\n');								}	
 							});								    		
 				    	});
 				    }

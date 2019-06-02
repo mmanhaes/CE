@@ -15,6 +15,80 @@ exports.database = {
 exports.userID ={};
 
 exports.userID.selectors = { 
+		"coordinators":{
+			   "selector": {
+				      "work": {
+				         "$elemMatch": {
+				            "workType": {
+				               "$regex": "Coordenador de EIDE I"
+				            },
+				            "weekDay": {
+				               "$regex": "Segunda"
+				            },
+				            "period": {
+				               "$regex": "Tarde"
+				            },
+				            "classNumber": {
+				               "$regex": "1"
+				            },
+				            "finalDate": {
+				                "$eq": ""
+				            }
+				         }
+				      }
+				   },
+				   "fields": [
+				      "_id",
+				      "_rev",
+				      "firstName",
+				      "middleName",
+				      "lastName",
+				      "userID",
+				      "work"
+				   ],
+				   "sort": [
+				      {
+				         "_id": "asc"
+				      }
+				   ]
+		},	
+		"coordinatorsNoClass":{
+			   "selector": {
+				      "work": {
+				         "$elemMatch": {
+				            "workType": {
+				               "$regex": "Coordenador de EIDE I"
+				            },
+				            "weekDay": {
+				               "$regex": "Segunda"
+				            },
+				            "period": {
+				               "$regex": "Tarde"
+				            },
+				            "classNumber": {
+				            	"$exists": false
+				            },
+				            "finalDate": {
+				                "$eq": ""
+				            }
+				         }
+				      }
+				   },
+				   "fields": [
+				      "_id",
+				      "_rev",
+				      "firstName",
+				      "middleName",
+				      "lastName",
+				      "userID",
+				      "work"
+				   ],
+				   "sort": [
+				      {
+				         "_id": "asc"
+				      }
+				   ]
+		},
 		"forUpdates":{
 			"selector": {
 			    "userID" : ""
