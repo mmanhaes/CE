@@ -63,12 +63,17 @@ function buildSearhOutput(data){
 	    row.insertCell(3).innerHTML= data.docs[i].phone1 || "";
 	    row.insertCell(4).innerHTML= data.docs[i].email1 || "";
 	    var loans = 0;
-	    for (var j =0;j<data.docs[i].book.length;++j){
-	    	if (data.docs[i].book[j].returnDate ===''){
-	    		loans++;
-	    	}
+	    if (typeof(data.docs[i].book)!=='undefined'){
+		    for (var j =0;j<data.docs[i].book.length;++j){
+		    	if (data.docs[i].book[j].returnDate ===''){
+		    		loans++;
+		    	}
+		    }
+		    row.insertCell(5).innerHTML= loans;
 	    }
-	    row.insertCell(5).innerHTML= loans;
+	    else{
+	    	row.insertCell(5).innerHTML= 0;
+	    }
     }
 }
 
@@ -97,7 +102,6 @@ function splitDate(input){
 }
 
 function handleChangeRadioButtonPerson(){
-	
 	var radios = document.getElementsByName("group2");
 	var table = document.getElementById("tableResultPerson");
 	var row;
@@ -452,8 +456,8 @@ function validateFieldsLoan(){
 	var limitDate = new Date($('#limitYear').val()+'-'+$('#limitMonth').val()+'-'+$('#limitDay').val());
 	var today = new Date();
 	
-	if (limitDate < today){
-		alert('Data para entrega do Livro é menor que a data atual, corrija a data de entrega e tente novamente !');
+	if (limitDate <= today){
+		alert('Data para entrega do Livro é menor ou igual a data atual, corrija a data de entrega e tente novamente !');
 		return false;
 	}
 	
@@ -546,8 +550,11 @@ $(document).ready(function() {
 	$('#previous').click(function(){
 		window.location = "/StockBook";
 	});
-	$('#next').click(function(){
-		window.location = "/Work";
+	$('#createUser').click(function(){
+		window.open(
+		  'https://ceai-participantes.mybluemix.net/cadastro',
+		  '_blank' // <- This is what makes it open in a new window.
+		);
 	});	
 	$('#loanBook').click(function(){
 		loan();

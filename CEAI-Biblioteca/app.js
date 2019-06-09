@@ -122,6 +122,22 @@ var buildSelectorSearchPerson = function(data,callback){
 	return callback("No Selector Found",null);
 };
 
+function formatSearchEntry(entry){
+	
+	entry = entry.replace(/Á/g,".*");
+	entry = entry.replace(/á/g,".*");
+	entry = entry.replace(/é/g,".*");
+	entry = entry.replace(/É/g,".*");
+	entry = entry.replace(/í/g,".*");
+	entry = entry.replace(/Í/g,".*");
+	entry = entry.replace("/ó/g",".*");
+	entry = entry.replace("/Ó/g",".*");
+	entry = entry.replace("/ú/g",".*");
+	entry = entry.replace("/Ú/g",".*");
+	
+	return entry;
+}
+
 var buildSelector = function(data,callback){
 	if (data.type === "isbn"){
 		config.selectors.isbn.selector.isbn = data.entry;
@@ -140,9 +156,9 @@ var buildSelector = function(data,callback){
 		selector = JSON.parse(JSON.stringify(config.selectors.espAuthor));
 		console.log(selector);
 		query = selector.selector.$or[0].espAuthor.$regex;
-		selector.selector.$or[0].espAuthor.$regex= query.replace(REPLACEMENT_KEY,data.entry);
+		selector.selector.$or[0].espAuthor.$regex= query.replace(REPLACEMENT_KEY,formatSearchEntry(data.entry));
 		query = selector.selector.$or[1].espAuthor.$regex;
-		selector.selector.$or[1].espAuthor.$regex= query.replace(REPLACEMENT_KEY,data.entry);
+		selector.selector.$or[1].espAuthor.$regex= query.replace(REPLACEMENT_KEY,formatSearchEntry(data.entry));
 		return callback(false,selector);
 	}
 	
@@ -151,9 +167,9 @@ var buildSelector = function(data,callback){
 		selector = JSON.parse(JSON.stringify(config.selectors.author));
 		console.log(selector);
 		query = selector.selector.$or[0].author.$regex;
-		selector.selector.$or[0].author.$regex= query.replace(REPLACEMENT_KEY,data.entry);
+		selector.selector.$or[0].author.$regex= query.replace(REPLACEMENT_KEY,formatSearchEntry(data.entry));
 		query = selector.selector.$or[1].author.$regex;
-		selector.selector.$or[1].author.$regex= query.replace(REPLACEMENT_KEY,data.entry);
+		selector.selector.$or[1].author.$regex= query.replace(REPLACEMENT_KEY,formatSearchEntry(data.entry));
 		return callback(false,selector);
 	}
 	
@@ -162,9 +178,9 @@ var buildSelector = function(data,callback){
 		selector = JSON.parse(JSON.stringify(config.selectors.bookName));
 		console.log(selector);
 		query = selector.selector.$or[0].bookName.$regex;
-		selector.selector.$or[0].bookName.$regex= query.replace(REPLACEMENT_KEY,data.entry);
+		selector.selector.$or[0].bookName.$regex= query.replace(REPLACEMENT_KEY,formatSearchEntry(data.entry));
 		query = selector.selector.$or[1].bookName.$regex;
-		selector.selector.$or[1].bookName.$regex= query.replace(REPLACEMENT_KEY,data.entry);
+		selector.selector.$or[1].bookName.$regex= query.replace(REPLACEMENT_KEY,formatSearchEntry(data.entry));
 		return callback(false,selector);
 	}
 	
@@ -189,9 +205,11 @@ var searchUsersByBook = function(sel){
 		var db2 = cloudant.db.use(config.database.person.name);
 		
 		console.log("Searching by UserID : "+sel.selector.userID+" and BookID: "+sel.selector.book.$elemMatch.bookID);
+		console.log("Using Selector",sel);
 		
 		db2.find(sel,function(err,result){
 			  if (err) {
+				    console.log('Error in searchUsersByBook',err);
 				    reject(err);
 			  }else{
 				  console.log('Found %d documents with %s', result.docs.length,JSON.stringify(sel));
@@ -219,37 +237,44 @@ var populateBookWithLoan = function(result,req,callback){
 			++index;					  
 		}
 		return Promise.all(promises).then(function(values) {
-			  console.log('Values Returned : '+JSON.stringify(values));
-			  var loansOK = [];
-			  for (index=0;index<values.length;++index){	
-				//Each index is an user data
-				  for(var i=0;i<values[index].docs[0].book.length;++i){
-					  // If is a loan opened put the relationship with user info
-					  if (values[index].docs[0].book[i].returnDate === '')
-					  {
-						  for (var j=0;j<result.docs[0].userIDs.length;++j)
+			  console.log('Values Returned (searchUsersByBook):',JSON.stringify(values));
+			  console.log('Checking if loans are consistent');
+			  if (values.length > 0 && values[0].docs.length > 0){
+				  console.log('Agregating Loans');
+				  var loansOK = [];
+				  for (index=0;index<values.length;++index){	
+					//Each index is an user data
+					  for(var i=0;i<values[index].docs[0].book.length;++i){
+						  // If is a loan opened put the relationship with user info
+						  if (values[index].docs[0].book[i].returnDate === '')
 						  {
-							 console.log('Changing user data inside book for index '+j);
-							 if (result.docs[0].userIDs[j].userID === values[index].docs[0].userID && typeof(result.docs[0].userIDs[j].loanID)==='undefined' && loansOK.indexOf(values[index].docs[0].book[i].loanID)===-1)
-							 {						  
-								  console.log("Putting loan ID "+values[index].docs[0].book[i].loanID+" with user details of "+values[index].docs[0].userID);
-								  result.docs[0].userIDs[j].firstName = values[index].docs[0].firstName;
-								  result.docs[0].userIDs[j].middleName = values[index].docs[0].middleName;
-								  result.docs[0].userIDs[j].lastName = values[index].docs[0].lastName;
-								  result.docs[0].userIDs[j].loanID = values[index].docs[0].book[i].loanID;
-								  result.docs[0].userIDs[j].returnDate = values[index].docs[0].book[i].returnDate;
-								  result.docs[0].userIDs[j].loanDate = values[index].docs[0].book[i].loanDate;
-								  result.docs[0].userIDs[j].limitDate = values[index].docs[0].book[i].limitDate;	
-								  result.docs[0].userIDs[j].notes = values[index].docs[0].book[i].notes;
-								  result.docs[0].userIDs[j].renovationNr = values[index].docs[0].book[i].renovationNr;
-								  loansOK.push(values[index].docs[0].book[i].loanID);
-							 }
-						  }
-					  }	
+							  for (var j=0;j<result.docs[0].userIDs.length;++j)
+							  {
+								 console.log('Changing user data inside book for index '+j);
+								 if (result.docs[0].userIDs[j].userID === values[index].docs[0].userID && typeof(result.docs[0].userIDs[j].loanID)==='undefined' && loansOK.indexOf(values[index].docs[0].book[i].loanID)===-1)
+								 {						  
+									  console.log("Putting loan ID "+values[index].docs[0].book[i].loanID+" with user details of "+values[index].docs[0].userID);
+									  result.docs[0].userIDs[j].firstName = values[index].docs[0].firstName;
+									  result.docs[0].userIDs[j].middleName = values[index].docs[0].middleName;
+									  result.docs[0].userIDs[j].lastName = values[index].docs[0].lastName;
+									  result.docs[0].userIDs[j].loanID = values[index].docs[0].book[i].loanID;
+									  result.docs[0].userIDs[j].returnDate = values[index].docs[0].book[i].returnDate;
+									  result.docs[0].userIDs[j].loanDate = values[index].docs[0].book[i].loanDate;
+									  result.docs[0].userIDs[j].limitDate = values[index].docs[0].book[i].limitDate;	
+									  result.docs[0].userIDs[j].notes = values[index].docs[0].book[i].notes;
+									  result.docs[0].userIDs[j].renovationNr = values[index].docs[0].book[i].renovationNr;
+									  loansOK.push(values[index].docs[0].book[i].loanID);
+								 }
+							  }
+						  }	
+					  }
 				  }
 			  }	  
 			  console.log("Function return (populateBookWithLoan) : "+JSON.stringify(result));
 			  return callback(result);
+		},function(err){
+			 console.log("Function return (populateBookWithLoan) - With ERROR: "+JSON.stringify(result));
+			 return callback(result);
 		});
 };
 
@@ -629,6 +654,9 @@ app.post('/services/ceai/loan', function(req, res){
 				  bookElement.limitDate = req.body.limitDate;
 				  bookElement.renovationNr = req.body.renovationNr;
 				  bookElement.notes = req.body.notes;
+				  if (typeof(result.docs[0].book)=='undefined'){
+					  result.docs[0].book = [];
+				  }
 				  result.docs[0].book.push(bookElement);
 				  db.insert(result.docs[0],result.docs[0]._id, function(err, body, header) {
 					if (err) {
@@ -647,6 +675,9 @@ app.post('/services/ceai/loan', function(req, res){
 					db2.find(sel, function(err, result2){
 						if (err) {
 							return console.log('[db2.search] ', err.message);
+						}
+						if (typeof (result2.docs[0].loan)=='undefined'){
+							result2.docs[0].loan = 0;
 						}
 						result2.docs[0].loan = ""+(parseInt(result2.docs[0].loan) + 1);
 						result2.docs[0].available = ""+(parseInt(result2.docs[0].available) - 1);
@@ -684,10 +715,14 @@ app.post('/services/ceai/renewLoan', function(req, res){
 		    res.end(err);
 		  }
 		  else{
-			  if (result.docs.length>0){	
-			  	  result.docs[0].book[0].limitDate = req.body.limitDate;
-			  	  result.docs[0].book[0].notes = req.body.notes;
-			  	  result.docs[0].book[0].renovationNr = req.body.renovationNr;
+			  if (result.docs.length>0){
+				  for(var i=0;i<result.docs[0].book.length;++i){
+					  if(result.docs[0].book[i].returnDate==='' && result.docs[0].book[i].bookID == req.body.bookID){				   
+						  result.docs[0].book[i].limitDate = req.body.limitDate;
+						  result.docs[0].book[i].notes = req.body.notes;
+						  result.docs[0].book[i].renovationNr = req.body.renovationNr;
+					  }
+				  } 
 				  db.insert(result.docs[0],result.docs[0]._id, function(err, body, header) {
 					if (err) {
 						return console.log('[db.update] ', err.message);
@@ -716,7 +751,7 @@ app.post('/services/ceai/return', function(req, res){
 	sel.selector.book.$elemMatch.loanID = req.body.loanID;
 	sel.selector.userID = req.body.userID;
 	
-	console.log("Searching by selector "+JSON.stringify(sel));
+	console.log("Searching by selector (Return Loan):",JSON.stringify(sel));
 	
 	db.find(sel, function(err, result) {
 		  if (err) {
@@ -724,9 +759,10 @@ app.post('/services/ceai/return', function(req, res){
 		    res.end(err);
 		  }
 		  else{
+			  //console.log("Results to update loan",JSON.stringify(result.docs));
 			  if (result.docs.length>0){
 				  for(var i=0;i<result.docs[0].book.length;++i){
-					  if(result.docs[0].book[i].returnDate===''){
+					  if(result.docs[0].book[i].returnDate==='' && result.docs[0].book[i].bookID == req.body.bookID){
 						  result.docs[0].book[i].loanDate = req.body.loanDate;
 					  	  result.docs[0].book[i].returnDate = req.body.returnDate;
 					  	  result.docs[0].book[i].limitDate = req.body.limitDate;
@@ -741,7 +777,7 @@ app.post('/services/ceai/return', function(req, res){
 						console.log('You have updated the record.');
 						console.log(body);
 						console.log('With Content :');
-						console.log(JSON.stringify(req.body, null, 2));						
+						console.log(JSON.stringify(result.docs[0], null, 2));						
 						
 					});
 				    var db2 = cloudant.db.use(config.database.book.name);

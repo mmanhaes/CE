@@ -65,7 +65,9 @@ function populateData(book){
 	$('#author').val(book.author);
 	$('#espAuthor').val(book.espAuthor);
 	$('#bookName').val(book.bookName);
-	$('#category').val(book.category);
+	var category = book.category;
+	category = category.substring(0,1).toUpperCase() + category.substring(1).toLowerCase();
+	$('#category').val(category);
 	$('#amount').val(book.amount);
 	$('#loan').val(book.loan);
 	$('#available').val(book.available);

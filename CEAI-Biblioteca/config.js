@@ -92,7 +92,7 @@ exports.selectors={
 				      "$or": [
 				         {
 				            "bookName": {
-				               "$regex": ".*(?i)(<ENTRY>)"
+				               "$regex": ".*(?i)(<ENTRY>).*"
 				            }
 				         },
 				         {
@@ -127,7 +127,7 @@ exports.selectors={
 				      "$or": [
 				         {
 				            "author": {
-				               "$regex": ".*(?i)(<ENTRY>)"
+				               "$regex": ".*(?i)(<ENTRY>).*"
 				            }
 				         },
 				         {
@@ -161,7 +161,7 @@ exports.selectors={
 				      "$or": [
 				         {
 				            "espAuthor": {
-				               "$regex": ".*(?i)(<ENTRY>)"
+				               "$regex": ".*(?i)(<ENTRY>).*"
 				            }
 				         },
 				         {
