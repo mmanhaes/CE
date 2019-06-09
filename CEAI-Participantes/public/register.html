@@ -292,7 +292,7 @@
 										class="input--question--manual--reduced base--a"
 										style="width: 50px;"></td>
 									<td style="width: 25%"><h5 align="right" class="base--h5" style="width: 140px;">Parentesco CPF:</h5></td>
-									<td style="width: 75%" colspan="1"><input id="parentCpf"
+									<td style="width: 75%" colspan="1"><input id="parentCpf" maxlength="11"
 										type="text" class="input--question--manual--reduced base--a"
 										style="width: 110px;"></td>
 									<td style="width: 75%" colspan="1">
@@ -589,13 +589,19 @@
 								<option value="ESDE I">ESDE I</option>
 								<option value="ESDE II">ESDE II</option>
 								<option value="EADE">EADE</option>
-								<option value="ESTUDO DA CODIFICAÇÃO ESPIRITA">ESTUDO DA CODIFICAÇÃO ESPIRITA</option>
-								<option value="ESTUDO DAS OBRAS DE ANDRÉ LUIZ">ESTUDO DAS OBRAS DE ANDRÉ LUIZ</option>
-								<option value="ESTUDO DA MEDIUNIDADE">ESTUDO DA MEDIUNIDADE</option>
-								<option value="PARTICIPANTE DO MEDIÚNICO">PARTICIPANTE DO MEDIÚNICO</option>
-								<option value="EVANGELIZAÇÃO INFANTO-JUVENIL">EVANGELIZAÇÃO INFANTO-JUVENIL</option>
-								<option value="ESTUDO DO EVANGELHO">ESTUDO DO EVANGELHO</option>
-								<option value="ESTUDO SÉRIE PSIC. JOANNA DE ANGELIS">ESTUDO SÉRIE PSIC. JOANNA DE ANGELIS</option>
+								<option value="Estudo da Codificação Espírita">Estudo da Codificação Espírita</option>
+								<option value="Estudo das Obras de André Luiz">Estudo das Obras de André Luiz</option>
+								<option value="Estudo da Mediunidade">Estudo da Mediunidade</option>
+								<option value="Participante do Mediúnico">Participante do Mediúnico</option>
+								<option value="Estudo da Evangelização - Infância 1">Estudo da Evangelização - Infância 1</option>
+								<option value="Estudo da Evangelização - Infância 2">Estudo da Evangelização - Infância 2</option>								
+								<option value="Estudo da Evangelização - Primeiro Ciclo">Estudo da Evangelização - Primeiro Ciclo</option>
+								<option value="Estudo da Evangelização - Segundo Ciclo">Estudo da Evangelização - Segundo Ciclo</option>		
+								<option value="Estudo da Evangelização - Terceiro Ciclo">Estudo da Evangelização - Terceiro Ciclo</option>						
+								<option value="Estudo da Evangelização - Juventude 1">Estudo da Evangelização - Juventude 1</option>
+								<option value="Estudo da Evangelização - Juventude 2">Estudo da Evangelização - Juventude 2</option>
+								<option value="Estudo do Evangelho">Estudo do Evangelho</option>
+								<option value="Estudo da série psic. Joanna de Ângelis">Estudo da série psic. Joanna de Ângelis</option>
 						</select></td>
 						<td colspan="1">
 							<h5 align="right" class="base--h5" style="width: 130px;">Dia da Semana:</h5>
@@ -759,7 +765,7 @@
 							<h5 class="base--h5" style="width: 140px;">Trabalho:</h5>
 						</td>
 						<td style="width: 100%" colspan="2"><select id="workType"
-							style="color: #a53725";width: 90px">
+							style="color: #a53725;width: 450px">
 								<option value="No Selection">Selecione</option>
 								<option value="Recepção">Recepção</option>
 								<option value="Ação Social">Ação Social</option>
@@ -770,27 +776,37 @@
 								<option value="Atividade de Passe">Atividade de Passe</option>
 								<option value="Atendimento Diálogo Fraterno">Atendimento Diálogo Fraterno</option>
 								<option value="Coordenador de EIDE I">Coordenador de EIDE I</option>
-								<option value="Coordenador de EIDE II">Coordenador de EIDE I</option>
+								<option value="Coordenador de EIDE II">Coordenador de EIDE II</option>
 								<option value="Coordenador de ESDE I">Coordenador de ESDE I</option>
 								<option value="Coordenador de ESDE II">Coordenador de ESDE II</option>
 								<option value="Coordenador de EADE">Coordenador de EADE</option>
 								<option value="Coordenador de Estudo do Evangelho">Coordenador de Estudo do Evangelho</option>
-								<option value="Coordenador de Estudo Joanna de Ângelis">Coordenador de Estudo Joanna de Ângelis</option>
+								<option value="Coordenador de Estudo da Série Psic. de Joanna de Ângelis">Coordenador de Estudo da Série Psic. de Joanna de Ângelis</option>
+								<option value="Coordenador de Estudo das Obras de André Luiz">Coordenador de Estudo das Obras de André Luiz</option>
 								<option value="Coordenador de Estudo da Mediunidade">Coordenador de Estudo da Mediunidade</option>
+								<option value="Coordenador do Grupo de Estudo da Codificação Espirita">Coordenador do Grupo de Estudo da Codificação Espirita</option>
 								<option value="Dirigente do Mediúnico">Dirigente do Mediúnico</option>
 								<option value="Dialogador do Mediúnico">Dialogador do Mediúnico</option>
 								<option value="Participante do Mediúnico">Participante do Mediúnico</option>
-								<option value="Coordenador de Evangelização e Juventude">Coordenador de Evangelização e Juventude</option>
+								<option value="Coordenador da Evangelização - Infância 1">Coordenador da Evangelização - Infância 1</option>
+								<option value="Coordenador da Evangelização - Infância 2">Coordenador da Evangelização - Infância 2</option>
+								<option value="Coordenador da Evangelização - Primeiro Ciclo">Coordenador da Evangelização - Primeiro Ciclo</option>
+								<option value="Coordenador da Evangelização - Segundo Ciclo">Coordenador da Evangelização - Segundo Ciclo</option>		
+								<option value="Coordenador da Evangelização - Terceiro Ciclo">Coordenador da Evangelização - Terceiro Ciclo</option>						
+								<option value="Coordenador da Evangelização - Juventude 1">Coordenador da Evangelização - Juventude 1</option>
+								<option value="Coordenador da Evangelização - Juventude 2">Coordenador da Evangelização - Juventude 2</option>								
+								<option value="Estágio na Evangelização e Juventude">Estágio na Evangelização e Juventude</option>
+								<option value="Coordenação de Apoio a Evangelização e Juventude">Coordenação de Apoio a Evangelização e Juventude</option>
 								<option value="Coordenador de Diálogo Fraterno em Grupo">Coordenador de Diálogo Fraterno em Grupo</option>
 								<option value="Coordenação de Apoio a diretoria">Coordenação de Apoio a diretoria</option>
 								<option value="Conselho Fiscal">Conselho Fiscal</option>
 								<option value="Diretoria">Diretoria</option>
 						</select></td>
-						<td colspan="1""width: 25%">
-							<h5 align="right"  class="base--h5" style="width: 171px;">Dia da Semana:</h5>
+						<td colspan="1">
+							<h5 align="right"  class="base--h5" style="width: 120px;">Dia da Semana:</h5>
 						</td>
 						<td style="width: 100%" colspan="1"><select id="weekDayWork"
-							style="color: #a53725";width: 55px">
+							style="color: #a53725">
 								<option selected="selected" value="No Selection">Selecione</option>
 								<option value="Segunda">Segunda</option>
 								<option value="Terça">Terça</option>
@@ -800,11 +816,11 @@
 								<option value="Sábado">Sábado</option>
 								<option value="Domingo">Domingo</option>
 						</select></td>
-						<td colspan="1""width: 25%">
-							<h5 align="right" class="base--h5" style="width: 90px;">Período:</h5>
+						<td colspan="1">
+							<h5 align="right" class="base--h5" style="width: 70px;">Período:</h5>
 						</td>
-						<td style="width: 100%" colspan="1"><select id="periodWork"
-							style="color: #a53725";width: 75px">
+						<td style="width: 80%" colspan="1"><select id="periodWork"
+							style="color: #a53725;width: 80px">
 								<option selected="selected" value="No Selection">Selecione</option>
 								<option value="Manhã">Manhã</option>
 								<option value="Tarde">Tarde</option>

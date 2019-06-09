@@ -44,6 +44,9 @@ function handleChangeRadioButton(){
          }
     }
     alert("Usuário "+cellFullName.innerHTML+" carregado para alterações.");
+    association = [];
+    work = [];
+    study = [];
     populateData(searchCache.docs[pos]);
     cachedPosition = pos;
 	var $userData = $('.userData');
@@ -200,7 +203,9 @@ function populateData(person){
 		$('#ddd1').val(phone[0]);
 		$('#phone1').val(phone[1]);
 	}
-	$('#whatsup1').val(person.whatsup1);	
+	if (typeof(person.whatsup1) != 'undefined' || person.whatsup1 != ''){
+		$('#whatsup1').val(person.whatsup1);
+	}
 	if (typeof(person.phone2) !== 'undefined')
 	{
 		phone = person.phone2.split("-");
@@ -440,7 +445,7 @@ function validateFieldsContact(callback){
 	}	
 	var whatsup1 = document.getElementById("whatsup1");
 	
-	if (whatsup1.selectedIndex === 0){
+	if (whatsup1.selectedIndex === 0 && whatsup1.selectedIndex === -1){
 
 		return callback(false,"Selecione se o telefone 1 tem whatsup ou não");
 	}
@@ -1131,8 +1136,8 @@ function buildStudyRowTable(data){
 
 function createOrUpdate(type){
 	//alert('Insert Button'); 
-	var $output = $('.outputCreateOrUpdate'),
-	$process = $('.outputCreateOrUpdate');	
+	var	$process = $('.processingCreateOrUpdate');
+	
 	validateFieldsForGeneral(function(validGeneral,response){
 		if (validGeneral === false){
 			if (response !== "")
@@ -1159,7 +1164,6 @@ function createOrUpdate(type){
 						}
 						else{
 							$process.show();
-							$output.hide();
 							var state = document.getElementById("state");
 							var respNames = "";
 							splitFullName($.trim($('#fullNameInput').val()),function(response){
@@ -1223,14 +1227,13 @@ function createOrUpdate(type){
 								contentType: "application/json",
 								success: function(data, textStatus, jqXHR){
 										console.log(data);
-										$('#resultsCreateOrUpdate').text(data);
 										$process.hide();
-										$output.show(); 
+										alert(data);										
 								},
 								error: function(jqXHR, textStatus, errorThrown){
-									$('#resultsCreateOrUpdate').text('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
+									console.log('Problemas na atualização de Cadastro, Contate administrador, Erro:',errorThrown);
 									$process.hide();
-									$output.show(); 
+									alert('Problemas na atualização de Cadastro, Contate administrador, Erro:',errorThrown);									
 								}
 							});
 						}
@@ -1250,7 +1253,9 @@ $(document).ready(function() {
 		var $output = $('.outputGeneral'),
 		$message = $('.messageSearchPanel'),
 		$process = $('.processingSearch'),	
-		$userData = $('.userData');
+		$userData = $('.userData'),
+		$newRecordButton = $('.newRecord');
+		$newRecordButton.hide();
 		var validate = validateFieldsSearch();
 		if (validate==0){	
 			alert('Favor preencher um nome para pesquisar, pode ser o primeiro nome ou nome completo ou coloque o CPF');
@@ -1289,11 +1294,11 @@ $(document).ready(function() {
 		            	buildSearhOutput(data);
 		            	searchCache = data;
 		            	$output.show(); 
+		         		$newRecordButton.show();
 		        	}
 		        	else{
 		        		$('#messageSearch').text('Pesquisa por participante '+$.trim($('#fullName').val())+' não econtrou dados');
 		        		$message.show(); 
-		        		var $newRecordButton = $('.newRecord');
 		         		$newRecordButton.show();
 		        	}        
 		        },
@@ -1321,13 +1326,13 @@ $(document).ready(function() {
 						if (response.message == 'NOT FOUND'){
 			        		$('#messageSearch').text('Pesquisa por participante '+$.trim($('#cpf').val())+' não econtrou dados');
 			        		$message.show(); 
-			        		var $newRecordButton = $('.newRecord');
 			         		$newRecordButton.show();
 						}
 						else{
 			            	buildSearhOutput(response.data);
 			            	searchCache = response.data;
 			            	$output.show(); 
+			         		$newRecordButton.show();
 						}
 				},
 				error: function(jqXHR, textStatus, errorThrown){

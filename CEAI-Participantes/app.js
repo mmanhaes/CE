@@ -548,7 +548,7 @@ app.post('/services/ceai/register', function(req, res){
 									console.log(body);
 									console.log('With Content :');
 									console.log(JSON.stringify(req.body, null, 2));
-									res.end('Dados Cadastrados com Sucesso para o participante :'+req.body.firstName+' '+req.body.middleName+' '+ req.body.lastName+'\n');								}	
+									res.end('Dados Cadastrados com Sucesso para o participante: '+req.body.firstName+' '+req.body.middleName+' '+ req.body.lastName+'\n');								}	
 							});								    		
 				    	});
 				    }
@@ -637,13 +637,14 @@ app.get('/cadastro',
 	res.sendFile(__dirname + "/public/register.html");
 });
 
+/*
 app.get('/publico',
 		function(req, res){
 	res.sendFile(__dirname + "/public/public.html");
 });
-
+*/
 
 app.listen(port,function(){
-	console.log('CEAI Cadastro de Participantes Server running on port:'+port);
+	console.log('CEAI Cadastro de Participantes Server running on port:',port);
 });
 
