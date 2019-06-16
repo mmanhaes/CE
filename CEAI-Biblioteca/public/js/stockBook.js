@@ -65,9 +65,7 @@ function populateData(book){
 	$('#author').val(book.author);
 	$('#espAuthor').val(book.espAuthor);
 	$('#bookName').val(book.bookName);
-	var category = book.category;
-	category = category.substring(0,1).toUpperCase() + category.substring(1).toLowerCase();
-	$('#category').val(category);
+	$('#category').val(book.category);
 	$('#amount').val(book.amount);
 	$('#loan').val(book.loan);
 	$('#available').val(book.available);
@@ -131,7 +129,7 @@ function validateFields(callback){
 	}	
 	var category = document.getElementById("category");
 	
-	if (category.selectedIndex === 0){
+	if (category.selectedIndex === -1 || category.selectedIndex === 0){
 
 		return callback(false,"Os campos Autor, Nome do Livro, Categoria do Livro e Quantidade são Requeridos");
 	}
@@ -222,47 +220,50 @@ $(document).ready(function() {
 					alert(response);
 				return;
 			}
-		}); 
-		$process.show();
-		$output.hide();
-		var category = document.getElementById("category");
-		var available;
-		if (parseInt($('#loan').val())>0)
-			available = (parseInt($('#amount').val()) - parseInt($('#loan').val()));
-		else
-			available = parseInt($('#amount').val());
-		var updateBook = '{'
-			+'"type" : "book",'
-			+'"bookID" : "'+$.trim($('#bookID').val())+'",'
-			+'"isbn" : "'+$.trim($('#isbn').val())+'",'
-			+'"author" : "'+$.trim($('#author').val())+'",'
-			+'"espAuthor" : "'+$.trim($('#espAuthor').val())+'",'
-			+'"category" : "'+category.options[category.selectedIndex].value+'",'
-			+'"bookName" : "'+$.trim($('#bookName').val())+'",'
-			+'"available" : "'+available+'",'
-			+'"amount" : "'+$.trim($('#amount').val())+'"}';
+			else{
+				$process.show();
+				$output.hide();
+				var category = document.getElementById("category");
+				var available;
+				if (parseInt($('#loan').val())>0)
+					available = (parseInt($('#amount').val()) - parseInt($('#loan').val()));
+				else
+					available = parseInt($('#amount').val());
+				var updateBook = '{'
+					+'"type" : "book",'
+					+'"bookID" : "'+$.trim($('#bookID').val())+'",'
+					+'"isbn" : "'+$.trim($('#isbn').val())+'",'
+					+'"author" : "'+$.trim($('#author').val())+'",'
+					+'"espAuthor" : "'+$.trim($('#espAuthor').val())+'",'
+					+'"category" : "'+category.options[category.selectedIndex].value+'",'
+					+'"bookName" : "'+$.trim($('#bookName').val())+'",'
+					+'"available" : "'+available+'",'
+					+'"amount" : "'+$.trim($('#amount').val())+'"}';
 
-		console.log(JSON.stringify(updateBook));
-		$.ajax({
-			url: '/services/ceai/updateBook',
-			type: 'POST',
-			data: updateBook,
-			contentType: "application/json",
-			success: function(data, textStatus, jqXHR){
-					console.log(data);
-					$('#results').html(data);
-					$('#available').val(available);
-					$process.hide();
-					$output.show(); 	
-					enableDisableActions('update');
-			},
-			error: function(jqXHR, textStatus, errorThrown){
-				$('#results').html('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
-				//alert('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
-				$process.hide();
-				$output.show(); 
+				console.log(JSON.stringify(updateBook));
+				$.ajax({
+					url: '/services/ceai/updateBook',
+					type: 'POST',
+					data: updateBook,
+					contentType: "application/json",
+					success: function(data, textStatus, jqXHR){
+							console.log(data);
+							$('#results').html(data);
+							$('#available').val(available);
+							$process.hide();
+							$output.show(); 	
+							enableDisableActions('update');
+					},
+					error: function(jqXHR, textStatus, errorThrown){
+						$('#results').html('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
+						//alert('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
+						$process.hide();
+						$output.show(); 
+					}
+				});
 			}
-		});
+		}); 
+		
 	});		
 	$('#insert').click(function(){
 		//alert('Insert Button'); 
