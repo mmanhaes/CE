@@ -22,6 +22,7 @@ var cachedPosition;
 var association = [];
 var work = [];
 var study = [];
+var currentDepartment;
 
 function cleanSearchOutput(table){
 	var length = table.rows.length;
@@ -285,19 +286,36 @@ function validateFieldsStudy(callback){
 
 function validateFieldsWork(callback){
 	
-	if ($('#workType').val() === "No Selection"){
-		return callback(false,"Selecione um tipo de Atividade voluntária");
+	if ($('#department').val() === "No Selection"  || $.trim($('#department').val()) == ''){
+		return callback(false,"Selecione o departamento no qual exerce a atividade voluntária");
 	}
-	if ($('#weekDayWork').val() === "No Selection"){
-		return callback(false,"Selecione o dia da semana da atividade voluntária");
+	if ($('#section').val() === "No Selection" || $.trim($('#section').val()) == ''){
+		return callback(false,"Selecione a seção ou grupo no qual exerce a atividade voluntária");
 	}
-	if ($('#periodWork').val() === "No Selection"){
-		return callback(false,"Selecione o período da Atividade voluntária");
+	if ($('#function').val() === "No Selection" || $.trim($('#function').val()) == ''){
+		return callback(false,"Selecione a função na seção ou grupo no qual exerce a atividade voluntária");
+	}
+	
+	if ($('#section').val()!="Direção" 
+		&& $('#section').val()!="Conselho Fiscal" 
+		 && $('#section').val()!="Secretaria"
+		  && $('#section').val()!="Coordenação" 
+		   && $('#section').val()!="Eventos" 
+			 && $('#section').val()!="Manutenção" 
+			   && $('#section').val()!="TI" 
+				 && $('#section').val()!="Colaboração"
+				   && $('#section').val()!="Grupo de Trabalho"){
+		if ($('#weekDayWork').val() === "No Selection"){
+			return callback(false,"Selecione o dia da semana da atividade voluntária");
+		}
+		if ($('#periodWork').val() === "No Selection"){
+			return callback(false,"Selecione o período da Atividade voluntária");
+		}
 	}
 
 	if ($.trim($('#initWorkDay').val()) === '' || $.trim($('#initWorkMonth').val()) === '' || $.trim($('#initWorkYear').val())==='')  
 	{
-		return callback(false,"Preencha o campo data inicial corretamente dd-MM-YYYY");
+		return callback(false,"Preencha o campo data inicial da atividade vonluntária corretamente dd-MM-YYYY");
 	}	
 	
 	
@@ -307,17 +325,25 @@ function validateFieldsWork(callback){
 
 function populateWorkData(work){
 	   
-	$('#workType').val(work.workType);
-	$('#weekDayWork').val(work.weekDay);
-	$('#periodWork').val(work.period);
+	$('#department').val(work.department);
+	handleDepartmentChange();
+	$('#section').val(work.section);
+	handleSectionChange();
+	$('#function').val(work["function"]);
+	if (typeof(work.weekDay)!='undefined' && work.weekDay!=''){
+		$('#weekDayWork').val(work.weekDay);
+		$('#periodWork').val(work.period);
+	}
 	var initDate =  work.initDate.split("-");
 	$('#initWorkDay').val(initDate[0]);
 	$('#initWorkMonth').val(initDate[1]);
 	$('#initWorkYear').val(initDate[2]);
 	var finalDate =  work.finalDate.split("-");
-	$('#finalWorkDay').val(finalDate[0]);
-	$('#finalWorkMonth').val(finalDate[1]);
-	$('#finalWorkYear').val(finalDate[2]);
+	if (finalDate.length > 0){
+		$('#finalWorkDay').val(finalDate[0]);
+		$('#finalWorkMonth').val(finalDate[1]);
+		$('#finalWorkYear').val(finalDate[2]);
+	}
 	if (typeof(work.classNumber)!='undefined'){
 		$('#classWorkLabel').css("display","block");
 		$('#classWork').css("display","block");
@@ -339,12 +365,24 @@ function buildWorkRowTable(data){
     var row = table.insertRow(rowCount);
 
     row.insertCell(0).innerHTML= '<input type="radio" name="groupWork" onchange="handleChangeRadioButtonWork();">';
-    row.insertCell(1).innerHTML= data.workType;
-    row.insertCell(2).innerHTML= data.weekDay;
-    row.insertCell(3).innerHTML= data.period;
-    row.insertCell(4).innerHTML= data.initDate;
-    row.insertCell(5).innerHTML= data.finalDate;
-    row.insertCell(6).innerHTML= data.notes;  
+    row.insertCell(1).innerHTML= data.department;
+    row.insertCell(2).innerHTML= data.section;
+    row.insertCell(3).innerHTML= data["function"];
+    if (typeof(data.weekDay)!='undefined'){
+    	row.insertCell(4).innerHTML= data.weekDay;
+    }
+    else{
+    	row.insertCell(4).innerHTML= "";
+    }
+    if (typeof(data.weekDay)!='undefined'){
+    	row.insertCell(5).innerHTML= data.period;
+    }
+    else{
+    	row.insertCell(5).innerHTML= "";
+    }    
+    row.insertCell(6).innerHTML= data.initDate;
+    row.insertCell(7).innerHTML= data.finalDate;
+    row.insertCell(8).innerHTML= data.notes;  
 }
 
 
@@ -361,12 +399,14 @@ function handleChangeRadioButtonWork(){
     }
 
     var work = {};
-    work["workType"] = row.cells[1].innerHTML;
-    work["weekDay"] = row.cells[2].innerHTML;
-    work["period"] = row.cells[3].innerHTML; 
-    work["initDate"] = row.cells[4].innerHTML;
-    work["finalDate"] = row.cells[5].innerHTML;
-    work["notes"] = row.cells[6].innerHTML;
+    work["department"] = row.cells[1].innerHTML;
+    work["section"] = row.cells[2].innerHTML;
+    work["function"] = row.cells[3].innerHTML;
+    work["weekDay"] = row.cells[4].innerHTML;
+    work["period"] = row.cells[5].innerHTML; 
+    work["initDate"] = row.cells[6].innerHTML;
+    work["finalDate"] = row.cells[7].innerHTML;
+    work["notes"] = row.cells[8].innerHTML;
     
     console.log(JSON.stringify(work));
     populateWorkData(work);
@@ -663,12 +703,22 @@ function cleanUpAssociationFields(){
     $('#notesAssociation').val('');
 }
 
+function clearComboOptions(sel){
+	while (sel.options.length > 0) {                
+		sel.remove(0);
+    }   
+}
+
 function cleanUpWorkFields(){
 	
-	var workType = document.getElementById("workType");
+	var department = document.getElementById("department");
+	var section = document.getElementById("section");
+	var funct = document.getElementById("function");
 	var weekDay = document.getElementById("weekDayWork");
 	var period = document.getElementById("periodWork");
-	workType.selectedIndex = 0;
+	department.selectedIndex = 0;
+	section.selectedIndex = 0;
+	funct.selectedIndex = 0;
 	weekDay.selectedIndex = 0;
 	period.selectedIndex = 0;
 	$('#initWorkDay').val('');
@@ -836,27 +886,43 @@ function updateWork(){
 		         }
 		    }
 		    if (index != -1){
-			    var workType = document.getElementById("workType");
+			    var department = document.getElementById("department");
+			    var section = document.getElementById("section");
+			    var funct = document.getElementById("function");
 				var weekDay = document.getElementById("weekDayWork");
 				var period = document.getElementById("periodWork");
-				var workItem = {};
-				row.cells[1].innerHTML = workType.options[workType.selectedIndex].value;
-			    workItem.workType = workType.options[workType.selectedIndex].value;
-			    row.cells[2].innerHTML = weekDay.options[weekDay.selectedIndex].value;
-			    workItem.weekDay = weekDay.options[weekDay.selectedIndex].value
-			    row.cells[3].innerHTML = period.options[period.selectedIndex].value;
-			    workItem.period = period.options[period.selectedIndex].value;
-			    row.cells[4].innerHTML = $.trim($('#initWorkDay').val()) + '-' + $.trim($('#initWorkMonth').val()) + '-' + $.trim($('#initWorkYear').val());
+				var workItem = {};			
+				row.cells[1].innerHTML = department.options[department.selectedIndex].value;
+				workItem.department = department.options[department.selectedIndex].value;
+				row.cells[2].innerHTML = section.options[section.selectedIndex].value;
+				workItem.section = section.options[section.selectedIndex].value;
+				row.cells[3].innerHTML = funct.options[funct.selectedIndex].value;
+				workItem["function"] = funct.options[funct.selectedIndex].value;
+			    if ($('#section').val()!="Direção" 
+					&& $('#section').val()!="Conselho Fiscal" 
+					 && $('#section').val()!="Secretaria"
+					  && $('#section').val()!="Coordenação" 
+					   && $('#section').val()!="Eventos" 
+						 && $('#section').val()!="Manutenção" 
+						   && $('#section').val()!="TI" 
+							 && $('#section').val()!="Colaboração"
+							   && $('#section').val()!="Grupo de Trabalho"){
+			    	 row.cells[4].innerHTML = weekDay.options[weekDay.selectedIndex].value;
+					 workItem.weekDay = weekDay.options[weekDay.selectedIndex].value
+					 row.cells[5].innerHTML = period.options[period.selectedIndex].value;
+					 workItem.period = period.options[period.selectedIndex].value;
+				}
+			    row.cells[6].innerHTML = $.trim($('#initWorkDay').val()) + '-' + $.trim($('#initWorkMonth').val()) + '-' + $.trim($('#initWorkYear').val());
 			    workItem.initDate = $.trim($('#initWorkDay').val()) + '-' + $.trim($('#initWorkMonth').val()) + '-' + $.trim($('#initWorkYear').val());
 			    if ($.trim($('#finalWorkDay').val())!=='' && $.trim($('#finalWorkMonth').val()) !=='' && $.trim($('#finalWorkYear').val()) !=='' ){
-			    	row.cells[5].innerHTML = $.trim($('#finalWorkDay').val()) + '-' + $.trim($('#finalWorkMonth').val()) + '-' + $.trim($('#finalWorkYear').val());
+			    	row.cells[7].innerHTML = $.trim($('#finalWorkDay').val()) + '-' + $.trim($('#finalWorkMonth').val()) + '-' + $.trim($('#finalWorkYear').val());
 			    	workItem.finalDate =  $.trim($('#finalWorkDay').val()) + '-' + $.trim($('#finalWorkMonth').val()) + '-' + $.trim($('#finalWorkYear').val());
 			    }
 			    else{
-			    	row.cells[5].innerHTML = '';
+			    	row.cells[7].innerHTML = '';
 			    	workItem.finalDate =  '';
 			    }
-			    row.cells[6].innerHTML = $.trim($('#notesWork').val());
+			    row.cells[8].innerHTML = $.trim($('#notesWork').val());
 			    if ($('#classWork').css("display") != "none"){
 			    	workItem.classNumber = $('#classWork').val(); 
 			    }			    
@@ -887,13 +953,29 @@ function insertWork(){
 		{
 			$process.show();
 			$output.hide();
-			var workType = document.getElementById("workType");
+			var department = document.getElementById("department");
+			var section = document.getElementById("section");
+			var funct = document.getElementById("function");
 			var weekDay = document.getElementById("weekDayWork");
 			var period = document.getElementById("periodWork");
 			var workItem = {};
-			workItem.workType = workType.options[workType.selectedIndex].value;
-			workItem.weekDay = weekDay.options[weekDay.selectedIndex].value
-			workItem.period = period.options[period.selectedIndex].value;
+			workItem.department = department.options[department.selectedIndex].value;
+			workItem.section = section.options[section.selectedIndex].value;
+			workItem["function"] = funct.options[funct.selectedIndex].value;
+			
+			if ($('#section').val()!="Direção" 
+				&& $('#section').val()!="Conselho Fiscal" 
+				 && $('#section').val()!="Secretaria"
+				  && $('#section').val()!="Coordenação" 
+				   && $('#section').val()!="Eventos" 
+					 && $('#section').val()!="Manutenção" 
+					   && $('#section').val()!="TI" 
+						 && $('#section').val()!="Colaboração"
+						   && $('#section').val()!="Grupo de Trabalho"){
+				workItem.weekDay = weekDay.options[weekDay.selectedIndex].value
+				workItem.period = period.options[period.selectedIndex].value;
+			}
+			
 			workItem.initDate = $.trim($('#initWorkDay').val()) + '-' + $.trim($('#initWorkMonth').val()) + '-' + $.trim($('#initWorkYear').val());
 		    if ($.trim($('#finalWorkDay').val())!==''){
 		    	workItem.finalDate = $.trim($('#finalWorkDay').val()) + '-' + $.trim($('#finalWorkMonth').val()) + '-' + $.trim($('#finalWorkYear').val());
@@ -998,7 +1080,7 @@ function updateStudy(){
 			    if ($('#classStudy').css("display") != "none"){
 			    	studyItem.classNumber = $('#classStudy').val(); 
 			    }
-			    studyItem.study = $.trim($('#notesStudy').val());
+			    studyItem.notes = $.trim($('#notesStudy').val());
 			    study[index] = studyItem;
 		    }			
 		    
@@ -1131,7 +1213,12 @@ function buildStudyRowTable(data){
     row.insertCell(3).innerHTML= data.period;
     row.insertCell(4).innerHTML= data.initDate;
     row.insertCell(5).innerHTML= data.finalDate;
-    row.insertCell(6).innerHTML= data.notes;  
+    if (typeof(data.notes)!=='undefined'){
+    	row.insertCell(6).innerHTML= data.notes;
+    }
+    else{
+    	row.insertCell(6).innerHTML= "";
+    }
 }
 
 function createOrUpdate(type){
@@ -1243,6 +1330,109 @@ function createOrUpdate(type){
 		}
 	}); 
 }
+
+function enableDisableClassLabel(){
+	if ($('#section').val()=="No Selection" || $('#section').val()=="EIDE I" || $('#section').val()=="EIDE II"
+		|| $('#section').val()=="ESDE I" 
+			|| $('#section').val()=="ESDE II" 
+			   || $('#section').val()=="EADE" 
+				   || $('#section').val()=="Grupo de Estudo da Codificação Espírita (GECE)"
+					   || $('#section').val()=="Estudo das Obras de André Luiz"
+						   || $('#section').val()=="Estudo da Série Psic. de Joanna de Ângelis"
+							   || $('#section').val()=="Infância 1"
+								   || $('#section').val()=="Infância 2"
+									   || $('#section').val()=="Primeiro Ciclo"
+										   || $('#section').val()=="Segundo Ciclo"
+											   || $('#section').val()=="Terceiro Ciclo"
+												   || $('#section').val()=="Juventude 1"
+													   || $('#section').val()=="Juventude 2"){
+		$('#classWorkLabel').css("display","block");
+		$('#classWork').css("display","block");
+	}
+	else{
+		$('#classWorkLabel').css("display","none");
+		$('#classWork').css("display","none");
+	}
+}
+
+function enableDisableDayAndPeriod(){
+	if ($('#section').val()=="Direção" || $('#section').val()=="Conselho Fiscal" || $('#section').val()=="Secretaria"
+		|| $('#section').val()=="Coordenação" 
+		  || $('#section').val()=="Eventos" 
+			|| $('#section').val()=="Manutenção" 
+			   || $('#section').val()=="TI" 
+				   || $('#section').val()=="Colaboração"
+					   || $('#section').val()=="Grupo de Trabalho"){
+		$('#weekDayWorkLabel').css("display","none");
+		$('#weekDayWork').css("display","none");
+		$('#periodWorkLabel').css("display","none");
+		$('#periodWork').css("display","none");
+	}
+	else{
+		$('#weekDayWorkLabel').css("display","block");
+		$('#weekDayWork').css("display","block");
+		$('#periodWorkLabel').css("display","block");
+		$('#periodWork').css("display","block");
+	}
+}
+
+function handleSectionChange(){
+	 enableDisableClassLabel();
+	 enableDisableDayAndPeriod();
+	 if (typeof(currentDepartment)!='undefined'){
+		 var valueSection = currentDepartment.sections.map(function(item){return item.section});
+		 console.log("value Array of Department:",JSON.stringify(valueSection));
+		 var sectionIndex = valueSection.indexOf($('#section').val());
+		 var currentSession = currentDepartment.sections[sectionIndex];
+		 console.log("Department Selected:",JSON.stringify(currentSession));
+	  	 var sel = document.getElementById('function');
+	  	 clearComboOptions(sel);
+	  	 var fragment = document.createDocumentFragment();
+	  	 var opt;
+	
+	     opt = document.createElement('option');
+	     opt.innerHTML = "Selecione";
+	     opt.value = "No Selection"; 
+	     fragment.appendChild(opt);
+	     for(var i=0;i<currentSession.functions.length;++i)
+	  	 {    		 
+	 	      opt = document.createElement('option');
+	  	      opt.innerHTML = currentSession.functions[i];
+	  	      opt.value = currentSession.functions[i];
+	  	      fragment.appendChild(opt);
+	  	 }        	
+	  	 sel.appendChild(fragment);
+	 }
+}
+
+function handleDepartmentChange(){
+	 var valueDepartment = chart.map(function(item){ return item.department});
+	 console.log("value Array of Department:",JSON.stringify(valueDepartment));
+	 var departmentIndex = valueDepartment.indexOf($('#department').val());
+	 if (departmentIndex!=-1){
+		 currentDepartment = chart[departmentIndex];
+		 console.log("Department Selected:",JSON.stringify(currentDepartment));
+	  	 var sel = document.getElementById('section');
+	  	 clearComboOptions(sel);
+	  	 var fragment = document.createDocumentFragment();
+	  	 var opt;
+	
+	     opt = document.createElement('option');
+	     opt.innerHTML = "Selecione";
+	     opt.value = "No Selection"; 
+	     fragment.appendChild(opt);
+	     for(var i=0;i<currentDepartment.sections.length;++i)
+	  	 {    		 
+	  	      opt = document.createElement('option');
+	   	      opt.innerHTML = currentDepartment.sections[i].section;
+	   	      opt.value = currentDepartment.sections[i].section;
+	   	      fragment.appendChild(opt);
+	  	 }        	
+	  	 sel.appendChild(fragment);
+	 }
+}
+	 
+	 
 
 $(document).ready(function() {
 	  $('#newRegister').click(function(){
@@ -1451,27 +1641,14 @@ $(document).ready(function() {
 	$('#deleteAssociation').click(function(){
 		removeAssociation();
 	});	
-	$('#workType').change(function(){
-		if ($('#workType').val()=="No Selection" || $('#workType').val()=="Recepção" || $('#workType').val()=="Ação Social"
-			|| $('#workType').val()=="Coordenação de Período" 
-				|| $('#workType').val()=="Expositor do Evangelho"
-				   || $('#workType').val()=="Dirigente de Exposição do Evangelho"
-					   || $('#workType').val()=="Atendimento Inicial"
-						   || $('#workType').val()=="Atividade de Passe"
-							   || $('#workType').val()=="Atendimento Diálogo Fraterno"
-								   || $('#workType').val()=="Participante do Mediúnico"
-									   || $('#workType').val()=="Coordenador de Evangelização e Juventude"
-										   || $('#workType').val()=="Coordenador de Diálogo Fraterno em Grupo"
-											   || $('#workType').val()=="Coordenação de Apoio a diretoria"
-												   || $('#workType').val()=="Conselho Fiscal"
-													   || $('#workType').val()=="Diretoria"){
-			$('#classWorkLabel').css("display","none");
-			$('#classWork').css("display","none");
-		}
-		else{
-			$('#classWorkLabel').css("display","block");
-			$('#classWork').css("display","block");
-		}
+	$('#function').change(function(){
+		
+	});
+	$('#department').change(function(){
+		handleDepartmentChange();
+	});
+	$('#section').change(function(){
+		handleSectionChange();
 	});
 	$('#studyType').change(function(){
 		if ($('#studyType').val()=="No Selection"){
