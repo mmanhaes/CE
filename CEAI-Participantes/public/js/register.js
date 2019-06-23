@@ -303,8 +303,7 @@ function validateFieldsWork(callback){
 		   && $('#section').val()!="Eventos" 
 			 && $('#section').val()!="Manutenção" 
 			   && $('#section').val()!="TI" 
-				 && $('#section').val()!="Colaboração"
-				   && $('#section').val()!="Grupo de Trabalho"){
+				 && $('#section').val()!="Colaboração"){
 		if ($('#weekDayWork').val() === "No Selection"){
 			return callback(false,"Selecione o dia da semana da atividade voluntária");
 		}
@@ -485,7 +484,7 @@ function validateFieldsContact(callback){
 	}	
 	var whatsup1 = document.getElementById("whatsup1");
 	
-	if (whatsup1.selectedIndex === 0 && whatsup1.selectedIndex === -1){
+	if (whatsup1.selectedIndex === 0 || whatsup1.selectedIndex === -1 || $.trim($('#whatsup1').val()) === ''){
 
 		return callback(false,"Selecione se o telefone 1 tem whatsup ou não");
 	}
@@ -905,8 +904,7 @@ function updateWork(){
 					   && $('#section').val()!="Eventos" 
 						 && $('#section').val()!="Manutenção" 
 						   && $('#section').val()!="TI" 
-							 && $('#section').val()!="Colaboração"
-							   && $('#section').val()!="Grupo de Trabalho"){
+							 && $('#section').val()!="Colaboração"){
 			    	 row.cells[4].innerHTML = weekDay.options[weekDay.selectedIndex].value;
 					 workItem.weekDay = weekDay.options[weekDay.selectedIndex].value
 					 row.cells[5].innerHTML = period.options[period.selectedIndex].value;
@@ -970,8 +968,7 @@ function insertWork(){
 				   && $('#section').val()!="Eventos" 
 					 && $('#section').val()!="Manutenção" 
 					   && $('#section').val()!="TI" 
-						 && $('#section').val()!="Colaboração"
-						   && $('#section').val()!="Grupo de Trabalho"){
+						 && $('#section').val()!="Colaboração"){
 				workItem.weekDay = weekDay.options[weekDay.selectedIndex].value
 				workItem.period = period.options[period.selectedIndex].value;
 			}
@@ -1361,8 +1358,7 @@ function enableDisableDayAndPeriod(){
 		  || $('#section').val()=="Eventos" 
 			|| $('#section').val()=="Manutenção" 
 			   || $('#section').val()=="TI" 
-				   || $('#section').val()=="Colaboração"
-					   || $('#section').val()=="Grupo de Trabalho"){
+				   || $('#section').val()=="Colaboração"){
 		$('#weekDayWorkLabel').css("display","none");
 		$('#weekDayWork').css("display","none");
 		$('#periodWorkLabel').css("display","none");
