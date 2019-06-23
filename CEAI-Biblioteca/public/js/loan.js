@@ -448,6 +448,11 @@ function loan(){
 }
 
 function validateFieldsLoan(){
+	if ($('#bookID').val()===''){
+		alert('Um livro precisa ser carregado antes de realizar um empréstimo. Pesquise e carregue o livro na opção Pesquisa de Livros');
+		return false;
+	}
+	
 	if ($('#limitDay').val()==='' || $('#limitMonth').val()==='' || $('#limitYear').val()===''){
 		alert('Especifique uma data de entrega do livro para Empréstimo ou Renovação válida e após a data de hoje !');
 		return false;
@@ -533,11 +538,24 @@ $(document).ready(function() {
 	        contentType: "application/json",
 	        success: function(data, textStatus, jqXHR){
 	        	//alert(data);
-	        	buildSearhOutput(JSON.parse(data));
-	            $process.hide();
+	        	data = JSON.parse(data);
+	        	$process.hide();
 	            $output.show(); 
+	            console.log(data);
+	        	if (data.docs.length>0){
+	        		buildSearhOutput(data);
+	        		$('#loanBook').prop("disabled",false).css('opacity',1.0);
+	        		$('#renewLoanBook').prop("disabled",false).css('opacity',1.0);
+	        		$('#return').prop("disabled",false).css('opacity',1.0);
+	        	}
+	        	else{
+	        		alert("Participante "+$.trim($('#fullName').val())+" não foi encontrado");
+	        		$('#loanBook').prop("disabled",true).css('opacity',0.5);
+	        		$('#renewLoanBook').prop("disabled",true).css('opacity',0.5);
+	        		$('#return').prop("disabled",true).css('opacity',0.5);
+	        	}
 	            clearLoadSelection();
-	    		$('#loanBook').prop("disabled",false).css('opacity',1.0);
+	    		
 	        },
 	        error: function(jqXHR, textStatus, errorThrown){
 	        	$('#results').text('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);

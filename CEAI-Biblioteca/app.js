@@ -85,36 +85,40 @@ app.use(bodyParser.json());
 var buildSelectorSearchPerson = function(data,callback){
 	if (data.lastName!=="" && data.firstName!=="" && data.middleName!=="")
 	{
-		config.fullName_selector.selector.firstName.$regex = case_ins+data.firstName;
-		config.fullName_selector.selector.middleName.$regex  = case_ins+data.middleName;
-		config.fullName_selector.selector.lastName.$regex  = case_ins+data.lastName;
+		var sel = JSON.parse(JSON.stringify(config.fullName_selector));
+		sel.selector.firstName.$regex = case_ins+data.firstName;
+		sel.selector.middleName.$regex  = case_ins+data.middleName;
+		sel.selector.lastName.$regex  = case_ins+data.lastName;
 		
-		return callback(false,config.fullName_selector);
+		return callback(false,sel);
 	}	
 	else{
 		if (data.lastName!=="" && data.firstName!=="")
 		{
-			config.firstAndlastName_selector.selector.firstName.$regex  = case_ins+data.firstName;
-			config.firstAndlastName_selector.selector.lastName.$regex  = case_ins+data.lastName;
+			var sel = JSON.parse(JSON.stringify(config.firstAndlastName_selector));
+			sel.selector.firstName.$regex  = case_ins+data.firstName;
+			sel.selector.lastName.$regex  = case_ins+data.lastName;
 			
-			return callback(false,config.firstAndlastName_selector);
+			return callback(false,sel);
 		}
 		else
 		{
 			if (data.middleName!=="" && data.firstName!=="")
 			{
-				config.firstAndlastName_selector.selector.firstName.$regex  = case_ins+data.firstName;
-				config.fullName_selector.selector.middleName.$regex  = case_ins+data.middleName;
+				var sel = JSON.parse(JSON.stringify(config.firstAndMiddleName_selector));
+				sel.selector.firstName.$regex  = case_ins+data.firstName;
+				sel.selector.middleName.$regex  = case_ins+data.middleName;
 				
-				return callback(false,config.firstAndMiddleName_selector);
+				return callback(false,sel);
 			}
 			else
 			{	
 				if (data.firstName!=="")
-				{				
-					config.firstName_selector.selector.firstName.$regex  = case_ins+data.firstName;
+				{	
+					var sel = JSON.parse(JSON.stringify(config.firstName_selector));
+					sel.selector.firstName.$regex  = case_ins+data.firstName;
 					
-					return callback(false,config.firstName_selector);
+					return callback(false,sel);
 				}
 			}	
 		}			

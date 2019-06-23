@@ -338,13 +338,13 @@ exports.selectors={
 exports.fullName_selector ={
 		  "selector": {
 			  	  "firstName": {
-			         "$regex": "(?i)marcelo"
+			         "$regex": "(?i)(<ENTRY>)"
 			      },
 			      "middleName": {
-			         "$regex": "(?i)mota"
+			         "$regex": "(?i)(<ENTRY>)"
 			      },
 			      "lastName": {
-			         "$regex": "(?i)manhães"
+			         "$regex": "(?i)(<ENTRY>)"
 			      }
 			  },
 			  "fields": [
@@ -366,7 +366,7 @@ exports.fullName_selector ={
 exports.firstName_selector ={
 		  "selector": {
 			  	"firstName": {
-			         "$regex": "(?i)marcelo"
+			         "$regex": "(?i)(<ENTRY>)"
 			      }
 		  	    },
 			  "fields": [
@@ -388,10 +388,10 @@ exports.firstName_selector ={
 exports.firstAndlastName_selector ={
 		  "selector": {
 			  	  "firstName": {
-			         "$regex": "(?i)marcelo"
+			         "$regex": "(?i)(<ENTRY>)"
 			      },			      
 			      "lastName": {
-			         "$regex": "(?i)manhães"
+			         "$regex": "(?i)(<ENTRY>)"
 			      }
 			  },
 			  "fields": [
@@ -413,10 +413,10 @@ exports.firstAndlastName_selector ={
 exports.firstAndMiddleName_selector ={
 		  "selector": {
 			  	  "firstName": {
-			         "$regex": "(?i)marcelo"
+			         "$regex": "(?i)(<ENTRY>)"
 			      },			      
 			      "middleName": {
-			         "$regex": "(?i)mota"
+			         "$regex": "(?i)(<ENTRY>)"
 			      }
 			  },
 			  "fields": [
