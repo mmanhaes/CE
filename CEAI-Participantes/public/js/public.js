@@ -24,6 +24,19 @@ var work = [];
 var study = [];
 var currentDepartment;
 
+function loadCurrentUser(){
+	$.ajax({
+		url: '/services/ceai/userInfo',
+        type: "GET",
+        success: function(data, textStatus, jqXHR){
+        	$('#displayName').text('CEAI - Bem Vindo '+data.displayName);               
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+        	console.log(errorThrown);
+        }
+    });	
+}
+
 function cleanSearchOutput(table){
 	var length = table.rows.length;
 	for (var i = length-1; i >=2 ; --i) {

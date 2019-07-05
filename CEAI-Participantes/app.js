@@ -254,25 +254,21 @@ app.post('/services/ceai/lgpd',
 	});	
 }); 
 
+app.get('/services/ceai/userInfo',
+		require('connect-ensure-login').ensureLoggedIn(),
+		function(req, res){
+	res.setHeader('Content-Type', 'application/json');
+	var data= {};
+	data.displayName = req.user.displayName;
+	res.end(JSON.stringify(data));	
+});
+
 app.get('/services/ceai/checkUserAccess',
 		require('connect-ensure-login').ensureLoggedIn(),
 		function(req, res){
 	res.setHeader('Content-Type', 'text/plain');
 	console.log("Access Rule : "+session.role);
 	res.end(session.role);	
-});
-
-app.get('/services/ceai/resetSession',function(req,res){
-	res.setHeader('Content-Type', 'text/plain');
-	req.session.userID = "";
-	res.end('OK');
-});
-
-app.post('/services/ceai/saveSearchSession', function(req, res){
-	res.setHeader('Content-Type', 'text/plain');
-	req.session.userID = req.body.userID;
-	console.log("Session ID Saved "+req.session.userID);
-	res.end('OK');	
 });
 
 app.post('/services/ceai/loadSessionData', function(req, res){
@@ -379,7 +375,7 @@ app.post('/services/ceai/searchPerson', function(req, res){
 					  	  for (var i = 0; i < result.docs.length; i++) {
 					  		  console.log('  Doc userIDs: %s', result.docs[i].userID);
 					  	  }
-					  	  console.log('Final response from searchPerson',JSON.stringify(result));
+					  	  //console.log('Final response from searchPerson',JSON.stringify(result));
 					  	  res.end(JSON.stringify(result));
 					  }
 					  else {
@@ -395,7 +391,7 @@ app.post('/services/ceai/searchPerson', function(req, res){
 										  	  for (var i = 0; i < result.docs.length; i++) {
 										  		  console.log('  Doc userIDs: %s', result.docs[i].userID);
 										  	  }
-										  	  console.log('Final response from searchPerson',JSON.stringify(result));
+										  	  //console.log('Final response from searchPerson',JSON.stringify(result));
 										  	  res.end(JSON.stringify(result));		
 										 }
 										 else{
@@ -410,7 +406,7 @@ app.post('/services/ceai/searchPerson', function(req, res){
 												  		  console.log('  Doc userIDs: %s', result.docs[i].userID);
 												  	}
 												  	if (result.docs.length>0){
-												  		  	console.log('Final response from searchPerson',JSON.stringify(result));
+												  		  	//console.log('Final response from searchPerson',JSON.stringify(result));
 												  		  	res.end(JSON.stringify(result));
 												  	}
 												  	else{

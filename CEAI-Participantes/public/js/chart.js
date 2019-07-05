@@ -3,13 +3,12 @@
  */
 
 var chart = [{"department":"Diretoria Colegiada",	"sections":[
-															{"section":"Direção", "functions": ["Diretor"]},
-															{"section":"Conselho Fiscal", "functions":  ["Coordenador"]},
+															{"section":"Diretoria", "functions": ["Diretor"]},															
 															{"section":"Coordenação de Período", "functions":  ["Coordenador"]}
 														]
 			},
 			{"department":"Administração",	"sections":[
-												{"section":"Direção", "functions": ["Diretor"]},
+												{"section":"Diretoria", "functions": ["Diretor"]},
 												{"section":"Coordenação", "functions":  ["Coordenador"]},
 												{"section":"Secretaria", "functions":  ["Colaborador"]},
 												{"section":"Eventos", "functions":  ["Coordenador","Colaborador"]},
@@ -17,8 +16,8 @@ var chart = [{"department":"Diretoria Colegiada",	"sections":[
 												{"section": "TI" , "functions":  ["Colaborador"]}
 											]
 		     },
-		     {"department":"Assistência Espiritual",	"sections":[
-					{"section":"Direção", "functions": ["Diretor"]},
+		     {"department":"Atendimento Espiritual",	"sections":[
+					{"section":"Diretoria", "functions": ["Diretor"]},
 					{"section":"Coordenação", "functions":  ["Coordenador"]},
 					{"section":"Recepção", "functions":  ["Coordenador","Colaborador"]},
 					{"section":"Fluidoterapia", "functions":  ["Coordenador","Colaborador"]},
@@ -31,19 +30,19 @@ var chart = [{"department":"Diretoria Colegiada",	"sections":[
 				]
 		     },
 		     {"department":"Assistência Social Espírita",	"sections":[
-					{"section":"Direção", "functions": ["Diretor"]},
+					{"section":"Diretoria", "functions": ["Diretor"]},
 					{"section":"Coordenação", "functions":  ["Coordenador"]},
 					{"section":"Colaboração", "functions":  ["Colaborador"]}					
 				]
 		     },
 		     {"department":"Estudo e Prática da Mediunidade",	"sections":[
-					{"section":"Direção", "functions": ["Diretor"]},
+					{"section":"Diretoria", "functions": ["Diretor"]},
 					{"section":"Coordenação", "functions":  ["Coordenador"]},
 					{"section":"Grupo de Trabalho", "functions":  ["Coordenador","Colaborador"]}					
 				]
 		     },
 		     {"department":"Estudos Doutrinários",	"sections":[
-					{"section":"Direção", "functions": ["Diretor"]},
+					{"section":"Diretoria", "functions": ["Diretor"]},
 					{"section":"Coordenação", "functions":  ["Coordenador"]},
 					{"section":"EIDE I", "functions":  ["Coordenador"]},
 					{"section":"EIDE II", "functions":  ["Coordenador"]},
@@ -55,14 +54,18 @@ var chart = [{"department":"Diretoria Colegiada",	"sections":[
 					{"section":"Estudo da Série Psic. de Joanna de Ângelis", "functions":  ["Coordenador"]}
 				]
 		     },
+		     {"department":"Conselho Fiscal", "sections":[
+					{"section":"Coordenação", "functions":  ["Coordenador","Colaborador"]}
+				]
+		     },
 		     {"department":"Comunicação",	"sections":[
-					{"section":"Direção", "functions": ["Diretor"]},
+					{"section":"Diretoria", "functions": ["Diretor"]},
 					{"section":"Coordenação", "functions":  ["Coordenador"]},
 					{"section":"Colaboração", "functions":  ["Colaborador"]}					
 				]
 		     },
 		     {"department":"Infância e Juventude",	"sections":[
-					{"section":"Direção", "functions": ["Diretor"]},
+					{"section":"Diretoria", "functions": ["Diretor"]},
 					{"section":"Coordenação", "functions":  ["Coordenador"]},
 					{"section":"Infância 1", "functions":  ["Colaborador","Estágio"]},
 					{"section":"Infância 2", "functions":  ["Colaborador","Estágio"]},

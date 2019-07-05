@@ -31,6 +31,19 @@ function cleanSearchOutput(table){
 	} 	
 }
 
+function loadCurrentUser(){
+	$.ajax({
+		url: '/services/ceai/userInfo',
+        type: "GET",
+        success: function(data, textStatus, jqXHR){
+        	$('#displayName').text('CEAI - Bem Vindo '+data.displayName);               
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+        	console.log(errorThrown);
+        }
+    });	
+}
+
 function handleChangeRadioButton(){
 	
 	var radios = document.getElementsByName("group1");
@@ -296,7 +309,7 @@ function validateFieldsWork(callback){
 		return callback(false,"Selecione a função na seção ou grupo no qual exerce a atividade voluntária");
 	}
 	
-	if ($('#section').val()!="Direção" 
+	if ($('#section').val()!="Diretoria" 
 		&& $('#section').val()!="Conselho Fiscal" 
 		 && $('#section').val()!="Secretaria"
 		  && $('#section').val()!="Coordenação" 
@@ -901,7 +914,7 @@ function updateWork(){
 				workItem.section = section.options[section.selectedIndex].value;
 				row.cells[3].innerHTML = funct.options[funct.selectedIndex].value;
 				workItem["function"] = funct.options[funct.selectedIndex].value;
-			    if ($('#section').val()!="Direção" 
+			    if ($('#section').val()!="Diretoria" 
 					&& $('#section').val()!="Conselho Fiscal" 
 					 && $('#section').val()!="Secretaria"
 					  && $('#section').val()!="Coordenação" 
@@ -965,7 +978,7 @@ function insertWork(){
 			workItem.section = section.options[section.selectedIndex].value;
 			workItem["function"] = funct.options[funct.selectedIndex].value;
 			
-			if ($('#section').val()!="Direção" 
+			if ($('#section').val()!="Diretoria" 
 				&& $('#section').val()!="Conselho Fiscal" 
 				 && $('#section').val()!="Secretaria"
 				  && $('#section').val()!="Coordenação" 
@@ -1357,7 +1370,7 @@ function enableDisableClassLabel(){
 }
 
 function enableDisableDayAndPeriod(){
-	if ($('#section').val()=="Direção" || $('#section').val()=="Conselho Fiscal" || $('#section').val()=="Secretaria"
+	if ($('#section').val()=="Diretoria" || $('#section').val()=="Conselho Fiscal" || $('#section').val()=="Secretaria"
 		|| $('#section').val()=="Coordenação" 
 		  || $('#section').val()=="Eventos" 
 			|| $('#section').val()=="Manutenção" 
@@ -1394,13 +1407,15 @@ function handleSectionChange(){
 	     opt.innerHTML = "Selecione";
 	     opt.value = "No Selection"; 
 	     fragment.appendChild(opt);
-	     for(var i=0;i<currentSession.functions.length;++i)
-	  	 {    		 
-	 	      opt = document.createElement('option');
-	  	      opt.innerHTML = currentSession.functions[i];
-	  	      opt.value = currentSession.functions[i];
-	  	      fragment.appendChild(opt);
-	  	 }        	
+	     if (typeof(currentSession)!='undefined'){
+		     for(var i=0;i<currentSession.functions.length;++i)
+		  	 {    		 
+		 	      opt = document.createElement('option');
+		  	      opt.innerHTML = currentSession.functions[i];
+		  	      opt.value = currentSession.functions[i];
+		  	      fragment.appendChild(opt);
+		  	 }
+	     }
 	  	 sel.appendChild(fragment);
 	 }
 }
@@ -1691,9 +1706,6 @@ $(document).ready(function() {
 		removeStudy();
 	});
 	$('#logout').click(function(){
-		window.location = "/logout";
-	});
-	$('#logoutOnSearch').click(function(){
 		window.location = "/logout";
 	});
 });

@@ -10,7 +10,20 @@
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="css/style.css">
 </head>
-<body onload="showLGPD_Dialog()">
+<body onload="showLGPD_Dialog();loadCurrentUser()">
+    <header class="_demo--heading">
+		<div class="_demo--container">
+			<a class="wordmark" href="/"> <span id=displayName style="color: orange" class="wordmark--right"></span>
+			</a>
+			<nav class="heading-nav" role="menubar">			
+				<ul>
+					<li class="base--li heading-nav--li" role="presentation"><a
+						class="heading-nav--item" href="/logout" role="menuitem"> Sair
+					</a></li>
+				</ul>
+			</nav>
+		</div>
+	</header>
 	<div class="_demo--banner">
 		<div class="_demo--container">
 			<div class="banner--service-icon-container" style="height: 20px;">
@@ -50,9 +63,7 @@
 
 			</table>
 			<input type="button" class="input--request-button base--a"
-				id="search" value="Pesquisar">	
-			<input type="button" class="input--request-button base--a"
-				id="logoutOnSearch" value="Sair do Sistema">		
+				id="search" value="Pesquisar">
 			<div class="processingSearch" style="display: none;'">
 				<div class="_demo--container">
 					<p class="base--p">
@@ -772,6 +783,7 @@
 								<option value="Assistência Espiritual">Assistência Espiritual</option>
 								<option value="Assistência Social Espírita">Assistência Social Espírita</option>
 								<option value="Comunicação">Comunicação</option>
+								<option value="Conselho Fiscal">Conselho Fiscal</option>
 								<option value="Diretoria Colegiada">Diretoria Colegiada</option>
 								<option value="Estudos Doutrinários">Estudos Doutrinários</option>
 								<option value="Infância e Juventude">Infância e Juventude</option>
