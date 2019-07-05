@@ -9,12 +9,62 @@ exports.cloudant = {
 };
 
 exports.database = {
-		person : {name: "ceai"}
+		person : {name: "ceai"},
+		lgpd: {name:"lgpd"},
+		users: {name: "ceai-users"}
 };
 
-exports.userID ={};
+exports.lgpd = {
+	   "selector": {
+		      "email": "",
+		      "tool":""
+		   },
+		   "fields": [
+			   "consent"
+		   ]
+}
 
-exports.userID.selectors = { 
+exports.selectors={};
+
+exports.selectors={
+		"byUserId":{
+			"selector": {
+			      "_id": "id"
+			   },
+			   "fields": [
+			      "_id",
+			      "_rev",
+			      "username",
+			      "password",
+			      "role",
+			      "displayName",
+			      "userID"
+			   ],
+			   "sort": [
+			      {
+			         "_id": "asc"
+			      }
+			   ]
+		},
+		"byUserName":{
+			   "selector": {
+				      "username": "clovis"
+				   },
+				   "fields": [
+				      "_id",
+				      "_rev",
+				      "username",
+				      "password",
+				      "role",
+				      "displayName",
+				      "userID"
+				   ],
+				   "sort": [
+				      {
+				         "_id": "asc"
+				      }
+				   ]
+		},
 		"coordinators":{
 			   "selector": {
 				      "work": {
@@ -292,7 +342,7 @@ exports.userID.selectors = {
 					    }
 					  ]
 			}
-};
+}
 
 exports.participant = {
 		  "firstName": "",

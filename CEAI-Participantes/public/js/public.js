@@ -22,12 +22,19 @@ var cachedPosition;
 var association = [];
 var work = [];
 var study = [];
+var currentDepartment;
 
 function cleanSearchOutput(table){
 	var length = table.rows.length;
 	for (var i = length-1; i >=2 ; --i) {
 		table.deleteRow(i);
 	} 	
+}
+
+function clearComboOptions(sel){
+	while (sel.options.length > 0) {                
+		sel.remove(0);
+    }   
 }
 
 function handleChangeRadioButton(){
@@ -257,17 +264,34 @@ function populateData(person){
 
 function populateWorkData(work){
 	   
-	$('#workType').val(work.workType);
-	$('#weekDayWork').val(work.weekDay);
-	$('#periodWork').val(work.period);
+	$('#department').val(work.department);
+	handleDepartmentChange();
+	$('#section').val(work.section);
+	handleSectionChange();
+	$('#function').val(work["function"]);
+	if (typeof(work.weekDay)!='undefined' && work.weekDay!=''){
+		$('#weekDayWork').val(work.weekDay);
+		$('#periodWork').val(work.period);
+	}
 	var initDate =  work.initDate.split("-");
 	$('#initWorkDay').val(initDate[0]);
 	$('#initWorkMonth').val(initDate[1]);
 	$('#initWorkYear').val(initDate[2]);
 	var finalDate =  work.finalDate.split("-");
-	$('#finalWorkDay').val(finalDate[0]);
-	$('#finalWorkMonth').val(finalDate[1]);
-	$('#finalWorkYear').val(finalDate[2]);
+	if (finalDate.length > 0){
+		$('#finalWorkDay').val(finalDate[0]);
+		$('#finalWorkMonth').val(finalDate[1]);
+		$('#finalWorkYear').val(finalDate[2]);
+	}
+	if (typeof(work.classNumber)!='undefined'){
+		$('#classWorkLabel').css("display","block");
+		$('#classWork').css("display","block");
+		$('#classWork').val(work.classNumber);
+	}
+	else{
+		$('#classWorkLabel').css("display","none");
+		$('#classWork').css("display","none");
+	}
 	$('#notes').val(work.notes);	
 }
 
@@ -280,14 +304,125 @@ function buildWorkRowTable(data){
     var row = table.insertRow(rowCount);
 
     row.insertCell(0).innerHTML= '<input type="radio" name="groupWork" onchange="handleChangeRadioButtonWork();">';
-    row.insertCell(1).innerHTML= data.workType;
-    row.insertCell(2).innerHTML= data.weekDay;
-    row.insertCell(3).innerHTML= data.period;
-    row.insertCell(4).innerHTML= data.initDate;
-    row.insertCell(5).innerHTML= data.finalDate;
-    row.insertCell(6).innerHTML= data.notes;  
+    row.insertCell(1).innerHTML= data.department;
+    row.insertCell(2).innerHTML= data.section;
+    row.insertCell(3).innerHTML= data["function"];
+    if (typeof(data.weekDay)!='undefined'){
+    	row.insertCell(4).innerHTML= data.weekDay;
+    }
+    else{
+    	row.insertCell(4).innerHTML= "";
+    }
+    if (typeof(data.weekDay)!='undefined'){
+    	row.insertCell(5).innerHTML= data.period;
+    }
+    else{
+    	row.insertCell(5).innerHTML= "";
+    }    
+    row.insertCell(6).innerHTML= data.initDate;
+    row.insertCell(7).innerHTML= data.finalDate;
+    row.insertCell(8).innerHTML= data.notes;  
 }
 
+function enableDisableClassLabel(){
+	if ($('#section').val()=="No Selection" || $('#section').val()=="EIDE I" || $('#section').val()=="EIDE II"
+		|| $('#section').val()=="ESDE I" 
+			|| $('#section').val()=="ESDE II" 
+			   || $('#section').val()=="EADE" 
+				   || $('#section').val()=="Grupo de Estudo da Codificação Espírita (GECE)"
+					   || $('#section').val()=="Estudo das Obras de André Luiz"
+						   || $('#section').val()=="Estudo da Série Psic. de Joanna de Ângelis"
+							   || $('#section').val()=="Infância 1"
+								   || $('#section').val()=="Infância 2"
+									   || $('#section').val()=="Primeiro Ciclo"
+										   || $('#section').val()=="Segundo Ciclo"
+											   || $('#section').val()=="Terceiro Ciclo"
+												   || $('#section').val()=="Juventude 1"
+													   || $('#section').val()=="Juventude 2"){
+		$('#classWorkLabel').css("display","block");
+		$('#classWork').css("display","block");
+	}
+	else{
+		$('#classWorkLabel').css("display","none");
+		$('#classWork').css("display","none");
+	}
+}
+
+function enableDisableDayAndPeriod(){
+	if ($('#section').val()=="Direção" || $('#section').val()=="Conselho Fiscal" || $('#section').val()=="Secretaria"
+		|| $('#section').val()=="Coordenação" 
+		  || $('#section').val()=="Eventos" 
+			|| $('#section').val()=="Manutenção" 
+			   || $('#section').val()=="TI" 
+				   || $('#section').val()=="Colaboração"){
+		$('#weekDayWorkLabel').css("display","none");
+		$('#weekDayWork').css("display","none");
+		$('#periodWorkLabel').css("display","none");
+		$('#periodWork').css("display","none");
+	}
+	else{
+		$('#weekDayWorkLabel').css("display","block");
+		$('#weekDayWork').css("display","block");
+		$('#periodWorkLabel').css("display","block");
+		$('#periodWork').css("display","block");
+	}
+}
+
+function handleSectionChange(){
+	 enableDisableClassLabel();
+	 enableDisableDayAndPeriod();
+	 if (typeof(currentDepartment)!='undefined'){
+		 var valueSection = currentDepartment.sections.map(function(item){return item.section});
+		 console.log("value Array of Department:",JSON.stringify(valueSection));
+		 var sectionIndex = valueSection.indexOf($('#section').val());
+		 var currentSession = currentDepartment.sections[sectionIndex];
+		 console.log("Department Selected:",JSON.stringify(currentSession));
+	  	 var sel = document.getElementById('function');
+	  	 clearComboOptions(sel);
+	  	 var fragment = document.createDocumentFragment();
+	  	 var opt;
+	
+	     opt = document.createElement('option');
+	     opt.innerHTML = "Selecione";
+	     opt.value = "No Selection"; 
+	     fragment.appendChild(opt);
+	     for(var i=0;i<currentSession.functions.length;++i)
+	  	 {    		 
+	 	      opt = document.createElement('option');
+	  	      opt.innerHTML = currentSession.functions[i];
+	  	      opt.value = currentSession.functions[i];
+	  	      fragment.appendChild(opt);
+	  	 }        	
+	  	 sel.appendChild(fragment);
+	 }
+}
+
+function handleDepartmentChange(){
+	 var valueDepartment = chart.map(function(item){ return item.department});
+	 console.log("value Array of Department:",JSON.stringify(valueDepartment));
+	 var departmentIndex = valueDepartment.indexOf($('#department').val());
+	 if (departmentIndex!=-1){
+		 currentDepartment = chart[departmentIndex];
+		 console.log("Department Selected:",JSON.stringify(currentDepartment));
+	  	 var sel = document.getElementById('section');
+	  	 clearComboOptions(sel);
+	  	 var fragment = document.createDocumentFragment();
+	  	 var opt;
+	
+	     opt = document.createElement('option');
+	     opt.innerHTML = "Selecione";
+	     opt.value = "No Selection"; 
+	     fragment.appendChild(opt);
+	     for(var i=0;i<currentDepartment.sections.length;++i)
+	  	 {    		 
+	  	      opt = document.createElement('option');
+	   	      opt.innerHTML = currentDepartment.sections[i].section;
+	   	      opt.value = currentDepartment.sections[i].section;
+	   	      fragment.appendChild(opt);
+	  	 }        	
+	  	 sel.appendChild(fragment);
+	 }
+}
 
 function handleChangeRadioButtonWork(){
 	
@@ -858,6 +993,9 @@ $(document).ready(function() {
 	});	
 	$('#previous').click(function(){
 		window.location = "/home";
+	});
+	$('#logout').click(function(){
+		window.location = "/logout";
 	});
 	$('#next').click(function(){
 		window.location = "/Contact";

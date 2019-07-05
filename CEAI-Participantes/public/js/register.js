@@ -478,9 +478,13 @@ function validateFieldsForGeneral(callback){
 }
 
 function validateFieldsContact(callback){
+	if ($.trim($('#email1').val()) === '')  
+	{
+		return callback(false,"Pelo menos o campo telefone 1 e o email 1 precisa ser preenchido");
+	}	
 	if ($.trim($('#phone1').val()) === '')  
 	{
-		return callback(false,"Pelo menos o campo telefone 1 precisa ser preenchido");
+		return callback(false,"Pelo menos o campo telefone 1 e o email 1 precisa ser preenchido");
 	}	
 	var whatsup1 = document.getElementById("whatsup1");
 	
@@ -1685,5 +1689,11 @@ $(document).ready(function() {
 	});	
 	$('#deleteStudy').click(function(){
 		removeStudy();
+	});
+	$('#logout').click(function(){
+		window.location = "/logout";
+	});
+	$('#logoutOnSearch').click(function(){
+		window.location = "/logout";
 	});
 });

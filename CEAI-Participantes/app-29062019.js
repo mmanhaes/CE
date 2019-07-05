@@ -8,7 +8,7 @@ const uuidv1 = require('uuid/v1');
 const case_ins = "(?i)"; 
 //Variables used for authentication
 var passport = require('passport');
-var CustomStrategy = require('passport-local').Strategy;
+var Strategy = require('passport-local').Strategy;
 var auth = require('./auth');
 //Variables for Cloudant
 var Cloudant = require('cloudant');
@@ -21,66 +21,28 @@ var session = require('express-session');
 //Variables for port
 var port = (process.env.PORT || process.env.VCAP_APP_PORT || 3000);
 var lgpd = require('./lgpd');
-var users = require('./users');
 const TOOL_NAME = "CEAI Participantes";
-var crypto = require('./crypto');
-const STANDARD_PASSWORD = '2b126db6d57d0d1763b1a77f3d89ea9e';
 
-passport.use('custom',new CustomStrategy(
-		//IF I BY PASS TO OTHER CLASS AND OTHER THREAD WILL CAUSE Error [ERR_STREAM_WRITE_AFTER_END]
+passport.use(new Strategy(
 		function(username, password, cb) {
-			  var db = cloudant.db.use(config.database.users.name);
-			  var sel = config.selectors.byUserName;
-			  sel.selector.username = username;
-			  
-			  db.find(sel, function(err, result) {
-				  if (err) {
-				     console.log("Error in findByUsername",err);
-				     return cb(err);
-				  }
-				  else{
-					 if (result.docs.length > 0){
-						 //console.log("Returned user name "+result.docs[0].username+" to authenticate");
-						 crypto.encrypt(password,function(encryptedPwd){
-							 if (result.docs[0].username == username && result.docs[0].password == encryptedPwd){ 
-								 console.log("User and Password OK for user:",username);
-								 session.user = result.docs[0];								 
-								 if (result.docs[0].password == STANDARD_PASSWORD){
-									 session.changePassword = true;
-								 }
-								 else{
-									 session.changePassword = false;
-								 }
-								 return cb(null, result.docs[0]);								 
-							 }
-							 else{
-								 console.log("User or Password NOK for user:",username);
-								 return cb(null, false); 
-							 }	
-						 });
-					 }
-					 else{
-						 return cb(null, false);
-					 }
-				  }
-			  });
-}));
+			auth.users.findByUsername(username, function(err, user) {
+				if (err) { return cb(err); }
+				if (!user) { return cb(null, false); }
+				if (user.password !== password) { return cb(null, false); }
+				session.role = user.role;
+				return cb(null, user);
+			});
+		}));
 
 passport.serializeUser(function(user, cb) {
-	//console.log("Serializing User With Value:",user._id);
-	cb(null, user._id);
+	cb(null, user.id);
 });
 
 passport.deserializeUser(function(id, cb) {
-	 console.log("Calling deserializeUser",id);
-	 //console.log("findById called");	  
-	 if (session.user._id==id){
-		 console.log("User "+session.user.displayName+" is valid");				 
-		 return cb(null, session.user);
-	 }
-	 else{
-		 cb(new Error('User ' + id + ' does not exist'));
-	 }
+	auth.users.findById(id, function (err, user) {
+		if (err) { return cb(err); }
+		cb(null, user);
+	});
 });
 
 //Configure view engine to render EJS templates.
@@ -165,32 +127,22 @@ var buildSelectorSearchPerson = function(type,data,callback){
 	return callback("No Selector Found",null);
 };
 
-app.get('/services/ceai/verifyChangePwd',
-		require('connect-ensure-login').ensureLoggedIn(),
-		function(req, res){
-	res.setHeader('Content-Type', 'application/json');
-	var data = {};
-	if (session.changePassword){
-		data.message = "CHANGE";		
-	}
-	else{
-		data.message = "DO NOT CHANGE";
-	}
-	res.end(JSON.stringify(data));
-});
-
 app.get('/services/ceai/lgpd', 
 		require('connect-ensure-login').ensureLoggedIn(),
         function(req, res){		
-	res.setHeader('Content-Type', 'application/json');
-	console.log("Reading GDPR for User",req.user.username);
+	var userId = req.user.username;
+	console.log("User",req.user);
 	//I'll set only focusID variable to define what request will show on screen by default.
 	//As on requests.html load all headers by requests, on requests.js i'll get more info about the request
-	lgpd.findLgpdRecord(req.user.username,TOOL_NAME, function(result,err) {
+	lgpd.findLgpdRecord(userId,TOOL_NAME, function(result,err) {
 		if (err){
 			var data = {};
 			data.message = "NOT ACCEPTED";
 			res.end(JSON.stringify(data));
+			/*
+			res.status(500);
+			res.end();
+			*/
 		}
 		else{
 			var data = {};
@@ -200,55 +152,7 @@ app.get('/services/ceai/lgpd',
 			else{
 				data.message = "NOT ACCEPTED";
 			}
-			console.log('Response consult GPD record: '+JSON.stringify(data));
-			res.end(JSON.stringify(data));
-		}
-	});	
-}); 
-
-app.post('/services/ceai/saveNewPassword', 
-		require('connect-ensure-login').ensureLoggedIn(),
-        function(req, res){	
-	res.setHeader('Content-Type', 'application/json');
-	console.log("Saving Password for User",req.user.username);
-	var input = req.user
-	crypto.encrypt(req.body.password,function(encryptedPwd){
-		input.password = encryptedPwd;	
-		var db = cloudant.db.use(config.database.users.name);
-		
-		db.insert(input,function(err, body, header) {
-			  var data = {};
-		      if (err) {
-			        console.log('[db.update] saveNewPassword Error', err.message);
-					data.message = "NOK";
-					res.end(JSON.stringify(data));
-			      }
-		      else{
-					data.message = "OK";
-					res.end(JSON.stringify(data));
-		      }
-		});
-	});
-}); 
-
-
-app.post('/services/ceai/lgpd', 
-		require('connect-ensure-login').ensureLoggedIn(),
-        function(req, res){	
-	res.setHeader('Content-Type', 'application/json');
-	console.log("Saving LGPD for User",req.user.username);
-	var input = req.body;
-	input.email = req.user.username;
-	input.tool = TOOL_NAME;
-	lgpd.saveLgpdRecord(input, function(result,err) {
-		var data = {};
-		if (err){
-			data.message = "NOT ACCEPTED";
-			res.end(JSON.stringify(data));
-		}
-		else{
-			data.message = result;
-			console.log('Response save GPD record: '+JSON.stringify(data));
+			console.log('Response consult GDPR record: '+JSON.stringify(data));
 			res.end(JSON.stringify(data));
 		}
 	});	
@@ -278,18 +182,20 @@ app.post('/services/ceai/saveSearchSession', function(req, res){
 app.post('/services/ceai/loadSessionData', function(req, res){
 	res.setHeader('Content-Type', 'text/plain');
 	//TODO with searchKey , example '{"searchKey" : "general"}' define what selector to search and execute the db.find
-		
-	if (typeof session.user.userID !== 'undefined')
+	
+	
+	
+	if (typeof req.session.userID !== 'undefined')
 	{
-		var sel = config.selectors[req.body.searchKey];
-		sel.selector.userID = session.user.userID;
+		var sel = config.userID.selectors[req.body.searchKey];
+		sel.selector.userID = req.session.userID;
 		var db = null;
 		
 		if (req.body.searchKey === "general" || req.body.searchKey === "contact" 
 			|| req.body.searchKey === "association" || req.body.searchKey === "work" 
 				|| req.body.searchKey === "study" || req.body.searchKey ==="forUpdates"){
 			db = cloudant.db.use(config.database.person.name);
-		}		
+		}	
 		
 		if (db !== null){
 			db.find(sel, function(err, result) {
@@ -318,7 +224,7 @@ app.post('/services/ceai/searchCPF', function(req, res){
 	
 	var db = cloudant.db.use(config.database.person.name);
 	
-	var sel = config.selectors.cpf;
+	var sel = config.userID.selectors.cpf;
 	
 	sel.selector.cpf = req.body.cpf;
 	
@@ -560,7 +466,7 @@ app.post('/services/ceai/update', function(req, res){
 	res.setHeader('Content-Type', 'text/plain');
 
 	var db = cloudant.db.use(config.database.person.name);
-	var selector = config.selectors.forUpdates;
+	var selector = config.userID.selectors.forUpdates;
 	selector.selector.userID = req.body.userID;
 	db.find(selector, function(err, result) {
 		  if (err) {
@@ -625,106 +531,72 @@ app.post('/services/ceai/inputGeneral', function(req, res){
 
 app.post('/services/ceai/register', function(req, res){
 	res.setHeader('Content-Type', 'text/plain');
-
+	cloudant.db.list(function(err, allDbs) {
+		console.log('All my databases: %s', allDbs.join(', '));
+	});
 	console.log(JSON.stringify(req.body, null, 2));
+	var db = cloudant.db.use(config.database.person.name);
 	
-	users.findByUserName(req.body.email1, function(err,result){
-		console.log("findByUserName result",JSON.stringify(result));
-		//if user was not found create a new user into the system with initial password
-		if (result.docs.length == 0){
-		   var input = {};
-		   input.username = req.body.email1;
-		   input.password = STANDARD_PASSWORD;
-		   if (req.body.work.length>0){
-			   input.role = "admin";
-		   }
-		   else{
-			   input.role = "user";
-		   }
-		   input.displayName =  req.body.firstName+ ' '+ req.body.middleName+' '+ req.body.lastName;
-		   input.userID  = req.body.userID;
-		   users.createUser(input,function(err,result){
-			   if (err){
-				   console.log('Error to create new user',err);
-			   }
-			   else{
-				   console.log('User '+ input.username+' created with success with standard password');
-			   }
-		   })			
-		}
+	if (req.body.operation == "insert"){
+		var id =  uuidv1();
+		delete req.body._id;
+		delete req.body._rev;
+		db.insert(req.body, id, function(err, body, header) {
+			if (err) {
+				return console.log('[db.insert from public Register Error] ', err.message);
+			}
+	
+			console.log('You have inserted the record.');
+			console.log(body);
+			console.log('With Content :');
+			console.log(JSON.stringify(req.body, null, 2));
+			
+			res.end('Dados Cadastrados com Sucesso com o participante :'+req.body.firstName+' '+req.body.middleName+' '+ req.body.lastName+'\n');
+		});
+	}
+	else{
 
 		var db = cloudant.db.use(config.database.person.name);
-		
-		if (req.body.operation == "insert"){
-			var id =  uuidv1();
-			delete req.body._id;
-			delete req.body._rev;
-			db.insert(req.body, id, function(err, body, header) {
-				if (err) {
-					return console.log('[db.insert from public Register Error] ', err.message);
-				}
-		
-				console.log('You have inserted the record.');
-				console.log(body);
-				console.log('With Content :');
-				console.log(JSON.stringify(req.body, null, 2));
-				
-				res.end('Dados Cadastrados com Sucesso com o participante :'+req.body.firstName+' '+req.body.middleName+' '+ req.body.lastName+'\n');
-			});
-		}
-		else{
-
-			var db = cloudant.db.use(config.database.person.name);
-			var selector = config.selectors.forUpdates;
-			selector.selector.userID = req.body.userID;
-			db.find(selector, function(err, result) {
-				  if (err) {
-				    console.log(err);
-				    config.config.searchError.error = err;
-				    res.end(config.searchError);
-				  }
-				  else{
-					    console.log('Found %d documents with %s', result.docs.length,JSON.stringify(selector));
-					    console.log('Result %s', JSON.stringify(result));
-					    if (result.docs.length>0)
-					    {					  	
-					    	prepareUpdate(result.docs[0],req.body,function(response){
-					    		db.insert(response, function(err, body, header) {
-									if (err) {
-										console.log('[db.update] ', err.message);
-										res.end('[db.update] ', err.message);
-									}
-									else{
-										console.log('You have updated the record.');
-										console.log(body);
-										console.log('With Content :');
-										console.log(JSON.stringify(req.body, null, 2));
-										res.end('Dados Cadastrados com Sucesso para o participante: '+req.body.firstName+' '+req.body.middleName+' '+ req.body.lastName+'\n');								}	
-								});								    		
-					    	});
-					    }
-					    else
-					    {
-					    	res.end('Erro na Atualização para o participante : '+ req.body.firstName+ " "+ req.body.middleName+" "+req.body.lastName);
-					    }	
-				  }
-			});	 
-		}
-	});
+		var selector = config.userID.selectors.forUpdates;
+		selector.selector.userID = req.body.userID;
+		db.find(selector, function(err, result) {
+			  if (err) {
+			    console.log(err);
+			    config.config.searchError.error = err;
+			    res.end(config.searchError);
+			  }
+			  else{
+				    console.log('Found %d documents with %s', result.docs.length,JSON.stringify(selector));
+				    console.log('Result %s', JSON.stringify(result));
+				    if (result.docs.length>0)
+				    {					  	
+				    	prepareUpdate(result.docs[0],req.body,function(response){
+				    		db.insert(response, function(err, body, header) {
+								if (err) {
+									console.log('[db.update] ', err.message);
+									res.end('[db.update] ', err.message);
+								}
+								else{
+									console.log('You have updated the record.');
+									console.log(body);
+									console.log('With Content :');
+									console.log(JSON.stringify(req.body, null, 2));
+									res.end('Dados Cadastrados com Sucesso para o participante: '+req.body.firstName+' '+req.body.middleName+' '+ req.body.lastName+'\n');								}	
+							});								    		
+				    	});
+				    }
+				    else
+				    {
+				    	res.end('Erro na Atualização para o participante : '+ req.body.firstName+ " "+ req.body.middleName+" "+req.body.lastName);
+				    }	
+			  }
+		});	 
+	}
 });
 
 app.get('/',
 		function(req, res){
-		if (typeof(session.user) == 'undefined'){
-			res.redirect('/login');
-		}else{
-			if (session.user.role != 'admin'){		
-				res.redirect('/publico');
-			}
-			else{
-				res.redirect('/cadastro');
-			}
-		}
+	res.redirect('/cadastro');
 });
 
 app.get('/home',
@@ -738,8 +610,8 @@ app.get('/login',
 	res.render('login');
 });
 
-app.post('/login',
-		passport.authenticate('custom', { successRedirect: '/', failureRedirect: '/login' }),
+app.post('/login', 
+		passport.authenticate('local', { failureRedirect: '/login' }),
 		function(req, res) {
 	res.redirect('/');
 });
@@ -795,22 +667,15 @@ app.get('/Association',
 app.get('/cadastro',
 		require('connect-ensure-login').ensureLoggedIn(),
 		function(req, res){
-	
-	console.log("Access Rule: "+session.user.role);
-	if (session.user.role != 'admin'){
-		console.log("O usuario: "+session.username +" nao tem acesso a esta funcionalidade");
-		res.sendFile(__dirname + "/public/noaccess.html");
-	}
-	else{
-		res.sendFile(__dirname + "/public/register.html");
-	}
+	res.sendFile(__dirname + "/public/register.html");
 });
 
+/*
 app.get('/publico',
-		require('connect-ensure-login').ensureLoggedIn(),
 		function(req, res){
 	res.sendFile(__dirname + "/public/public.html");
 });
+*/
 
 app.listen(port,function(){
 	console.log('CEAI Cadastro de Participantes Server running on port:',port);

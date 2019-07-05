@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
 <link rel="icon" href="images/favicon.ico" type="image/x-icon">
-<link rel="stylesheet" href="/css/bootstrap.css">
+<link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body onload="showLGPD_Dialog()">
 	<div class="_demo--banner">
 		<div class="_demo--container">
 			<div class="banner--service-icon-container" style="height: 20px;">
@@ -25,74 +25,8 @@
 					Participantes</h2>
 			</div>
 		</div>
-	</div>
-	<div class="_demo--container">
-		<article class="_content base--article">
-			<div class="_content--choose-input-file">
-				<h3 id="top" class="base--h3">Pesquisa</h3>
-				<p class="_content--input-description base--p">Pesquise pelo
-					nome do participante ou CPF</p>
-			</div>
-			<table border="" style="width: 80%">
-				<tr>
-					<td style="width: 320px;"><h5 class="base--h5">Nome do
-							participante:</h5></td>
-					<td style="width: 402px;"><input id="fullName" type="text"
-						class="input--question--manual--reduced base--a"
-						style="width: 398px;"></td>
-				</tr>
-				<tr>
-					<td style="width: 320px;"><h5 class="base--h5">CPF:</h5></td>
-					<td style="width: 402px;"><input id="cpf" type="text"
-						class="input--question--manual--reduced base--a"
-						style="width: 158px;"></td>
-				</tr>
-
-			</table>
-			<input type="button" class="input--request-button base--a"
-				id="search" value="Pesquisar">		
-			<div class="processingSearch" style="display: none;'">
-				<div class="_demo--container">
-					<p class="base--p">
-						<img src="images/processing.gif" alt="processing"
-							style="width: 96px; height: 96px; align: middle">
-					</p>
-				</div>
-			</div>
-			<div class="outputGeneral" style="display: none;'">
-				<div class="_demo--container" style="width: 950px;">
-						<form>
-						<table class="table" id="tableResult" style="border: 1px solid grey">
-							<tr>
-								<th class="th" style="border: 1px solid grey;width:830px" colspan="6"><h5 class="base--h5">Principais Dados</h5></th>
-							</tr>
-							<tr>
-								<th class="th" style="border: 1px solid grey"><h5 class="base--h5">Sel</h5></th>
-								<th class="th" style="border: 1px solid grey"><h5 class="base--h5">Código</h5></th>
-								<th class="th" style="border: 1px solid grey" colspan="2"><h5 class="base--h5">Nome Completo</h5></th>
-								<th class="th" style="border: 1px solid grey"><h5 class="base--h5">Telefone</h5></th>
-								<th class="th" style="border: 1px solid grey"><h5 class="base--h5">Email</h5></th>
-							</tr>
-							<tr>
-								<td width="40"><input type="radio"></td>
-								<td width="40">1234</td>
-								<td colspan="2">&nbsp;</td>
-								<td width="40">&nbsp;</td>
-								<td width="40">&nbsp;</td>
-							</tr>							
-						</table>
-						</form>
-				</div>
-			</div>
-			<div class="messageSearchPanel" style="display: none;'">
-				<div class="_demo--container">
-					<h4 class="base--h4">Mensagem</h4>
-					<span id="messageSearch" style="color: red">Sem Resultados</span>
-				</div>
-			</div>
-		</article>
-	</div>
-	<div class="userData" style="display: none;'">
+	</div>	
+	<div class="userData">
 		<div class="_demo--container">
 			<article class="_content base--article">
 				<div class="_content--choose-input-file">
@@ -736,41 +670,41 @@
 				<table border="" style="width: 80%">
 					<tr>
 						<td colspan="1""width: 25%">
-							<h5 class="base--h5" style="width: 140px;">Trabalho:</h5>
+							<h5 class="base--h5" style="width: 140px;">Departamento:</h5>
 						</td>
-						<td style="width: 100%" colspan="2"><select id="workType" disabled="disabled"
-							style="color: #a53725";width: 90px">
+						<td style="width: 100%" colspan="1"><select id="department"
+							style="color: #a53725;width: 320px">
 								<option value="No Selection">Selecione</option>
-								<option value="Recepção">Recepção</option>
-								<option value="Ação Social">Ação Social</option>
-								<option value="Coordenação de Período">Coordenação de Período</option>
-								<option value="Expositor do Evangelho">Expositor do Evangelho</option>
-								<option value="Dirigente de Exposição do Evangelho">Dirigente de Exposição do Evangelho</option>
-								<option value="Atendimento Inicial">Atendimento Inicial</option>
-								<option value="Atividade de Passe">Atividade de Passe</option>
-								<option value="Atendimento Diálogo Fraterno">Atendimento Diálogo Fraterno</option>
-								<option value="Coordenador de EIDE I">Coordenador de EIDE I</option>
-								<option value="Coordenador de EIDE II">Coordenador de EIDE I</option>
-								<option value="Coordenador de ESDE I">Coordenador de ESDE I</option>
-								<option value="Coordenador de ESDE II">Coordenador de ESDE II</option>
-								<option value="Coordenador de EADE">Coordenador de EADE</option>
-								<option value="Coordenador de Estudo do Evangelho">Coordenador de Estudo do Evangelho</option>
-								<option value="Coordenador de Estudo Joanna de Ângelis">Coordenador de Estudo Joanna de Ângelis</option>
-								<option value="Coordenador de Estudo da Mediunidade">Coordenador de Estudo da Mediunidade</option>
-								<option value="Dirigente do Mediúnico">Dirigente do Mediúnico</option>
-								<option value="Dialogador do Mediúnico">Dialogador do Mediúnico</option>
-								<option value="Participante do Mediúnico">Participante do Mediúnico</option>
-								<option value="Coordenador de Evangelização e Juventude">Coordenador de Evangelização e Juventude</option>
-								<option value="Coordenador de Diálogo Fraterno em Grupo">Coordenador de Diálogo Fraterno em Grupo</option>
-								<option value="Coordenação de Apoio a diretoria">Coordenação de Apoio a diretoria</option>
-								<option value="Conselho Fiscal">Conselho Fiscal</option>
-								<option value="Diretoria">Diretoria</option>
+								<option value="Administração">Administração</option>
+								<option value="Assistência Espiritual">Assistência Espiritual</option>
+								<option value="Assistência Social Espírita">Assistência Social Espírita</option>
+								<option value="Comunicação">Comunicação</option>
+								<option value="Diretoria Colegiada">Diretoria Colegiada</option>
+								<option value="Estudos Doutrinários">Estudos Doutrinários</option>
+								<option value="Infância e Juventude">Infância e Juventude</option>
+								<option value="Estudo e Prática da Mediunidade">Estudo e Prática da Mediunidade</option>
 						</select></td>
-						<td colspan="1""width: 25%">
-							<h5 align="right"  class="base--h5" style="width: 171px;">Dia da Semana:</h5>
+						<td colspan="1">
+							<h5 align="right"  class="base--h5" style="width: 120px;">Seção/Grupo:</h5>
 						</td>
-						<td style="width: 100%" colspan="1"><select id="weekDayWork" disabled="disabled"
-							style="color: #a53725";width: 55px">
+						<td style="width: 100%" colspan="4"><select id="section"
+							style="color: #a53725;width: 390px">
+								<option selected="selected" value="No Selection">Selecione</option>
+						</select></td>						
+					</tr>	
+					<tr>
+						<td colspan="1""width: 25%">
+							<h5 class="base--h5" style="width: 140px;">Função:</h5>
+						</td>
+						<td style="width: 100%" colspan="2"><select id="function"
+							style="color: #a53725;width: 250px">
+								<option value="No Selection">Selecione</option>
+						</select></td>
+						<td colspan="1">
+							<h5 align="right" id="weekDayWorkLabel" class="base--h5" style="width: 120px;">Dia da Semana:</h5>
+						</td>
+						<td style="width: 100%" colspan="1"><select id="weekDayWork"
+							style="color: #a53725">
 								<option selected="selected" value="No Selection">Selecione</option>
 								<option value="Segunda">Segunda</option>
 								<option value="Terça">Terça</option>
@@ -780,11 +714,11 @@
 								<option value="Sábado">Sábado</option>
 								<option value="Domingo">Domingo</option>
 						</select></td>
-						<td colspan="1""width: 25%">
-							<h5 align="right" class="base--h5" style="width: 90px;">Período:</h5>
+						<td colspan="1">
+							<h5 align="right" class="base--h5" id="periodWorkLabel" style="width: 70px;">Período:</h5>
 						</td>
-						<td style="width: 100%" colspan="1"><select id="periodWork" disabled="disabled"
-							style="color: #a53725";width: 75px">
+						<td style="width: 80%" colspan="1"><select id="periodWork"
+							style="color: #a53725;width: 97px">
 								<option selected="selected" value="No Selection">Selecione</option>
 								<option value="Manhã">Manhã</option>
 								<option value="Tarde">Tarde</option>
@@ -797,15 +731,15 @@
 						<td colspan="1" style="width: 90px;">
 							<table border="" style="width: 100%" cellspacing="0">
 								<tr>
-									<td><input id="initWorkDay" disabled="disabled" maxlength="2" type="text"
+									<td><input id="initWorkDay" maxlength="2" type="text"
 										class="input--question--manual base--a" style="width: 30px;">
 									</td>
 									<td>/</td>
-									<td><input id="initWorkMonth" disabled="disabled" maxlength="2" type="text"
+									<td><input id="initWorkMonth" maxlength="2" type="text"
 										class="input--question--manual base--a" style="width: 30px;">
 									</td>
 									<td>/</td>
-									<td><input id="initWorkYear" type="text" maxlength="4" disabled="disabled"
+									<td><input id="initWorkYear" type="text" maxlength="4"
 										class="input--question--manual base--a" style="width: 60px;">
 									</td>
 								</tr>
@@ -816,21 +750,27 @@
 						<td colspan="1" style="width: 90px;">
 							<table border="" style="width: 100%" cellspacing="0">
 								<tr>
-									<td><input id="finalWorkDay" maxlength="2" type="text" disabled="disabled"
+									<td><input id="finalWorkDay" maxlength="2" type="text"
 										class="input--question--manual base--a" style="width: 30px;">
 									</td>
 									<td>/</td>
-									<td><input id="finalWorkMonth" maxlength="2" type="text" disabled="disabled"
+									<td><input id="finalWorkMonth" maxlength="2" type="text"
 										class="input--question--manual base--a" style="width: 30px;">
 									</td>
 									<td>/</td>
-									<td><input id="finalWorkYear" type="text" maxlength="4" disabled="disabled"
+									<td><input id="finalWorkYear" type="text" maxlength="4"
 										class="input--question--manual base--a" style="width: 60px;">
 									</td>
 								</tr>
 							</table>
 						</td>
-						<td colspan="3" style="width: 120px;"></td>
+						<td colspan="1""width: 25%">
+							<h5 id="classWorkLabel" align="right" class="base--h5" style="width: 90px;">Turma:</h5>
+						</td>
+						<td colspan="2" style="width: 100%"><select id="classWork"
+							style="color: #a53725";width: 75px">
+								<option value="1">1</option>
+						</select></td>
 					</tr>
 					
 					<tr>
@@ -839,7 +779,7 @@
 						<td scope="col" colspan="6" style="width: 75%">
 							<table border="" style="width: 100%">
 								<tr>
-									<td><input id="notesWork" type="text" disabled="disabled"
+									<td><input id="notesWork" type="text" 
 										class="input--question--manual--reduced base--a"
 										style="width: 750px;"></td>
 								</tr>
@@ -861,16 +801,20 @@
 							<table class="table" id="tableResultWork" 
 							style="border: 1px solid grey">
 								<tr>
-									<th class="th" style="border: 1px solid grey" colspan="7"><h5
-											class="base--h5">Histórico de Trabalho</h5></th>
+									<th class="th" style="border: 1px solid grey" colspan="9"><h5
+											class="base--h5">Histórico de Voluntariado</h5></th>
 								</tr>
 								<tr>
 									<th class="th" style="border: 1px solid grey"><h5
 											class="base--h5">Sel</h5></th>
 									<th class="th" style="border: 1px solid grey"><h5
-											class="base--h5">Trabalho</h5></th>
+											class="base--h5">Departamento</h5></th>
 									<th class="th" style="border: 1px solid grey"><h5
-											class="base--h5">Dia da Semana</h5></th>
+											class="base--h5">Seção/Grupo</h5></th>
+									<th class="th" style="border: 1px solid grey"><h5
+											class="base--h5">Função</h5></th>
+									<th class="th" style="border: 1px solid grey"><h5
+											class="base--h5">Dia</h5></th>
 									<th class="th" style="border: 1px solid grey"><h5
 											class="base--h5">Período</h5></th>
 									<th class="th" style="border: 1px solid grey"><h5
@@ -878,7 +822,7 @@
 									<th class="th" style="border: 1px solid grey"><h5
 											class="base--h5">Data Final</h5></th>
 									<th colspan="1" class="th" style="border: 1px solid grey"><h5
-											class="base--h5">Observações</h5></th>
+											class="base--h5">Obs.</h5></th>
 								</tr>
 								<!-- <tr>
 									<td width="40"><input type="radio"></td>
@@ -905,6 +849,8 @@
 		</div>
    		  <input type="button" title="Altera dados de um participante existente" class="input--request-button base--a"
 				id="update" value="Alterar dados do Participante">
+		   <input type="button" title="Sair do Sistema" class="input--request-button base--a"
+				id="logout" value="Sair do Sistema">
 		  <div class="processingCreateOrUpdate" style="display:none;'">
 	 			<div class="_demo--container">
 	 				<p class="base--p">
@@ -923,6 +869,10 @@
    </div>
    <script type="text/javascript"
 		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+   <script type="text/javascript" src="js/lib/bootstrap.bundle.min.js"></script>
+   <script type="text/javascript" src="js/lib/bootbox.all.min.js"></script>
+   <script type="text/javascript" src="js/shared.js"></script>
+   <script type="text/javascript" src="js/chart.js"></script>
    <script type="text/javascript" src="js/public.js"></script>
 </body>
 </html>

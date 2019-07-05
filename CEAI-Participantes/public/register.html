@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
 <link rel="icon" href="images/favicon.ico" type="image/x-icon">
-<link rel="stylesheet" href="/css/bootstrap.css">
+<link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body onload="showLGPD_Dialog()">
 	<div class="_demo--banner">
 		<div class="_demo--container">
 			<div class="banner--service-icon-container" style="height: 20px;">
@@ -50,7 +50,9 @@
 
 			</table>
 			<input type="button" class="input--request-button base--a"
-				id="search" value="Pesquisar">		
+				id="search" value="Pesquisar">	
+			<input type="button" class="input--request-button base--a"
+				id="logoutOnSearch" value="Sair do Sistema">		
 			<div class="processingSearch" style="display: none;'">
 				<div class="_demo--container">
 					<p class="base--p">
@@ -898,7 +900,7 @@
 							style="border: 1px solid grey">
 								<tr>
 									<th class="th" style="border: 1px solid grey" colspan="9"><h5
-											class="base--h5">Histórico de Trabalho</h5></th>
+											class="base--h5">Histórico de Voluntariado</h5></th>
 								</tr>
 								<tr>
 									<th class="th" style="border: 1px solid grey"><h5
@@ -949,6 +951,8 @@
 				id="update" value="Alterar dados do Participante">
 		  <input type="button" title="Limpa todos os Campos para criar um novo Registro" class="input--request-button base--a"
 				id="cleanFields" value="Limpar todos os campos">
+		  <input type="button" title="Sair do Sistema" class="input--request-button base--a"
+				id="logout" value="Sair do Sistema">
 		  <div class="processingCreateOrUpdate" style="display:none;'">
 	 			<div class="_demo--container">
 	 				<p class="base--p">
@@ -967,6 +971,9 @@
    </div>
    <script type="text/javascript"
 		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+   <script type="text/javascript" src="js/lib/bootstrap.bundle.min.js"></script>
+   <script type="text/javascript" src="js/lib/bootbox.all.min.js"></script>
+   <script type="text/javascript" src="js/shared.js"></script>
    <script type="text/javascript" src="js/chart.js"></script>
    <script type="text/javascript" src="js/register.js"></script>
 </body>
