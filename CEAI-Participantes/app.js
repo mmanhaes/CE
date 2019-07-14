@@ -25,6 +25,7 @@ var users = require('./users');
 const TOOL_NAME = "CEAI Participantes";
 var crypto = require('./crypto');
 const STANDARD_PASSWORD = '2b126db6d57d0d1763b1a77f3d89ea9e';
+const APIKEY = '0f96c163c5bce56648eb83ff1566be8d'
 
 passport.use('custom',new CustomStrategy(
 		//IF I BY PASS TO OTHER CLASS AND OTHER THREAD WILL CAUSE Error [ERR_STREAM_WRITE_AFTER_END]
@@ -271,7 +272,9 @@ app.get('/services/ceai/checkUserAccess',
 	res.end(session.role);	
 });
 
-app.post('/services/ceai/loadSessionData', function(req, res){
+app.post('/services/ceai/loadSessionData', 
+		require('connect-ensure-login').ensureLoggedIn(),
+		function(req, res){
 	res.setHeader('Content-Type', 'text/plain');
 	//TODO with searchKey , example '{"searchKey" : "general"}' define what selector to search and execute the db.find
 		
@@ -309,7 +312,9 @@ app.post('/services/ceai/loadSessionData', function(req, res){
 	}
 });
 
-app.post('/services/ceai/searchCPF', function(req, res){
+app.post('/services/ceai/searchCPF', 
+		require('connect-ensure-login').ensureLoggedIn(),
+		function(req, res){
 	res.setHeader('Content-Type', 'application/json');
 	
 	var db = cloudant.db.use(config.database.person.name);
@@ -341,8 +346,111 @@ app.post('/services/ceai/searchCPF', function(req, res){
 	});
 });
 
+app.post('/services/ceai/searchPersonAPI', 
+		function(req, res){
+	res.setHeader('Content-Type', 'text/plain');
+	
+	if (req.get('apiKey') != APIKEY)
+	{
+		console.log("API Key passed",req.get('apiKey'));
+		res.status(403);
+		console.log('Headers',req.headers);
+		res.end('{"message":"Not Authorized"}');
+	}
+	else{
+		var db = cloudant.db.use(config.database.person.name);
+		
+		var selector = "";
+		var type = JSON.parse(JSON.stringify(req.body.type));
+		delete req.body.type;
+		console.log("Searching Person by type",type);
+		buildSelectorSearchPerson(type,req.body,function(err,response){
+			if (err){
+				console.log(err);
+				config.searchError.error = err;
+			    res.end(config.searchError);
+			}
+			else
+			{	
+				//Search with FirstName and LastName or FullName
+				selector = response;
+				console.log("Using selector "+JSON.stringify(selector)+ " to find into database");
+				db.find(selector, function(err, result) {
+					  if (err) {
+					    console.log(err);
+					    config.searchError.error = err;
+					    res.end(config.searchError);
+					  }
+					  else{
+						  console.log('Found %d documents with %s', result.docs.length,JSON.stringify(selector));
+						  if (result.docs.length>0)
+						  {
+						  	  for (var i = 0; i < result.docs.length; i++) {
+						  		  console.log('  Doc userIDs: %s', result.docs[i].userID);
+						  	  }
+						  	  //console.log('Final response from searchPerson',JSON.stringify(result));
+						  	  res.end(JSON.stringify(result));
+						  }
+						  else {
+							  //If not success in FullName or First/Last Name it goes to First and MiddleName 
+							  if (req.body.firstName !=="" && req.body.lastName !==""){
+								  req.body.middleName = "";
+								  buildSelectorSearchPerson(type,req.body,function(err,response){
+									  selector = response;
+										db.find(selector, function(err, result) {
+											 if (result.docs.length>0)
+											 {
+												  console.log('Found %d documents with %s', result.docs.length,JSON.stringify(selector));
+											  	  for (var i = 0; i < result.docs.length; i++) {
+											  		  console.log('  Doc userIDs: %s', result.docs[i].userID);
+											  	  }
+											  	  //console.log('Final response from searchPerson',JSON.stringify(result));
+											  	  res.end(JSON.stringify(result));		
+											 }
+											 else{
+											  	//If not success in FullName or First/Last Name it goes to First and MiddleName 
+												req.body.middleName = "";
+												req.body.lastName = "";
+												buildSelectorSearchPerson(type,req.body,function(err,response){
+												  selector = response;
+													db.find(selector, function(err, result) {
+														console.log('Found %d documents with %s', result.docs.length,JSON.stringify(selector));
+													  	for (var i = 0; i < result.docs.length; i++) {
+													  		  console.log('  Doc userIDs: %s', result.docs[i].userID);
+													  	}
+													  	if (result.docs.length>0){
+													  		  	//console.log('Final response from searchPerson',JSON.stringify(result));
+													  		  	res.end(JSON.stringify(result));
+													  	}
+													  	else{
+															  var result = {};
+															  result.message = "Not Found";								   
+															  console.log("Not Found for query",req.body);
+															  res.end(JSON.stringify(result));
+														}
+													});
+	   											});  
+											 }	  
+										});
+								  });
+							  }
+							  else{
+								  var result = {};
+								  result.message = "Not Found";								   
+								  console.log("Not Found for query",req.body);
+								  res.end(JSON.stringify(result));
+							  }
+						  }						  
+					  }	  
+				});	 
+			}	
+		});
+	}
+});
 
-app.post('/services/ceai/searchPerson', function(req, res){
+app.post('/services/ceai/searchPerson', 
+		require('connect-ensure-login').ensureLoggedIn(),
+		function(req, res){
 	res.setHeader('Content-Type', 'text/plain');
 	
 	var db = cloudant.db.use(config.database.person.name);
@@ -552,7 +660,9 @@ function prepareUpdate(dbSource,request,callback){
 	return callback(dbSource);
 }
 
-app.post('/services/ceai/update', function(req, res){
+app.post('/services/ceai/update', 
+		require('connect-ensure-login').ensureLoggedIn(),
+		function(req, res){
 	res.setHeader('Content-Type', 'text/plain');
 
 	var db = cloudant.db.use(config.database.person.name);
@@ -595,7 +705,9 @@ app.post('/services/ceai/update', function(req, res){
 });
 
 
-app.post('/services/ceai/inputGeneral', function(req, res){
+app.post('/services/ceai/inputGeneral', 
+		require('connect-ensure-login').ensureLoggedIn(),
+		function(req, res){
 	res.setHeader('Content-Type', 'text/plain');
 	cloudant.db.list(function(err, allDbs) {
 		console.log('All my databases: %s', allDbs.join(', '));
@@ -619,7 +731,9 @@ app.post('/services/ceai/inputGeneral', function(req, res){
 	res.end('para o participante : '+ req.body.firstName+ " "+ req.body.middleName+" "+req.body.lastName);	 
 });
 
-app.post('/services/ceai/register', function(req, res){
+app.post('/services/ceai/register', 
+		require('connect-ensure-login').ensureLoggedIn(),
+		function(req, res){
 	res.setHeader('Content-Type', 'text/plain');
 
 	console.log(JSON.stringify(req.body, null, 2));
