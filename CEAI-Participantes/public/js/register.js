@@ -444,11 +444,11 @@ function checkUserAccess(){
 }
 
 function validateFieldsForGeneral(callback){
-	if ($.trim($('#fullName').val()) === ''){
+	if ($.trim($('#fullNameInput').val()) === ''){
 		return callback(false,"Insira o nome completo do participante");
 	}  
 	
-	var res = $.trim($('#fullName')).split(" ");
+	var res = $.trim($('#fullNameInput')).split(" ");
 	if (res.length ===1){
 		return callback(false,"Nome do participante precisa estar completo");
 	}
@@ -1447,125 +1447,132 @@ function handleDepartmentChange(){
 	 }
 }
 	 
+function search(){
+	//alert('Search Button'); 
+	var $output = $('.outputGeneral'),
+	$message = $('.messageSearchPanel'),
+	$process = $('.processingSearch'),	
+	$userData = $('.userData'),
+	$newRecordButton = $('.newRecord');
+	$newRecordButton.hide();
+	var validate = validateFieldsSearch();
+	if (validate==0){	
+		alert('Favor preencher um nome para pesquisar, pode ser o primeiro nome ou nome completo ou coloque o CPF');
+		return;
+	}	
+	$process.show();
+	$userData.hide();
+	cleanSearchOutput(document.getElementById("tableResult"));
+	cleanupAllFields();
+  	$output.hide();
+  	$message.hide();
+  	if (validate == 1){
+  	
+	  	var respNames = "";		
+	  	splitFullName($.trim($('#fullName').val()),function(response){
+			respNames = response;
+		});
+	  	
+	  	var inputSearch = '{'
+	  		+'"type" : "register",'
+	  		+'"firstName" : "'+$.trim(respNames.firstName)+'",'
+			+'"middleName" : "'+$.trim(respNames.middleName)+'",'
+			+'"lastName" : "'+$.trim(respNames.lastName)+'"}';
+	  	  
+	  	  console.log(JSON.stringify(inputSearch));
+	  	  
+	  	  $.ajax({
+	  		url: '/services/ceai/searchPerson',
+	        type: 'POST',
+	        data: inputSearch,
+	        contentType: "application/json",
+	        success: function(data, textStatus, jqXHR){
+	        	data = JSON.parse(data);
+	            $process.hide();
+	        	if (typeof(data.message)=='undefined'){
+	            	buildSearhOutput(data);
+	            	searchCache = data;
+	            	$output.show(); 
+	         		$newRecordButton.show();
+	        	}
+	        	else{
+	        		$('#messageSearch').text('Pesquisa por participante '+$.trim($('#fullName').val())+' não econtrou dados');
+	        		$message.show(); 
+	         		$newRecordButton.show();
+	        	}        
+	        },
+	        error: function(jqXHR, textStatus, errorThrown){
+	        	$('#messageSearch').text('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
+	        	//alert('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
+	        	 $process.hide();
+	        	 $message.show(); 
+	        }
+	      });
+  	}
+  	else{
+		var input = '{'
+			+'"cpf" : "'+$.trim($('#cpf').val())+'"}';
+
+		console.log(JSON.stringify(input));
+
+		$.ajax({
+			url: '/services/ceai/searchCPF',
+			type: 'POST',
+			data: input,
+			contentType: "application/json",
+			success: function(response, textStatus, jqXHR){
+					$process.hide();
+					if (response.message == 'NOT FOUND'){
+		        		$('#messageSearch').text('Pesquisa por participante '+$.trim($('#cpf').val())+' não econtrou dados');
+		        		$message.show(); 
+		         		$newRecordButton.show();
+					}
+					else{
+		            	buildSearhOutput(response.data);
+		            	searchCache = response.data;
+		            	$output.show(); 
+		         		$newRecordButton.show();
+					}
+			},
+			error: function(jqXHR, textStatus, errorThrown){
+				$('#messageSearch').text('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
+				//alert('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
+				$process.hide();
+				$output.show(); 
+			}
+		});
+  	}
+}
 	 
 
 $(document).ready(function() {
-	  $('#newRegister').click(function(){
-		  newRecord();
-	  });	
-	  $('#search').click(function(){
-		//alert('Search Button'); 
-		var $output = $('.outputGeneral'),
-		$message = $('.messageSearchPanel'),
-		$process = $('.processingSearch'),	
-		$userData = $('.userData'),
-		$newRecordButton = $('.newRecord');
-		$newRecordButton.hide();
-		var validate = validateFieldsSearch();
-		if (validate==0){	
-			alert('Favor preencher um nome para pesquisar, pode ser o primeiro nome ou nome completo ou coloque o CPF');
-			return;
-		}	
-		$process.show();
-		$userData.hide();
-		cleanSearchOutput(document.getElementById("tableResult"));
-		cleanupAllFields();
-	  	$output.hide();
-	  	$message.hide();
-	  	if (validate == 1){
-	  	
-		  	var respNames = "";		
-		  	splitFullName($.trim($('#fullName').val()),function(response){
-				respNames = response;
-			});
-		  	
-		  	var inputSearch = '{'
-		  		+'"type" : "register",'
-		  		+'"firstName" : "'+$.trim(respNames.firstName)+'",'
-				+'"middleName" : "'+$.trim(respNames.middleName)+'",'
-				+'"lastName" : "'+$.trim(respNames.lastName)+'"}';
-		  	  
-		  	  console.log(JSON.stringify(inputSearch));
-		  	  
-		  	  $.ajax({
-		  		url: '/services/ceai/searchPerson',
-		        type: 'POST',
-		        data: inputSearch,
-		        contentType: "application/json",
-		        success: function(data, textStatus, jqXHR){
-		        	data = JSON.parse(data);
-		            $process.hide();
-		        	if (typeof(data.message)=='undefined'){
-		            	buildSearhOutput(data);
-		            	searchCache = data;
-		            	$output.show(); 
-		         		$newRecordButton.show();
-		        	}
-		        	else{
-		        		$('#messageSearch').text('Pesquisa por participante '+$.trim($('#fullName').val())+' não econtrou dados');
-		        		$message.show(); 
-		         		$newRecordButton.show();
-		        	}        
-		        },
-		        error: function(jqXHR, textStatus, errorThrown){
-		        	$('#messageSearch').text('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
-		        	//alert('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
-		        	 $process.hide();
-		        	 $message.show(); 
-		        }
-		      });
-	  	}
-	  	else{
-			var input = '{'
-				+'"cpf" : "'+$.trim($('#cpf').val())+'"}';
-
-			console.log(JSON.stringify(input));
-
-			$.ajax({
-				url: '/services/ceai/searchCPF',
-				type: 'POST',
-				data: input,
-				contentType: "application/json",
-				success: function(response, textStatus, jqXHR){
-						$process.hide();
-						if (response.message == 'NOT FOUND'){
-			        		$('#messageSearch').text('Pesquisa por participante '+$.trim($('#cpf').val())+' não econtrou dados');
-			        		$message.show(); 
-			         		$newRecordButton.show();
-						}
-						else{
-			            	buildSearhOutput(response.data);
-			            	searchCache = response.data;
-			            	$output.show(); 
-			         		$newRecordButton.show();
-						}
-				},
-				error: function(jqXHR, textStatus, errorThrown){
-					$('#messageSearch').text('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
-					//alert('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);
-					$process.hide();
-					$output.show(); 
-				}
-			});
-	  	}
+	$('#newRegister').click(function(){
+		newRecord();
+	});	
+	$('#search').click(function(){
+		search();
 	});
 	$("#parentCpf").focusout(function(){
-		var val = $.trim($('#cpf').val());
+		var val = $.trim($('#parentCpf').val());
 		if (val!==''){
 			var isnum = /^\d+$/.test(val);
 			if (!isnum){
 				alert("Coloque somente números sem separadores");
-				$('#cpf').val("");
+				$('#parentCpf').val("");
 			}
+		}
+		if (cpfValidate(val)==false){
+			alert("CPF Inválido, Coloque somente números válidos e sem separadores");
+			$('#parentCpf').val("");
 		}
 	});
 	$( "#parentCpf" ).keypress(function() {
-		var val = $.trim($('#cpf').val());
+		var val = $.trim($('#parentCpf').val());
 		if (val!==''){
 			var isnum = /^\d+$/.test(val);
 			if (!isnum){
 				alert("Coloque somente números sem separadores");
-				$('#cpf').val("");
+				$('#parentCpf').val("");
 			}
 		}
 	});	
@@ -1578,6 +1585,10 @@ $(document).ready(function() {
 				$('#cpf').val("");
 			}
 		}
+		if (cpfValidate(val)==false){
+			alert("CPF Inválido, Coloque somente números válidos e sem separadores");
+			$('#cpf').val("");
+		}
 	});
 	$( "#cpf" ).keypress(function() {
 		var val = $.trim($('#cpf').val());
@@ -1587,7 +1598,39 @@ $(document).ready(function() {
 				alert("Coloque somente números sem separadores");
 				$('#cpf').val("");
 			}
+		}		
+	});	
+	$("#cpfInput").focusout(function(){
+		//alert("Acionou verificador");
+		var val = $.trim($('#cpfInput').val());
+		if (val!==''){
+			var isnum = /^\d+$/.test(val);
+			if (!isnum){
+				alert("Coloque somente números válidos e sem separadores");
+				$('#cpfInput').val("");
+			}
 		}
+		if (cpfValidate(val)==false){
+			alert("CPF Inválido, Coloque somente números válidos e sem separadores");
+			$('#cpfInput').val("");
+		}
+	});
+	$( "#cpfInput" ).keypress(function() {
+		//alert("Acionou verificador");
+		var val = $.trim($('#cpfInput').val());
+		if (val!==''){
+			var isnum = /^\d+$/.test(val);
+			if (!isnum){
+				alert("Coloque somente números sem separadores");
+				$('#cpf').val("");
+			}
+		}
+	});	
+	$( "#fullName").keypress(function(e) {
+		var keycode = (e.keyCode ? e.keyCode : e.which);
+	    if (keycode == '13') {
+	    	search();
+	    }
 	});	
 	$('#previous').click(function(){
 		window.location = "/home";

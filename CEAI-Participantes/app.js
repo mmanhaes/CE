@@ -80,7 +80,25 @@ passport.deserializeUser(function(id, cb) {
 		 return cb(null, session.user);
 	 }
 	 else{
-		 cb(new Error('User ' + id + ' does not exist'));
+		  var db = cloudant.db.use(config.database.users.name);
+		  var sel = config.selectors.byUserId;
+		  sel.selector._id = id;
+		  
+		  db.find(sel, function(err, result) {
+			  if (err) {
+			     console.log("Error in findByUserByID",err);
+			     return cb(new Error("Error in findByUserByID"+err));
+			  }
+			  else{
+				 if (result.docs.length > 0){
+					 session.user = result.docs[0];	
+					 return cb(null, session.user);
+				 }
+				 else{
+					 return cb(new Error('User ' + id + ' does not exist'));
+				 }
+			  }
+		  });
 	 }
 });
 
