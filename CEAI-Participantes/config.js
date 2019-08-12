@@ -27,6 +27,25 @@ exports.lgpd = {
 exports.selectors={};
 
 exports.selectors={
+		"byUserIDSystem":{
+			"selector": {
+			      "userID": "id"
+			   },
+			   "fields": [
+			      "_id",
+			      "_rev",
+			      "username",
+			      "password",
+			      "role",
+			      "displayName",
+			      "userID"
+			   ],
+			   "sort": [
+			      {
+			         "_id": "asc"
+			      }
+			   ]
+		},
 		"byUserId":{
 			"selector": {
 			      "_id": "id"

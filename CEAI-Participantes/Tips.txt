@@ -92,3 +92,15 @@ https://github.com/cloudfoundry/nodejs-buildpack
 7 - if you put a variable that was not assigned jquery/javascript tries to mach some component into HTML
 	
 8 - Work with searchParent
+
+9 - Create access levels
+
+1 - Worker
+2 - Coordinator
+3 - Admin
+
+10 - Insert NCode 
+
+11 - Insert Graduation
+
+12 - Prepare new load of data from spreadsheet adauto

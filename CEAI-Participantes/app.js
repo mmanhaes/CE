@@ -250,6 +250,47 @@ app.post('/services/ceai/saveNewPassword',
 	});
 }); 
 
+app.post('/services/ceai/resetPassword', 
+		require('connect-ensure-login').ensureLoggedIn(),
+        function(req, res){	
+	res.setHeader('Content-Type', 'application/json');
+	
+	console.log("Reset Password for User ID ",req.body.userID);
+
+	var db = cloudant.db.use(config.database.users.name);
+	var sel = config.selectors.byUserIDSystem;
+	sel.selector.userID = req.body.userID;
+	  
+	db.find(sel, function(err, result) {
+		if (err) {
+		 	data.message = "NOK";
+			res.end(JSON.stringify(data));
+		}
+		else{
+			 var data = {};
+			 if (result.docs.length > 0){
+				var input =  result.docs[0];
+			 	input.password = STANDARD_PASSWORD;			
+				db.insert(input,function(err, body, header) {
+					  
+				      if (err) {
+					        console.log('[db.update] Reset Password Error', err.message);
+							data.message = "NOK";
+							res.end(JSON.stringify(data));
+					      }
+				      else{
+							data.message = "OK";
+							res.end(JSON.stringify(data));
+				      }
+				});
+			 }
+			 else{
+				 	data.message = "NOK";
+					res.end(JSON.stringify(data));
+			 }
+		}
+	});
+}); 
 
 app.post('/services/ceai/lgpd', 
 		require('connect-ensure-login').ensureLoggedIn(),

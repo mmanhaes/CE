@@ -1590,15 +1590,21 @@ $(document).ready(function() {
 			$('#cpf').val("");
 		}
 	});
-	$( "#cpf" ).keypress(function() {
-		var val = $.trim($('#cpf').val());
-		if (val!==''){
-			var isnum = /^\d+$/.test(val);
-			if (!isnum){
-				alert("Coloque somente números sem separadores");
-				$('#cpf').val("");
-			}
-		}		
+	$( "#cpf" ).keypress(function(e) {
+		var keycode = (e.keyCode ? e.keyCode : e.which);
+	    if (keycode == '13') {
+	    	search();
+	    }
+	    else{
+			var val = $.trim($('#cpf').val());
+			if (val!==''){
+				var isnum = /^\d+$/.test(val);
+				if (!isnum){
+					alert("Coloque somente números sem separadores");
+					$('#cpf').val("");
+				}
+			}		
+	    }
 	});	
 	$("#cpfInput").focusout(function(){
 		//alert("Acionou verificador");
@@ -1688,7 +1694,6 @@ $(document).ready(function() {
 				}
 			});
 		}
-		
 	});
 	$('#updateAssociation').click(function(){
 		updateAssociation();
@@ -1699,8 +1704,29 @@ $(document).ready(function() {
 	$('#deleteAssociation').click(function(){
 		removeAssociation();
 	});	
-	$('#function').change(function(){
-		
+	$('#resetPassword').click(function(){
+		var data = {};
+		data.userID = $('#userID').val();
+	
+		$.ajax({
+			url: '/services/ceai/resetPassword',
+	        type: "POST",
+	        data: JSON.stringify(data),
+	        contentType: "application/json",
+	        success: function(data, textStatus, jqXHR){
+	        	if (data.message=="OK"){
+	        		alert("Senha Resetada com Sucesso");
+	        	}
+	        	else{
+	        		alert("Problemas no Reset de senha, Contate o Administrador");
+	        	}
+	        },
+	        error: function(jqXHR, textStatus, errorThrown){
+	        	alert("Problemas no Reset de senha, Contate o Administrador");
+	        	
+	        	console.log('GDPR acceptance failed to save ');
+	        }
+	    });	
 	});
 	$('#department').change(function(){
 		handleDepartmentChange();
