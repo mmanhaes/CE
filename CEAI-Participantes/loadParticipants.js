@@ -311,5 +311,45 @@ function loadParticipants(){
 	});		
 }
 
+function dumpParticipants(outputFile){
+	var xlsx = require('node-xlsx').default;
+	
+	const fs = require("fs");
+	
+	var db = cloudant.db.use(config.database.person.name);
+	var sel = config.selectors.forDump;
+	
+	var fields = JSON.parse(JSON.stringify(config.selectors.forDump.fields));
+ 
+    var data = [fields];
+    
+	db.find(sel, function(err, result) {
+		if (err) {
+		 	data.message = "NOK";
+			res.end(JSON.stringify(data));
+		}
+		else{
+			 if (result.docs.length>0){
+				   console.log('Number of participantes found',result.docs.length);
+				   for(var i=0;i<result.docs.length;++i){
+					   var item = [];
+					   for (var j=0;j<fields.length;++j){
+						   item.push(result.docs[i][fields[j]])
+					   }
+					   data.push(item);
+				   }				 
+				   const buffer = xlsx.build([{ name: "participants", data: data }]);
+				   
+				   fs.writeFile(outputFile, buffer, (err) => {
+					    if (err) throw err
+					    console.log('Dump of participantes executed with success on file',outputFile);					    
+				   })
+			 }
+		}
+	});
+	
+}
+
 //var args = process.argv.splice(2);
-loadParticipants();
+//loadParticipants();
+dumpParticipants('./data/participantsCloud.xlsx');

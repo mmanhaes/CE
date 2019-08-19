@@ -27,6 +27,39 @@ exports.lgpd = {
 exports.selectors={};
 
 exports.selectors={
+		"forDump":{
+			"selector": {
+			    "_id" : {"$gt" : 0}
+			  },
+			  "fields": [
+			    "firstName",
+			    "middleName",
+			    "lastName",
+			    "userID",
+			    "cpf",
+			    "rg",
+			    "rgExp",
+			    "rgState",
+			    "birthDate",
+			    "address",
+			    "number",
+			    "complement",
+			    "neighborhood",
+			    "city",
+			    "state",
+			    "postCode",
+			    "parentCpf",
+			    "parentName",
+			    "phone1",
+			    "whatsup1",
+			    "phone2",
+			    "whatsup2",
+			    "email1",
+			    "email2",
+			    "habilities",
+			    "habilitesNotes"
+			  ]
+		},
 		"byUserIDSystem":{
 			"selector": {
 			      "userID": "id"
