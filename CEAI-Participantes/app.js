@@ -683,7 +683,7 @@ function prepareUpdate(dbSource,request,callback){
 	
 	switch (request.type){
 		case  "finance":	
-			dbSource.finance= request.finance;			
+			dbSource.finance.push(request.finance);			
 			break;
 		case  "finance_insert":	
 			dbSource.firstName = request.firstName;
