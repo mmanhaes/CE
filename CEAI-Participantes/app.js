@@ -25,7 +25,23 @@ var users = require('./users');
 const TOOL_NAME = "CEAI Participantes";
 var crypto = require('./crypto');
 const STANDARD_PASSWORD = '2b126db6d57d0d1763b1a77f3d89ea9e';
-const APIKEY = '0f96c163c5bce56648eb83ff1566be8d'
+const APIKEY = '0f96c163c5bce56648eb83ff1566be8d';
+
+function getCustomerID(){
+	var currentdate = new Date(); 
+	
+	var min=1000; 
+    var max=9999;  
+    var padding = Math.floor(Math.random() * (+max - +min) + +min); 
+	
+	return  currentdate.getFullYear() 
+					+ "-" + (currentdate.getMonth()+1) 
+					+ "-" + currentdate.getDate()					 
+					+ "-" + currentdate.getHours()  
+	                + "-" + currentdate.getMinutes() 
+	                + "-" + currentdate.getSeconds()
+	                + "-" + padding;
+}
 
 passport.use('custom',new CustomStrategy(
 		//IF I BY PASS TO OTHER CLASS AND OTHER THREAD WILL CAUSE Error [ERR_STREAM_WRITE_AFTER_END]
@@ -143,44 +159,53 @@ var buildSelectorSearchPerson = function(type,data,callback){
 		  return item.type == type;
 	});
 	
-	console.log('Configuration Found',JSON.stringify(configFound[0]));
-	
-	if (data.lastName!=="" && data.firstName!=="" && data.middleName!=="")
+	if (type != 'finance')
 	{
-		configFound[0].fullName_selector.selector.firstName.$regex = case_ins+data.firstName;
-		configFound[0].fullName_selector.selector.middleName.$regex  = case_ins+data.middleName;
-		configFound[0].fullName_selector.selector.lastName.$regex  = case_ins+data.lastName;
+	
+		console.log('Configuration Found',JSON.stringify(configFound[0]));
 		
-		return callback(false,configFound[0].fullName_selector);
-	}	
-	else{
-		if (data.lastName!=="" && data.firstName!=="")
+		if (data.lastName!=="" && data.firstName!=="" && data.middleName!=="")
 		{
-			configFound[0].firstAndlastName_selector.selector.firstName.$regex  = case_ins+data.firstName;
-			configFound[0].firstAndlastName_selector.selector.lastName.$regex  = case_ins+data.lastName;
+			configFound[0].fullName_selector.selector.firstName.$regex = case_ins+data.firstName;
+			configFound[0].fullName_selector.selector.middleName.$regex  = case_ins+data.middleName;
+			configFound[0].fullName_selector.selector.lastName.$regex  = case_ins+data.lastName;
 			
-			return callback(false,configFound[0].firstAndlastName_selector);
-		}
-		else
-		{
-			if (data.middleName!=="" && data.firstName!=="")
+			return callback(false,configFound[0].fullName_selector);
+		}	
+		else{
+			if (data.lastName!=="" && data.firstName!=="")
 			{
 				configFound[0].firstAndlastName_selector.selector.firstName.$regex  = case_ins+data.firstName;
-				configFound[0].fullName_selector.selector.middleName.$regex  = case_ins+data.middleName;
+				configFound[0].firstAndlastName_selector.selector.lastName.$regex  = case_ins+data.lastName;
 				
-				return callback(false,configFound[0].firstAndMiddleName_selector);
+				return callback(false,configFound[0].firstAndlastName_selector);
 			}
 			else
-			{	
-				if (data.firstName!=="")
-				{				
-					configFound[0].firstName_selector.selector.firstName.$regex  = case_ins+data.firstName;
+			{
+				if (data.middleName!=="" && data.firstName!=="")
+				{
+					configFound[0].firstAndlastName_selector.selector.firstName.$regex  = case_ins+data.firstName;
+					configFound[0].fullName_selector.selector.middleName.$regex  = case_ins+data.middleName;
 					
-					return callback(false,configFound[0].firstName_selector);
+					return callback(false,configFound[0].firstAndMiddleName_selector);
 				}
-			}	
-		}			
+				else
+				{	
+					if (data.firstName!=="")
+					{				
+						configFound[0].firstName_selector.selector.firstName.$regex  = case_ins+data.firstName;
+						
+						return callback(false,configFound[0].firstName_selector);
+					}
+				}	
+			}			
+		}
 	}
+	else{
+		configFound[0].fincode_selector.selector.fincode = data.fincode;
+		return callback(false,configFound[0].fincode_selector);		
+	}
+	
 	return callback("No Selector Found",null);
 };
 
@@ -405,6 +430,59 @@ app.post('/services/ceai/searchCPF',
 	});
 });
 
+app.post('/services/ceai/updatePersonAPI', 
+		function(req, res){
+	res.setHeader('Content-Type', 'text/plain');
+	
+	if (req.get('apiKey') != APIKEY)
+	{
+		console.log("API Key passed",req.get('apiKey'));
+		res.status(403);
+		console.log('Headers',req.headers);
+		res.end('{"message":"Not Authorized"}');
+	}
+	else{
+		var db = cloudant.db.use(config.database.person.name);
+		var selector = config.selectors.forFinancialUpdates;
+		selector.selector.fincode = req.body.fincode;
+		db.find(selector, function(err, result) {
+			  if (err) {
+			    console.log(err);
+			    config.config.searchError.error = err;
+			    res.end(config.searchError);
+			  }
+			  else{
+				    console.log('Found %d documents with %s', result.docs.length,JSON.stringify(selector));
+				    console.log('Result %s', JSON.stringify(result));
+				    if (result.docs.length>0)
+				    {					  	
+				    	prepareUpdate(result.docs[0],req.body,function(response){
+				    		db.insert(response, function(err, body, header) {
+								if (err) {
+									console.log('[db.update] ', err.message);
+									res.end('[db.update] ', err.message);
+								}
+								else{
+									console.log('You have updated the record.');
+									console.log(body);
+									console.log('With Content :');
+									console.log(JSON.stringify(req.body, null, 2));
+									res.write('Requisicão Atualizada com Sucesso Para o Usuário com o ID :'+response.userID +'\n');
+									res.write('Código Financeiro :'+response.fincode +'\n');
+									res.end('Participante : '+ response.firstName+ " "+ response.middleName+" "+response.lastName);	
+								}	
+							});								    		
+				    	});
+				    }
+				    else
+				    {
+				    	res.end('Erro na Atualização para o participante : '+ req.body.firstName+ " "+ req.body.middleName+" "+req.body.lastName);
+				    }	
+			  }
+		});	 
+	}
+});
+
 app.post('/services/ceai/searchPersonAPI', 
 		function(req, res){
 	res.setHeader('Content-Type', 'text/plain');
@@ -604,6 +682,37 @@ app.post('/services/ceai/searchPerson',
 function prepareUpdate(dbSource,request,callback){
 	
 	switch (request.type){
+		case  "finance":	
+			dbSource.finance= request.finance;			
+			break;
+		case  "finance_insert":	
+			dbSource.firstName = request.firstName;
+			dbSource.middleName = request.middleName;
+			dbSource.lastName = request.lastName;
+			dbSource.fincode = request.fincode;
+			dbSource.cpf = request.cpf;
+			dbSource.rg = request.rg;
+			dbSource.rgExp = request.rgExp;
+			dbSource.rgState = request.rgState;
+			dbSource.birthDate = request.birthDate;
+			dbSource.address = request.address;
+			dbSource.number = request.number;
+			dbSource.complement = request.complement;
+			dbSource.neighborhood = request.neighborhood;
+			dbSource.city = request.city;
+			dbSource.state = request.state;
+			dbSource.postCode = request.postCode;
+			dbSource.parentCpf = request.parentCpf;
+			dbSource.parentName = request.parentName;
+			dbSource.phone1 = request.phone1;
+			dbSource.whatsup1 = request.whatsup1;
+			dbSource.phone2 = request.phone2;
+			dbSource.whatsup2 = request.whatsup2;
+			dbSource.email1 = request.email1;
+			dbSource.email2 = request.email2;
+			dbSource.habilities= request.habilities;
+			dbSource.habilitesNotes= request.habilitesNotes;
+			break;
 		case  "all":	
 			dbSource.userID= request.userID;
 			dbSource.firstName = request.firstName;
@@ -790,6 +899,59 @@ app.post('/services/ceai/inputGeneral',
 	res.end('para o participante : '+ req.body.firstName+ " "+ req.body.middleName+" "+req.body.lastName);	 
 });
 
+app.post('/services/ceai/registerPersonAPI',function(req, res){
+	res.setHeader('Content-Type', 'text/plain');
+
+	console.log("registerPersonAPI input: "+JSON.stringify(req.body, null, 2));
+	
+	if (req.get('apiKey') != APIKEY)
+	{
+		console.log("API Key passed",req.get('apiKey'));
+		res.status(403);
+		console.log('Headers',req.headers);
+		res.end('{"message":"Not Authorized"}');
+	}
+	else{
+		var input = {};
+		input.username = req.body.email1;
+		input.password = STANDARD_PASSWORD;
+		input.role = "user";	
+		input.displayName =  req.body.firstName+ ' '+ req.body.middleName+' '+ req.body.lastName;
+		input.userID  = req.body.userID;
+		users.createUser(input,function(err,result){
+			   if (err){
+				   res.write('Erro para criar um novo usuário',err);
+			   }
+			   else{
+				   res.write('Usuário '+ input.username+' criado com sucesso com a senha padrão \n');
+			   }
+			   
+			   var db = cloudant.db.use(config.database.person.name);		
+				var id =  uuidv1();
+				var participant = JSON.parse(JSON.stringify(config.participant));
+				participant.userID = getCustomerID();
+				prepareUpdate(participant,req.body,function(response){
+		    		db.insert(response,id,function(err, body, header) {
+						if (err) {
+							res.end('[db.insert from public Register Error] ', err.message);
+						}
+						else{
+							console.log('You have inserted the record.');
+							console.log(body);
+							console.log('With Content :');
+							console.log(JSON.stringify(req.body, null, 2));
+							
+							res.write('Dados Cadastrados com Sucesso Para o Usuário com o ID :'+response.userID +'\n');
+							res.write('Código Financeiro :'+response.fincode +'\n');
+							res.end('Participante : '+ response.firstName+ " "+ response.middleName+" "+response.lastName);
+						}
+					});
+				});		
+		});
+	}
+});
+
+
 app.post('/services/ceai/register', 
 		require('connect-ensure-login').ensureLoggedIn(),
 		function(req, res){
@@ -804,11 +966,11 @@ app.post('/services/ceai/register',
 		   var input = {};
 		   input.username = req.body.email1;
 		   input.password = STANDARD_PASSWORD;
-		   if (req.body.work.length>0){
-			   input.role = "admin";
+		   if (req.body.work.length==0){
+			   input.role = "user";
 		   }
 		   else{
-			   input.role = "user";
+			   input.role = "admin";
 		   }
 		   input.displayName =  req.body.firstName+ ' '+ req.body.middleName+' '+ req.body.lastName;
 		   input.userID  = req.body.userID;

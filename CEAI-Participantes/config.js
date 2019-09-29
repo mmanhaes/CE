@@ -36,6 +36,7 @@ exports.selectors={
 			    "middleName",
 			    "lastName",
 			    "userID",
+			    "fincode",
 			    "cpf",
 			    "rg",
 			    "rgExp",
@@ -227,7 +228,49 @@ exports.selectors={
 			    "habilitesNotes",
 			    "work",
 			    "study",
-			    "book"
+			    "book",
+			    "finance"
+			  ]
+		},
+		"forFinancialUpdates":{
+			"selector": {
+			    "fincode" : ""
+			  },
+			  "fields": [
+				"_id",
+			    "_rev",
+			    "firstName",
+			    "middleName",
+			    "lastName",
+			    "userID",
+			    "fincode",
+			    "cpf",
+			    "rg",
+			    "rgExp",
+			    "rgState",
+			    "birthDate",
+			    "address",
+			    "number",
+			    "complement",
+			    "neighborhood",
+			    "city",
+			    "state",
+			    "postCode",
+			    "parentCpf",
+			    "parentName",
+			    "phone1",
+			    "whatsup1",
+			    "phone2",
+			    "whatsup2",
+			    "email1",
+			    "email2",
+			    "association",
+			    "habilities",
+			    "habilitesNotes",
+			    "work",
+			    "study",
+			    "book",
+			    "finance"
 			  ]
 		},
 		"general":{
@@ -239,6 +282,7 @@ exports.selectors={
 			    "middleName",
 			    "lastName",
 			    "userID",
+			    "fincode",
 			    "cpf",
 			    "rg",
 			    "rgExp",
@@ -386,7 +430,8 @@ exports.selectors={
 						    "habilitesNotes",
 						    "work",
 						    "study",
-						    "book"
+						    "book",
+						    "finance"
 					  ],
 					  "sort": [
 					    {
@@ -401,6 +446,8 @@ exports.participant = {
 		  "middleName": "",
 		  "lastName": "",
 		  "userID": "2018-4-5-19-40-30-85",
+		  "fincode":"",
+		  "cpf":"",
 		  "rg": "",
 		  "rgExp": "",
 		  "rgState": "",
@@ -444,6 +491,49 @@ exports.searchError = {
 
 exports.searchPerson = [
 	{
+		type:"finance",
+		fincode_selector : {
+				  "selector": {
+					  	  "fincode": ""
+					  },
+					  "fields": [
+						  "_id",
+						    "_rev",
+						    "firstName",
+						    "middleName",
+						    "lastName",
+						    "userID",
+						    "fincode",
+						    "cpf",
+						    "rg",
+						    "rgExp",
+						    "rgState",
+						    "birthDate",
+						    "address",
+						    "number",
+						    "complement",
+						    "neighborhood",
+						    "city",
+						    "state",
+						    "postCode",
+						    "parentCpf",
+						    "parentName",
+						    "phone1",
+						    "whatsup1",
+						    "phone2",
+						    "whatsup2",
+						    "email1",
+						    "email2",
+						    "finance"
+					  ],
+					  "sort": [
+					    {
+					      "firstName": "asc"
+					    }
+					  ]
+		}
+	},
+	{
 		type:"register",
 		fullName_selector : {
 				  "selector": {
@@ -464,6 +554,7 @@ exports.searchPerson = [
 						    "middleName",
 						    "lastName",
 						    "userID",
+						    "fincode",
 						    "cpf",
 						    "rg",
 						    "rgExp",
@@ -489,7 +580,8 @@ exports.searchPerson = [
 						    "habilitesNotes",
 						    "work",
 						    "study",
-						    "book"
+						    "book",
+						    "finance"
 					  ],
 					  "sort": [
 					    {
@@ -510,7 +602,8 @@ exports.searchPerson = [
 						    "middleName",
 						    "lastName",
 						    "userID",
-						    "cpf",
+						    "fincode",
+						    "cpf",						    
 						    "rg",
 						    "rgExp",
 						    "rgState",
@@ -535,7 +628,8 @@ exports.searchPerson = [
 						    "habilitesNotes",
 						    "work",
 						    "study",
-						    "book"
+						    "book",
+						    "finance"
 					  ],
 					  "sort": [
 					    {
@@ -559,6 +653,7 @@ exports.searchPerson = [
 						    "middleName",
 						    "lastName",
 						    "userID",
+						    "fincode",
 						    "cpf",
 						    "rg",
 						    "rgExp",
@@ -584,7 +679,8 @@ exports.searchPerson = [
 						    "habilitesNotes",
 						    "work",
 						    "study",
-						    "book"
+						    "book",
+						    "finance"
 					  ],
 					  "sort": [
 					    {
@@ -608,6 +704,7 @@ exports.searchPerson = [
 						    "middleName",
 						    "lastName",
 						    "userID",
+						    "fincode",
 						    "cpf",
 						    "rg",
 						    "rgExp",
@@ -633,7 +730,8 @@ exports.searchPerson = [
 						    "habilitesNotes",
 						    "work",
 						    "study",
-						    "book"
+						    "book",
+						    "finance"
 					  ],
 					  "sort": [
 					    {
