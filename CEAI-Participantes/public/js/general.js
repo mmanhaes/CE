@@ -138,7 +138,7 @@ function validateFields(callback){
 	return callback(true,"");
 }
 
-function splitFullName(name,callback){
+function splitFullNameOLD(name,callback){
 	var res = name.split(" ");
 	var response = {
 			firstName: "",
@@ -157,6 +157,46 @@ function splitFullName(name,callback){
 		middleName += " "+res[i];
 	}
 	response.middleName = middleName;
+	return callback(response);
+}
+
+function splitFullName(name,callback){
+	var res = name.split(" ");
+	var response = {
+			firstName: "",
+			lastName: "",
+			middleName: ""
+	};
+	if (res.length ===1 )
+	{
+		response.firstName = name;
+		return callback(response);
+	}
+	response.firstName = res[0].trim();
+	response.lastName = res[res.length-1];
+	var middleName = "";
+	var complement_lastName = "";
+	for (var i=1; i<res.length-1;++i){
+		if (i == res.length-2){
+			if (res[i]=="DOS" || res[i]=="DAS" || res[i]=="DO" || res[i]=="DA" || res[i]=="DE" || res[i]=="DI" || res[i]=="DU" || res[i]=="E"){
+				complement_lastName = res[i];
+			}
+			else{
+				middleName += " "+res[i];
+			}
+		}
+		else{
+			middleName += " "+res[i];
+		}
+	}
+	if (complement_lastName != ""){
+		response.lastName =complement_lastName+" "+response.lastName;
+		response.lastName = response.lastName.trim();
+	}
+	response.middleName = middleName.trim();
+	
+	console.log('Name Structure',JSON.stringify(response));
+	
 	return callback(response);
 }
 

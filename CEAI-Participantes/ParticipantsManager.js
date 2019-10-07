@@ -12,8 +12,10 @@ const uuidv1 = require('uuid/v1');
 const REPLACEMENT_KEY = '<ENTRY>';
 const case_ins = "(?i)"; 
 var nInserts = 0;
+var nUpdates = 0;
 var randomstring = require("randomstring");
 const fs = require("fs");
+var notFound = [];
 
 function getParticipantID(){
 	var currentdate = new Date(); 
@@ -87,6 +89,15 @@ function updateParticipant(data,callback){
 	});	
 }
 
+function prepareUpdateFinance(dbSource,request,callback){
+	
+	dbSource.fincode = request.fincode;
+	dbSource.finance = request.finance;
+
+	return callback(dbSource);
+}
+
+
 function prepareUpdate(dbSource,request,callback){
 	
 			dbSource.userID= request.userID;
@@ -122,6 +133,7 @@ function prepareUpdate(dbSource,request,callback){
 			dbSource.association = request.association;
 			dbSource.study = request.study;
 			dbSource.work = request.work;
+			dbSource.finance = request.finance;
 
 	
 	return callback(dbSource);
@@ -129,7 +141,7 @@ function prepareUpdate(dbSource,request,callback){
 
 var buildSelectorSearchPerson = function(data,callback){
 	var configFound = config.searchPerson.filter(function(item) {
-		  return item.type == "regular";
+		  return item.type == "register";
 	});
 	
 	if (data.lastName!=="" && typeof (data.lastName) !=='undefined' && data.firstName!=="" && typeof (data.firstName) !=='undefined' && data.middleName!=="" && typeof (data.middleName) !=='undefined')
@@ -234,14 +246,51 @@ function splitFullName(name,callback){
 		response.firstName = name;
 		return callback(response);
 	}
-	response.firstName = res[0];
+	response.firstName = res[0].trim();
 	response.lastName = res[res.length-1];
 	var middleName = "";
+	var complement_lastName = "";
 	for (var i=1; i<res.length-1;++i){
-		middleName += " "+res[i];
+		if (i == res.length-2){
+			if (res[i]=="DOS" || res[i]=="DAS" || res[i]=="DO" || res[i]=="DA" || res[i]=="DE" || res[i]=="DI" || res[i]=="DU" || res[i]=="E"){
+				complement_lastName = res[i];
+			}
+			else{
+				middleName += " "+res[i];
+			}
+		}
+		else{
+			middleName += " "+res[i];
+		}
 	}
-	response.middleName = middleName;
+	if (complement_lastName != ""){
+		response.lastName =complement_lastName+" "+response.lastName;
+		response.lastName = response.lastName.trim();
+	}
+	response.middleName = middleName.trim();
+	
+	console.log('Name Structure',JSON.stringify(response));
+	
 	return callback(response);
+}
+
+function transformDataFinance(data){
+	var particpants = [];
+	
+	for(var i=0;i<data.length;++i){
+		var participant = JSON.parse(JSON.stringify(config.participant));
+		console.log('Transforming data line',data[i]);
+		splitFullName(data[i]['NOME COMPLETO'].trim(),function(response){
+			participant.firstName = response.firstName;
+			participant.middleName = response.middleName;
+			participant.lastName = response.lastName;
+			participant.finance = [];
+			participant.fincode = data[i]['NCODE'];
+			particpants.push(participant);	
+		});		
+	}
+	
+	return particpants;
 }
 
 function transformDataV2(data){
@@ -327,11 +376,52 @@ function transformData(data){
 	
 	return particpants;
 }
-		
-function loadParticipantsFromFile(fileName,sheetName){
-	var XLSX = require('xlsx');
 
-	var workbook = XLSX.readFile(fileName);
+function changeEncoding(path) {
+	var iconv = require('iconv-lite');
+    var buffer = fs.readFileSync(path);
+    var output = iconv.encode(iconv.decode(buffer, "iso8859-1"), "utf-8");
+    fs.writeFileSync(path, output);
+}
+
+function convertFile(fileName){
+	var fs = require("fs");
+	var input = fs.readFileSync(fileName, {encoding: "ascii"});
+
+	var iconv = require('iconv-lite');
+	var output = iconv.decode(input, "ISO-8859-1");
+
+	fs.writeFileSync(fileName, output);
+}
+
+function loadParticipantsFromFileCSV(fileName){
+	var iconv = require('iconv-lite');
+	const csv = require('csv-parser');
+	const fs = require('fs');
+
+	var data = [];
+	fs.createReadStream(fileName)
+	  .pipe(iconv.decodeStream("utf-8"))
+	  .pipe(csv())
+	  .on('data', (row) => {
+	    console.log(row);
+		data.push(row);
+	})
+	.on('end', () => {
+	    console.log('CSV file successfully processed');
+	    return data;	    
+	});		
+}
+		
+function loadParticipantsFromFileExcel(fileName,sheetName){
+	var XLSX = require('xlsx');
+	
+	/* DOES NOT WORK
+		let buf = fs.readFileSync(fileName, {encoding: 'utf8'});
+		var workbook = XLSX.read(buf, {type:'string'});
+	*/
+	//changeEncoding(fileName);
+	var workbook = XLSX.readFile(fileName,{codepage:65001,encoding:"utf-8"});	
 	var worksheet = workbook.Sheets[sheetName];
 	var headers = {};
 	var data = [];
@@ -362,8 +452,72 @@ function loadParticipantsFromFile(fileName,sheetName){
 	return filtered;
 }
 
+function updateParticipantControlFinance(data,index){
+	return new Promise(function (resolve, reject) {
+		if (index == data.length){
+			resolve(false);
+		}
+		else{
+			var db = cloudant.db.use(config.database.person.name);
+			buildSelectorSearchPerson(data[index],function(err,sel){
+				console.log("Search Existing Participant with selector: "+JSON.stringify(sel));
+				db.find(sel, function(err, result) {
+					  if (err) {
+					    console.log(err);
+					    reject(err);
+					  }
+					  else{
+						  if (result.docs.length>0){
+							  prepareUpdateFinance(result.docs[0],data[index],function(updated){
+								  console.log("data to be updated",updated);
+								  updateParticipant(updated,function(result,error){
+										if (error){
+											reject(error);
+										}else{
+											console.log('Update worked for the Name '+ data[index].firstName+' '+ data[index].middleName + ' ' + data[index].lastName+ ' with Financial code: '+data[index].fincode);
+											var update = updateParticipantControlFinance(data,++index);
+											update.then(function(response){		
+												if (response)
+													nUpdates++;
+												resolve(true);
+											},function(err){
+												console.log("Error in updateParticipantControlFinance",err);
+											});
+										}
+								  });
+								  /*
+								     var update = updateParticipantControlFinance(data,++index);
+									update.then(function(response){		
+										if (response)
+											nUpdates++;
+										resolve(true);
+									},function(err){
+										console.log("Error in updateParticipantControlFinance",err);
+								  });
+								  */ 
+							  });							  
+						  }
+						  else{
+							  console.log('Update not done ! Reason: participant with Name '+ data[index].firstName+' '+ data[index].middleName + ' ' + data[index].lastName + ' does not exists in database');
+							  notFound.push(data[index]);
+							  var update = updateParticipantControlFinance(data,++index);
+							  update.then(function(response){		
+									if (response)
+										nUpdates++;
+									resolve(false);
+								},function(err){
+									console.log("Error in updateParticipantControlFinance",err);
+							  });
+						  }
+					  }
+				});		
+			});
+		}
+	});
+}
+
 function loadParticipants(fileName){
-	var data = loadParticipantsFromFile(fileName,'CADGERAL');
+	var data = loadParticipantsFromFileExcel(fileName,'CADGERAL');
 	var participants = transformData(data);
 	//console.log(participants);
 	var nCheck=0;	
@@ -375,6 +529,29 @@ function loadParticipants(fileName){
 	},function(err){
 		console.log("Error in loadParticipants",err);
 	});		
+}
+
+function dumpParticipantsNotFound(data,outputFile){
+	var xlsx = require('node-xlsx').default;
+	
+	var fields = JSON.parse(JSON.stringify(config.selectors.forDump.fields));
+ 
+    var output = [['NOME COMPLETO','NCODE']];
+    
+    
+	for (var j=0;j<data.length;++j){
+	   var item = [];
+	   item.push(data[j].firstName+" "+data[j].middleName+" "+data[j].lastName);
+	   item.push(data[j].fincode);
+	   output.push(item);
+	}
+	
+	const buffer = xlsx.build([{ name: "participants", data: output }]);
+				   
+	fs.writeFile(outputFile, buffer, (err) => {
+		    if (err) throw err
+		    console.log('Dump of finance participants not found in the system executed with success on file',outputFile);					    
+	});	
 }
 
 function dumpParticipants(outputFile){
@@ -415,7 +592,7 @@ function dumpParticipants(outputFile){
 }
 
 function loadParticipantsV2(fileName,sheetName){
-	var data = loadParticipantsFromFile(fileName,sheetName);
+	var data = loadParticipantsFromFileExcel(fileName,sheetName);
 	var participants = transformDataV2(data);
 	var promises = [];
 	for(var i=0;i<participants.length;++i){
@@ -426,6 +603,26 @@ function loadParticipantsV2(fileName,sheetName){
 	},function(err){
 		console.log("Error in insertParticipantControl",err);
 	});
+}
+
+function loadParticipantsFinance(fileName,sheetName){
+	//convertFile(fileName);
+	//var data = loadParticipantsFromFileCSV(fileName);
+	
+	var data = loadParticipantsFromFileExcel(fileName,sheetName);
+	var participants = transformDataFinance(data);
+	
+	nUpdates=0;
+	var nCheck=0;	
+	var update = updateParticipantControlFinance(participants,nCheck);
+	update.then(function(response){		
+		if (response)
+			nUpdates++;		
+		dumpParticipantsNotFound(notFound,'./data/financeParticipantsNotFond.xlsx');
+		console.log('Number of Participants Update',nUpdates);
+	},function(err){
+		console.log("Error in loadParticipantsFinance",err);
+	});	
 }
 
 function searchRecursive(data, records,outputFile,counter){
@@ -462,7 +659,7 @@ function searchRecursive(data, records,outputFile,counter){
 }
 
 function checkInserts(fileName,sheetName,outputFile){	
-	var data = loadParticipantsFromFile(fileName,sheetName);
+	var data = loadParticipantsFromFileExcel(fileName,sheetName);
 	var records = [];
 	var counter =0;
 	searchRecursive(data,records,outputFile,counter);	
@@ -471,6 +668,7 @@ function checkInserts(fileName,sheetName,outputFile){
 //var args = process.argv.splice(2);
 //loadParticipants('./data/CADASTRO BIBLIOTECA FINAL.xlsx');
 //dumpParticipants('./data/participantsCloud.xlsx');
-loadParticipantsV2('./data/RemainingNotInserted.xlsx','Sheet1');
+//loadParticipantsV2('./data/RemainingNotInserted.xlsx','Sheet1');
+loadParticipantsFinance('./data/financeParticipantsNotFond-Input.xlsx','participants');
 //checkInserts('./data/RemainingNotInserted.xlsx','Sheet1','./data/checkInserts-remaining.txt');
 //checkInserts('./data/CADASTRO BIBLIOTECA FINAL.xlsx','ajuste 30.08.19','./data/checkInserts.txt');
