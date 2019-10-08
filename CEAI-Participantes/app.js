@@ -476,7 +476,7 @@ app.post('/services/ceai/updatePersonAPI',
 				    }
 				    else
 				    {
-				    	res.end('Erro na Atualização para o participante : '+ req.body.firstName+ " "+ req.body.middleName+" "+req.body.lastName);
+				    	res.end('Erro na Atualização, Motivo: o fincode '+ req.body.fincode + ' Não foi encontrado');
 				    }	
 			  }
 		});	 
@@ -682,8 +682,10 @@ app.post('/services/ceai/searchPerson',
 function prepareUpdate(dbSource,request,callback){
 	
 	switch (request.type){
-		case  "finance":	
-			dbSource.finance.push(request.finance);			
+		case  "finance":				
+			for (var i=0;i<request.finance.length;++i){
+				dbSource.finance.push(request.finance[i]);
+			}						
 			break;
 		case  "finance_insert":	
 			dbSource.firstName = request.firstName;
@@ -712,6 +714,9 @@ function prepareUpdate(dbSource,request,callback){
 			dbSource.email2 = request.email2;
 			dbSource.habilities= request.habilities;
 			dbSource.habilitesNotes= request.habilitesNotes;
+			for (var i=0;i<request.finance.length;++i){
+				dbSource.finance.push(request.finance[i]);
+			}
 			break;
 		case  "all":	
 			dbSource.userID= request.userID;

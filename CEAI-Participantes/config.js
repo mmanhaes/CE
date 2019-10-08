@@ -473,7 +473,8 @@ exports.participant = {
 		  "association": [],
 		  "work": [],
 		  "study": [],
-		  "notes":""
+		  "notes":"",
+		  "finance":[]
 }
 
 exports.association = {
