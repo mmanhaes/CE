@@ -273,6 +273,22 @@ function populateData(person){
 			radios[0].checked = true;
 		}
 	}
+	if (typeof(person.finance)!='undefined'){
+		handlePaymentYearLoad();
+		var currentdate = new Date(); 
+		$('#paymentYear').val(currentdate.getFullYear());
+		handlePaymentChange(person,currentdate.getFullYear());
+	}	
+}
+
+function handlePaymentChange(person,year){
+	
+	var finance = person.finance.filter(function(item) {
+		  return item.year == year;
+	});
+	for(var i=finance.length-1;i>=0;--i){
+		buildPaymentRowTable(finance[i]);
+	}
 }
 
 function validateFieldsStudy(callback){
@@ -840,6 +856,7 @@ function cleanupAllFields(){
 	cleanSearchOutput(document.getElementById("tableResultAssociation"));
 	cleanSearchOutput(document.getElementById("tableResultWork"));
 	cleanSearchOutput(document.getElementById("tableResultStudy"));
+	cleanSearchOutput(document.getElementById("tableResultPayment"));
 }
 
 function removeWork(){
@@ -1235,6 +1252,20 @@ function buildStudyRowTable(data){
     }
 }
 
+function buildPaymentRowTable(data){
+	 
+    var table = document.getElementById("tableResultPayment");
+
+    var rowCount = table.rows.length;
+    var row = table.insertRow(rowCount);
+
+    row.insertCell(0).innerHTML= data.month;
+    row.insertCell(1).innerHTML= data.paymentDate;
+    row.insertCell(2).innerHTML= data.value;
+    row.insertCell(3).innerHTML= data.receptNumber;
+    row.insertCell(4).innerHTML= data.paymentType;    
+}
+
 function createOrUpdate(type){
 	//alert('Insert Button'); 
 	var	$process = $('.processingCreateOrUpdate');
@@ -1418,6 +1449,24 @@ function handleSectionChange(){
 	     }
 	  	 sel.appendChild(fragment);
 	 }
+}
+
+function handlePaymentYearLoad(){
+	var sel = document.getElementById('paymentYear');
+ 	 clearComboOptions(sel);
+ 	 var fragment = document.createDocumentFragment();
+ 	 var opt;
+ 	 var baseYear = 2018;
+	 var currentYear = (new Date()).getFullYear();
+ 	 
+ 	 for(var i=baseYear;i<=currentYear;++i)
+ 	 {    		 
+ 	      opt = document.createElement('option');
+  	      opt.innerHTML = i
+  	      opt.value = i;
+  	      fragment.appendChild(opt);
+ 	 }        	
+ 	 sel.appendChild(fragment);
 }
 
 function handleDepartmentChange(){
@@ -1730,6 +1779,10 @@ $(document).ready(function() {
 	});
 	$('#department').change(function(){
 		handleDepartmentChange();
+	});
+	$('#paymentYear').change(function(){
+		cleanSearchOutput(document.getElementById("tableResultPayment"));
+		handlePaymentChange(searchCache.docs[cachedPosition],$('#paymentYear').val());
 	});
 	$('#section').change(function(){
 		handleSectionChange();

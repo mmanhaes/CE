@@ -458,7 +458,7 @@
 						</select></td>
 						<td><h5 align="right" class="base--h5" style="width: 150px;">Data de Início:</h5></td>
 						<td colspan="1" style="width: 200px;">
-							<table border="" style="width: 100%" cellspacing="0">
+							<table border="" style="width: 60%" cellspacing="0">
 								<tr>
 									<td><input id="initAssociationDay" maxlength="2" type="text"
 										class="input--question--manual base--a" style="width: 30px;">
@@ -834,7 +834,7 @@
 						<td colspan="1" style="width: 150px;"><h5 class="base--h5">Data
 								Inicial:</h5></td>
 						<td colspan="1" style="width: 90px;">
-							<table border="" style="width: 100%" cellspacing="0">
+							<table border="" style="width: 40%" cellspacing="0">
 								<tr>
 									<td><input id="initWorkDay" maxlength="2" type="text"
 										class="input--question--manual base--a" style="width: 30px;">
@@ -945,8 +945,6 @@
 								</tr> -->
 							</table>
 						</form>
-	
-	
 					</div>
 				</div>
 				<div class="messageWorkPanel" style="display: none;'">
@@ -957,6 +955,51 @@
 				</div>
 			</article>
 		</div>
+		
+		<div class="_demo--container">
+			<article class="_content base--article">
+				<div class="_content--choose-input-file">
+					<h3 id="top" class="base--h3">Informações Financeiras</h3>
+					<p class="_content--input-description base--p">Visualize o histórico de pagamentos
+					</p>
+				</div>
+				<table border="" style="width: 80%">
+					<tr>
+						<td colspan="1""width: 25%">
+							<h5 class="base--h5" style="width: 140px;">Ano:</h5>
+						</td>
+						<td style="width: 100%" colspan="1"><select id="paymentYear"
+							style="color: #a53725;width: 120px">
+						</select></td>										
+					</tr> 
+				</table>
+				<div class="outputPayment">
+					<div class="_demo--container" style="width: 960px;">
+						<form>
+							<table class="table" id="tableResultPayment" 
+							style="border: 1px solid grey">
+								<tr>
+									<th class="th" style="border: 1px solid grey" colspan="9"><h5
+											class="base--h5">Histórico de Pagamentos</h5></th>
+								</tr>
+								<tr>
+									<th class="th" style="border: 1px solid grey"><h5
+											class="base--h5">Mês</h5></th>
+									<th class="th" style="border: 1px solid grey"><h5
+											class="base--h5">Data do Pagamento</h5></th>
+									<th class="th" style="border: 1px solid grey"><h5
+											class="base--h5">Valor</h5></th>
+									<th class="th" style="border: 1px solid grey"><h5
+											class="base--h5">Número do Recibo</h5></th>
+									<th class="th" style="border: 1px solid grey"><h5
+											class="base--h5">Tipo de Pagamento</h5></th>									
+								</tr>
+							</table>
+						</form>
+					</div>
+				</div>
+		    </article>
+		  </div>
 		  <input type="button" title="Criar um novo registro de participante"  class="input--request-button base--a"
 			id="create" value="Criar um Novo Participante">
    		  <input type="button" title="Altera dados de um participante existente" class="input--request-button base--a"

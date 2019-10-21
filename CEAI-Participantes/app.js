@@ -714,8 +714,10 @@ function prepareUpdate(dbSource,request,callback){
 			dbSource.email2 = request.email2;
 			dbSource.habilities= request.habilities;
 			dbSource.habilitesNotes= request.habilitesNotes;
-			for (var i=0;i<request.finance.length;++i){
-				dbSource.finance.push(request.finance[i]);
+			if (typeof(request.finance)!='undefined'){
+				for (var i=0;i<request.finance.length;++i){
+					dbSource.finance.push(request.finance[i]);
+				}
 			}
 			break;
 		case  "all":	
