@@ -59,7 +59,7 @@ passport.use('custom',new CustomStrategy(
 					 if (result.docs.length > 0){
 						 //console.log("Returned user name "+result.docs[0].username+" to authenticate");
 						 crypto.encrypt(password,function(encryptedPwd){
-							 if (result.docs[0].username == username && result.docs[0].password == encryptedPwd){ 
+							 if (result.docs[0].username == username && result.docs[0].password == encryptedPwd){
 								 console.log("User and Password OK for user:",username);
 								 session.user = result.docs[0];								 
 								 if (result.docs[0].password == STANDARD_PASSWORD){
@@ -351,9 +351,9 @@ app.get('/services/ceai/userInfo',
 app.get('/services/ceai/checkUserAccess',
 		require('connect-ensure-login').ensureLoggedIn(),
 		function(req, res){
-	res.setHeader('Content-Type', 'text/plain');
-	console.log("Access Rule : "+session.role);
-	res.end(session.role);	
+	res.setHeader('Content-Type', 'application/json');
+	console.log("Session Object : "+JSON.stringify(session.user));
+	res.end(JSON.stringify(session.user));	
 });
 
 app.post('/services/ceai/loadSessionData', 
@@ -964,33 +964,83 @@ app.post('/services/ceai/register',
 		function(req, res){
 	res.setHeader('Content-Type', 'text/plain');
 
-	console.log(JSON.stringify(req.body, null, 2));
+	console.log('Data to be register an user',JSON.stringify(req.body, null, 2));
 	
 	users.findByUserName(req.body.email1, function(err,result){
 		console.log("findByUserName result",JSON.stringify(result));
 		//if user was not found create a new user into the system with initial password
+		var input = {};
+		if (result.docs.length > 0){
+		   input = result.docs[0];
+		}
+		else{			
+			input.password = STANDARD_PASSWORD;
+		}
+		input.username = req.body.email1;
+		var role = [];
+		var roleItem = {};		
+		if (req.body.work.length==0){
+		   roleItem = {};
+		   roleItem.department = 'Any';
+		   roleItem.section = 'Any';
+		   roleItem['function'] = 'User';
+		   role.push(roleItem);
+		}
+		else{
+			   for (var i=0;i<req.body.work.length;++i){
+				  if (req.body.work[i]['function'] === 'Diretor' || req.body.work[i]['function'] === 'Coordenador'){
+					  roleItem = {};
+					  roleItem.department = req.body.work[i].department;
+					  roleItem.section = req.body.work[i].section;
+					  roleItem['function'] = req.body.work[i]['function'];
+
+					  if (typeof(req.body.work[i].weekDay)!='undefined'){
+						  roleItem.weekDay = req.body.work[i].weekDay;
+					  }
+					  if (typeof(req.body.work[i].period)!='undefined'){
+						  roleItem.period = req.body.work[i].period;
+					  }
+					  
+					  role.push(roleItem);
+				  }							  
+			   }
+			   if (role.length==0){
+					  roleItem = {};
+					  roleItem.department = 'Any';
+				      roleItem.section = 'Any';
+					  roleItem['function'] = 'Worker';
+					  role.push(roleItem);
+			   }
+		}			   
+		input.role = role;
+		input.displayName =  req.body.firstName+ ' '+ req.body.middleName+' '+ req.body.lastName;
 		if (result.docs.length == 0){
-		   var input = {};
-		   input.username = req.body.email1;
-		   input.password = STANDARD_PASSWORD;
-		   if (req.body.work.length==0){
-			   input.role = "user";
-		   }
-		   else{
-			   input.role = "admin";
-		   }
-		   input.displayName =  req.body.firstName+ ' '+ req.body.middleName+' '+ req.body.lastName;
-		   input.userID  = req.body.userID;
-		   users.createUser(input,function(err,result){
+			input.userID  = req.body.userID;
+			users.createUser(input,function(err,result){
 			   if (err){
 				   console.log('Error to create new user',err);
 			   }
 			   else{
 				   console.log('User '+ input.username+' created with success with standard password');
 			   }
-		   })			
+		   });			
+		}
+		else{
+			  users.updateUser(input,function(err,result){
+				   if (err){
+					   console.log('Error to update user',err);
+				   }
+				   else{
+					   console.log('User '+ input.username+' updated with success with standard password');
+				   }
+			   });	
 		}
 
+		if (input.userID == session.user.userID){
+			console.log('Session updated with new user profile data',JSON.stringify(input));
+			session.user = input;
+		}
+		
 		var db = cloudant.db.use(config.database.person.name);
 		
 		if (req.body.operation == "insert"){
@@ -1056,12 +1106,12 @@ app.get('/',
 		if (typeof(session.user) == 'undefined'){
 			res.redirect('/login');
 		}else{
-			if (session.user.role != 'admin'){		
-				res.redirect('/publico');
+			for (var i=0;i<session.user.role.length;++i){
+				if (session.user.role[i]['function'] === 'User'){
+					res.redirect('/publico');
+				}
 			}
-			else{
-				res.redirect('/cadastro');
-			}
+			res.redirect('/cadastro');			
 		}
 });
 
@@ -1135,13 +1185,13 @@ app.get('/cadastro',
 		function(req, res){
 	
 	console.log("Access Rule: "+session.user.role);
-	if (session.user.role != 'admin'){
-		console.log("O usuario: "+session.username +" nao tem acesso a esta funcionalidade");
-		res.sendFile(__dirname + "/public/noaccess.html");
+	for (var i=0;i<session.user.role.length;++i){
+		if (session.user.role[i]['function']=='User'){
+			console.log("O usuario: "+session.username +" nao tem acesso a esta funcionalidade");
+			res.sendFile(__dirname + "/public/noaccess.html");
+		}		
 	}
-	else{
-		res.sendFile(__dirname + "/public/register.html");
-	}
+	res.sendFile(__dirname + "/public/register.html");	
 });
 
 app.get('/publico',

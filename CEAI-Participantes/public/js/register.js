@@ -57,21 +57,27 @@ function handleChangeRadioButton(){
         	 break;
          }
     }
-    alert("Usuário "+cellFullName.innerHTML+" carregado para alterações.");
-    association = [];
-    work = [];
-    study = [];
-    populateData(searchCache.docs[pos]);
     cachedPosition = pos;
-	var $userData = $('.userData');
-	var $output = $('.outputGeneral');
-	var $newRecordButton = $('.newRecord');
-	$('#create').prop("disabled",true).css('opacity',0.5);
-	$('#update').prop("disabled",false).css('opacity',1.0);
-	$('#cleanFields').prop("disabled",false).css('opacity',1.0);
-	$userData.show();
-	$output.hide();
-	$newRecordButton.hide();
+    checkUserAccess(function(access){
+    	enableDisableActions(access);
+    	enableDisableFields(access);
+    	if (access){
+    		alert("Usuário "+cellFullName.innerHTML+" carregado para alterações.");    		
+    	}
+    	else{
+    		alert("Usuário "+cellFullName.innerHTML+" carregado para leitura.");
+    	}    	
+        association = [];
+        work = [];
+        study = [];
+        populateData(searchCache.docs[pos]);
+    	var $userData = $('.userData');
+    	var $output = $('.outputGeneral');
+    	var $newRecordButton = $('.newRecord');
+    	$userData.show();
+    	$output.hide();
+    	$newRecordButton.hide();
+    });    
 }
 
 function buildSearhOutput(data){
@@ -440,21 +446,263 @@ function handleChangeRadioButtonWork(){
     populateWorkData(work);
 }
 
-function checkUserAccess(){
+function enableDisableActions(writer){
+	if (writer){
+		$('#create').prop("disabled",false).css('opacity',1.0);
+		$('#update').prop("disabled",false).css('opacity',1.0);
+		$('#resetPassword').prop("disabled",false).css('opacity',1.0);
+		$('#cleanFields').prop("disabled",false).css('opacity',1.0);
+		$('#insertWork').prop("disabled",false).css('opacity',1.0);
+		$('#updateWork').prop("disabled",false).css('opacity',1.0);
+		$('#deleteWork').prop("disabled",false).css('opacity',1.0);
+		$('#insertStudy').prop("disabled",false).css('opacity',1.0);
+		$('#updateStudy').prop("disabled",false).css('opacity',1.0);
+		$('#deleteStudy').prop("disabled",false).css('opacity',1.0);
+		$('#insertAssociation').prop("disabled",false).css('opacity',1.0);
+		$('#updateAssociation').prop("disabled",false).css('opacity',1.0);
+		$('#deleteAssociation').prop("disabled",false).css('opacity',1.0);
+		$('#searchParent').prop("disabled",false).css('opacity',1.0);		
+	}
+	else{
+		$('#create').prop("disabled",true).css('opacity',0.5);
+		$('#update').prop("disabled",true).css('opacity',0.5);
+		$('#resetPassword').prop("disabled",true).css('opacity',0.5);
+		$('#cleanFields').prop("disabled",true).css('opacity',0.5);
+		$('#insertWork').prop("disabled",true).css('opacity',0.5);
+		$('#updateWork').prop("disabled",true).css('opacity',0.5);
+		$('#deleteWork').prop("disabled",true).css('opacity',0.5);
+		$('#insertStudy').prop("disabled",true).css('opacity',0.5);
+		$('#updateStudy').prop("disabled",true).css('opacity',0.5);
+		$('#deleteStudy').prop("disabled",true).css('opacity',0.5);
+		$('#insertAssociation').prop("disabled",true).css('opacity',0.5);
+		$('#updateAssociation').prop("disabled",true).css('opacity',0.5);
+		$('#deleteAssociation').prop("disabled",true).css('opacity',0.5);
+		$('#searchParent').prop("disabled",true).css('opacity',0.5);
+	}	
+}
+
+function enableDisableFields(writer){
+	if (writer){
+		$('#fullNameInput').prop("disabled",false);
+		$('#rg').prop("disabled",false);
+		$('#rgExp').prop("disabled",false);
+		$('#rgState').prop("disabled",false).css('opacity',1.0);
+		$('#cpfInput').prop("disabled",false);
+		$('#day').prop("disabled",false);
+		$('#month').prop("disabled",false);
+		$('#year').prop("disabled",false);
+		$('#address').prop("disabled",false);
+		$('#number').prop("disabled",false);
+		$('#complement').prop("disabled",false);
+		$('#neighborhood').prop("disabled",false);
+		$('#city').prop("disabled",false);
+		$('#state').prop("disabled",false).css('opacity',1.0);
+		$('#postCode-1').prop("disabled",false);
+		$('#postCode-2').prop("disabled",false);
+		$('#parentCpf').prop("disabled",false);
+		$('#parentName').prop("disabled",false);
+		$('#ddd1').prop("disabled",false);
+		$('#phone1').prop("disabled",false);
+		$('#whatsup1').prop("disabled",false).css('opacity',1.0);
+		$('#ddd2').prop("disabled",false);
+		$('#phone2').prop("disabled",false).css('opacity',1.0);
+		$('#whatsup2').prop("disabled",false);
+		$('#email1').prop("disabled",false);
+		$('#email2').prop("disabled",false);
+		$('#habilities').prop("disabled",false);
+		$('#notesHabilities').prop("disabled",false);
+		$('#associationType').prop("disabled",false).css('opacity',1.0);
+		$('#initAssociationDay').prop("disabled",false);
+		$('#initAssociationMonth').prop("disabled",false);
+		$('#initAssociationYear').prop("disabled",false);
+		$('#exitAssociationDay').prop("disabled",false);
+		$('#exitAssociationMonth').prop("disabled",false);
+		$('#exitAssociationYear').prop("disabled",false);
+		$('#contribution').prop("disabled",false);
+		$('#notesAssociation').prop("disabled",false);
+		$('#studyType').prop("disabled",false).css('opacity',1.0);
+		$('#weekDayStudy').prop("disabled",false).css('opacity',1.0);
+		$('#periodStudy').prop("disabled",false).css('opacity',1.0);
+		$('#initStudyDay').prop("disabled",false);
+		$('#initStudyMonth').prop("disabled",false);
+		$('#initStudyYear').prop("disabled",false);
+		$('#finalStudyDay').prop("disabled",false);
+		$('#finalStudyMonth').prop("disabled",false);
+		$('#finalStudyYear').prop("disabled",false);
+		$('#classStudy').prop("disabled",false);
+		$('#notesStudy').prop("disabled",false);
+		$('#department').prop("disabled",false).css('opacity',1.0);
+		$('#section').prop("disabled",false).css('opacity',1.0);
+		$('#function').prop("disabled",false).css('opacity',1.0);
+		$('#weekDayWork').prop("disabled",false).css('opacity',1.0);
+		$('#periodWork').prop("disabled",false).css('opacity',1.0);
+		$('#initWorkDay').prop("disabled",false);
+		$('#initWorkMonth').prop("disabled",false);
+		$('#initWorkYear').prop("disabled",false);
+		$('#finalWorkDay').prop("disabled",false);
+		$('#finalWorkMonth').prop("disabled",false);
+		$('#finalWorkYear').prop("disabled",false);
+		$('#classWork').prop("disabled",false).css('opacity',1.0);
+		$('#notesWork').prop("disabled",true);
+		
+		
+	}
+	else{
+		$('#fullNameInput').prop("disabled",true);
+		$('#rg').prop("disabled",true);
+		$('#rgExp').prop("disabled",true);
+		$('#rgState').prop("disabled",true).css('opacity',0.5);
+		$('#cpfInput').prop("disabled",true);
+		$('#day').prop("disabled",true);
+		$('#month').prop("disabled",true);
+		$('#year').prop("disabled",true);
+		$('#address').prop("disabled",true);
+		$('#number').prop("disabled",true);
+		$('#complement').prop("disabled",true);
+		$('#neighborhood').prop("disabled",true);
+		$('#city').prop("disabled",true);
+		$('#state').prop("disabled",true).css('opacity',0.5);
+		$('#postCode-1').prop("disabled",true);
+		$('#postCode-2').prop("disabled",true);
+		$('#parentCpf').prop("disabled",true);
+		$('#parentName').prop("disabled",true);
+		$('#ddd1').prop("disabled",true);
+		$('#phone1').prop("disabled",true);
+		$('#whatsup1').prop("disabled",true).css('opacity',0.5);
+		$('#ddd2').prop("disabled",true);
+		$('#phone2').prop("disabled",true);
+		$('#whatsup2').prop("disabled",true).css('opacity',0.5);
+		$('#email1').prop("disabled",true);
+		$('#email2').prop("disabled",true);
+		$('#habilities').prop("disabled",true);
+		$('#notesHabilities').prop("disabled",true);
+		$('#associationType').prop("disabled",true).css('opacity',0.5);
+		$('#initAssociationDay').prop("disabled",true);
+		$('#initAssociationMonth').prop("disabled",true);
+		$('#initAssociationYear').prop("disabled",true);
+		$('#exitAssociationDay').prop("disabled",true);
+		$('#exitAssociationMonth').prop("disabled",true);
+		$('#exitAssociationYear').prop("disabled",true);
+		$('#contribution').prop("disabled",true);
+		$('#notesAssociation').prop("disabled",true);
+		$('#studyType').prop("disabled",true).css('opacity',0.5);
+		$('#weekDayStudy').prop("disabled",true).css('opacity',0.5);
+		$('#periodStudy').prop("disabled",true).css('opacity',0.5);
+		$('#initStudyDay').prop("disabled",true);
+		$('#initStudyMonth').prop("disabled",true);
+		$('#initStudyYear').prop("disabled",true);
+		$('#finalStudyDay').prop("disabled",true);
+		$('#finalStudyMonth').prop("disabled",true);
+		$('#finalStudyYear').prop("disabled",true);
+		$('#classStudy').prop("disabled",true);
+		$('#notesStudy').prop("disabled",true);
+		$('#department').prop("disabled",true).css('opacity',0.5);
+		$('#section').prop("disabled",true).css('opacity',0.5);
+		$('#function').prop("disabled",true).css('opacity',0.5);
+		$('#weekDayWork').prop("disabled",true).css('opacity',0.5);
+		$('#periodWork').prop("disabled",true).css('opacity',0.5);
+		$('#initWorkDay').prop("disabled",true);
+		$('#initWorkMonth').prop("disabled",true);
+		$('#initWorkYear').prop("disabled",true);
+		$('#finalWorkDay').prop("disabled",true);
+		$('#finalWorkMonth').prop("disabled",true);
+		$('#finalWorkYear').prop("disabled",true);
+		$('#classWork').prop("disabled",true).css('opacity',1.0);
+		$('#notesWork').prop("disabled",true);		
+	}
+	
+}
+
+function checkUserAccess(callback){
+	
+	//Needs to improve to match coordinators, Look comment searchCache.docs[cachedPosition]
 	
 	$.ajax({
   		url: '/services/ceai/checkUserAccess',
         type: 'GET',
         contentType: "text/plain",
         success: function(data, textStatus, jqXHR){
-        	if (data !== 'admin'){
-        		$('#insert').prop("disabled",true).css('opacity',0.5);
-        		$('#update').prop("disabled",true).css('opacity',0.5);
-        		$('#delete').prop("disabled",true).css('opacity',0.5);
+        	//If is the own user, enable changes
+        	if (data.username === searchCache.docs[cachedPosition].email1){
+        		console.log("Level access : Writer (it is own user data)");
+        		return callback(true);
+        	}
+        	else{
+        		//Working with Rules only
+        		console.log("Checking access Level, as it is not the owner of data");
+        		data = data.role;
+	        	var i=0;
+	        	for(;i<data.length;++i){
+	        		if (data[i]['function']=='Worker' || data[i]['function']=='User'){
+	        			console.log("Level access : "+data[i]['function']);
+	        			return callback(false);
+	        		}
+	        	}
+	        	if (i == data.length){
+	        		console.log("User it is not a regular worker neither regular user");	        		
+	        		var isWriter = false;
+	        		var i=0;
+	        		for(;i<data.length && isWriter == false ;++i){
+	        			console.log("Checking user function "+data[i]['function']);	        			
+	        			switch(data[i]['function']){
+	        				case 'Diretor':
+	        					if (data[i].department != "Administração"){
+		        					var studyUser = searchCache.docs[cachedPosition].study;	        		       		
+		    		        		for (var j=0;j<studyUser.length;++j){
+		    		        			if (studyUser[j].department == data[i].department){
+		    		        				console.log("Level Access: is not director of user department - Reader");
+		    		        				isWriter = true;
+		    		        			}
+		    		        		}	        					
+	        					}
+	        					else{
+	        						console.log("Level Access: is administrative director - Writer");
+	        						isWriter = true;
+	        					}
+	    		        		break;
+	        				case 'Coordenador':
+	        					if (data[i]['section']=='Coordenação'){
+	        						var studyUser = searchCache.docs[cachedPosition].study;	        		       		
+	        						var j=0;
+	        						for (;j<studyUser.length;++j){
+		    		        			if (studyUser[j].department == data[i].department){
+		    		        				console.log("Is coordinator of participants department - Writer");
+		    		        				isWriter = true;
+		    		        				break;
+		    		        			}
+		    		        		}
+	        						if (j==studyUser.length){
+	        							console.log("Is not coordinator of participants department - Reader");
+	        							isWriter = false;
+	        						}
+	        					}
+	        					else{
+	        						var studyUser = searchCache.docs[cachedPosition].study;	        		       		
+	        						var j=0;
+	        						for (;j<studyUser.length;++j){
+		    		        			if (studyUser[j].department == data[i].department && studyUser[j].studyType == data[i].section && studyUser[j].weekDay == data[i].weekDay && studyUser[j].period == data[i].period){
+		    		        				console.log("Is coordinator of participants study - Writer");
+		    		        				isWriter = true;
+		    		        				break;
+		    		        			}
+		    		        		}
+	        						if (j==studyUser.length){
+			    		        		console.log("Is not coordinator of participants group - Reader");
+			    		        		isWriter = false;
+	        						}
+	        					}
+	        					break;
+	        				default:
+	        					console.log("It is a worker with no access writer to user");
+	        					isWriter = false; 
+	        			}
+	        		}
+	        		return callback(isWriter);
+	        	}
         	}
         },
         error: function(jqXHR, textStatus, errorThrown){
-        	console.log("Saving Session Data Failed "+errorThrown);
+        	console.log("Check Access Failed "+errorThrown);
         }
       });	
 }
@@ -1091,6 +1339,8 @@ function updateStudy(){
 				var weekDay = document.getElementById("weekDayStudy");
 				var period = document.getElementById("periodStudy");
 				var studyItem = {};
+				var studyDepartment = studySectionDepartment.find(element => element.section == studyType.options[studyType.selectedIndex].value);
+				studyItem.department = studyDepartment.department;
 			    row.cells[1].innerHTML = studyType.options[studyType.selectedIndex].value;
 			    studyItem.studyType = studyType.options[studyType.selectedIndex].value;
 			    row.cells[2].innerHTML = weekDay.options[weekDay.selectedIndex].value;
@@ -1140,7 +1390,9 @@ function insertStudy(){
 			var studyType = document.getElementById("studyType");
 			var weekDay = document.getElementById("weekDayStudy");
 			var period = document.getElementById("periodStudy");
-			var studyItem = {};
+			var studyItem = {};			
+			var studyDepartment = studySectionDepartment.find(element => element.section == studyType.options[studyType.selectedIndex].value);
+			studyItem.department = studyDepartment.department;
 			studyItem.studyType = studyType.options[studyType.selectedIndex].value;
 			studyItem.weekDay = weekDay.options[weekDay.selectedIndex].value
 			studyItem.period = period.options[period.selectedIndex].value;
@@ -1536,19 +1788,24 @@ function search(){
 	        data: inputSearch,
 	        contentType: "application/json",
 	        success: function(data, textStatus, jqXHR){
-	        	data = JSON.parse(data);
-	            $process.hide();
-	        	if (typeof(data.message)=='undefined'){
-	            	buildSearhOutput(data);
-	            	searchCache = data;
-	            	$output.show(); 
-	         		$newRecordButton.show();
+	        	try{
+		        	data = JSON.parse(data);
+		            $process.hide();
+		        	if (typeof(data.message)=='undefined'){
+		            	buildSearhOutput(data);
+		            	searchCache = data;
+		            	$output.show(); 
+		         		$newRecordButton.show();
+		        	}
+		        	else{
+		        		$('#messageSearch').text('Pesquisa por participante '+$.trim($('#fullName').val())+' não econtrou dados');
+		        		$message.show(); 
+		         		$newRecordButton.show();
+		        	}
 	        	}
-	        	else{
-	        		$('#messageSearch').text('Pesquisa por participante '+$.trim($('#fullName').val())+' não econtrou dados');
-	        		$message.show(); 
-	         		$newRecordButton.show();
-	        	}        
+		        catch (e){
+		        	alert('Execute Reload no Browser');
+		        }
 	        },
 	        error: function(jqXHR, textStatus, errorThrown){
 	        	$('#messageSearch').text('Error on Process: '+ jqXHR.responseText+' status: '+jqXHR.statusText);

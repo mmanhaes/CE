@@ -6,6 +6,23 @@ var dbURL =  credentials.url || config.cloudant.url;
 var cloudant = Cloudant({url: dbURL, plugin:'retry', retryAttempts:10, retryTimeout:10000 });
 const uuidv1 = require('uuid/v1');
 
+
+var updateUser = function(data,callback){
+	
+	  var db = cloudant.db.use(config.database.users.name);	
+  
+	  db.insert(data,function(err, body, header) {
+	      if (err) {
+		        console.log('[db.Update] User', err.message);
+		        return callback(err,null);
+		      }
+		 
+		      console.log('You have Updated a record for an User.');
+		      console.log(body);
+		      return callback(null,"OK");
+	  });
+};
+
 var createUser = function(data,callback){
 	
 	  var db = cloudant.db.use(config.database.users.name);	
@@ -34,9 +51,10 @@ var findByUserName = function(username,callback){
 		     console.log("Error in findByUsername",err);
 		     return callback(err,null);
 		  }	  
-	  	  return callback(null,result)
+	  	  return callback(null,result);
 	  });	
 };
 
 module.exports.findByUserName = findByUserName;
 module.exports.createUser = createUser;
+module.exports.updateUser = updateUser;

@@ -38,7 +38,8 @@ var chart = [{"department":"Diretoria Colegiada",	"sections":[
 		     {"department":"Estudo e Prática da Mediunidade",	"sections":[
 					{"section":"Diretoria", "functions": ["Diretor"]},
 					{"section":"Coordenação", "functions":  ["Coordenador"]},
-					{"section":"Grupo de Trabalho", "functions":  ["Coordenador","Colaborador"]}					
+					{"section":"Grupo de Trabalho", "functions":  ["Coordenador","Colaborador"]},
+					{"section":"Estudo da Mediunidade", "functions":  ["Coordenador"]}
 				]
 		     },
 		     {"department":"Estudos Doutrinários",	"sections":[
@@ -67,13 +68,40 @@ var chart = [{"department":"Diretoria Colegiada",	"sections":[
 		     {"department":"Infância e Juventude",	"sections":[
 					{"section":"Diretoria", "functions": ["Diretor"]},
 					{"section":"Coordenação", "functions":  ["Coordenador"]},
-					{"section":"Infância 1", "functions":  ["Colaborador","Estágio"]},
-					{"section":"Infância 2", "functions":  ["Colaborador","Estágio"]},
-					{"section":"Primeiro Ciclo", "functions":  ["Colaborador","Estágio"]},
-					{"section":"Segundo Ciclo", "functions":  ["Colaborador","Estágio"]},
-					{"section":"Terceiro Ciclo", "functions":  ["Colaborador","Estágio"]},
-					{"section":"Juventude 1", "functions":  ["Colaborador","Estágio"]},
-					{"section":"Juventude 2", "functions":  ["Colaborador","Estágio"]}
+					{"section":"Infância 1", "functions":  ["Coordenador","Colaborador","Estágio"]},
+					{"section":"Infância 2", "functions":  ["Coordenador","Colaborador","Estágio"]},
+					{"section":"Primeiro Ciclo", "functions":  ["Coordenador","Colaborador","Estágio"]},
+					{"section":"Segundo Ciclo", "functions":  ["Coordenador","Colaborador","Estágio"]},
+					{"section":"Terceiro Ciclo", "functions":  ["Coordenador","Colaborador","Estágio"]},
+					{"section":"Juventude 1", "functions":  ["Coordenador","Colaborador","Estágio"]},
+					{"section":"Juventude 2", "functions":  ["Coordenador","Colaborador","Estágio"]}
 				]
 		     }		     
+];
+
+var studySectionDepartment = [
+	{"section":"EIDE I","department":"Estudos Doutrinários"},
+	{"section":"EIDE II","department":"Estudos Doutrinários"},
+	{"section":"ESDE I","department":"Estudos Doutrinários"},
+	{"section":"ESDE II","department":"Estudos Doutrinários"},
+	{"section":"EADE","department":"Estudos Doutrinários"},
+	{"section":"Estudo da Codificação Espírita","department":"Estudos Doutrinários"},
+	{"section":"Estudo das Obras de André Luiz","department":"Estudos Doutrinários"},
+	{"section":"Estudo da Mediunidade","department":"Estudo e Prática da Mediunidade"},
+	{"section":"Estudo da Evangelização - Infância 1","department":"Estudos Doutrinários"},
+	{"section":"Estudo da Evangelização - Infância 2","department":"Estudos Doutrinários"},							
+	{"section":"Estudo da Evangelização - Primeiro Ciclo","department":"Estudos Doutrinários"},
+	{"section":"Estudo da Evangelização - Segundo Ciclo","department":"Estudos Doutrinários"},		
+	{"section":"Estudo da Evangelização - Terceiro Ciclo","department":"Estudos Doutrinários"},					
+	{"section":"Estudo da Evangelização - Juventude 1","department":"Estudos Doutrinários"},
+	{"section":"Estudo da Evangelização - Juventude 2","department":"Estudos Doutrinários"},
+	{"section":"Estudo do Evangelho","department":"Estudos Doutrinários"},
+	{"section":"Estudo da série psic. Joanna de Ângelis","department":"Estudos Doutrinários"},
+	{"section":"Infância 1", "department":"Infância e Juventude"},
+	{"section":"Infância 2", "department":"Infância e Juventude"},
+	{"section":"Primeiro Ciclo", "department":"Infância e Juventude"},
+	{"section":"Segundo Ciclo", "department":"Infância e Juventude"},
+	{"section":"Terceiro Ciclo", "department":"Infância e Juventude"},
+	{"section":"Juventude 1", "department":"Infância e Juventude"},
+	{"section":"Juventude 2","department":"Infância e Juventude"}
 ]
