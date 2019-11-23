@@ -255,8 +255,8 @@ function populateData(person){
 	}
 	if (typeof(person.work)!='undefined'){
 		work = person.work;
-		for(var i=work.length-1;i>=0;--i){
-			if (i===work.length-1){
+		for(var i=0; i<work.length;++i){
+			if (i==0){
 				populateWorkData(work[i]);
 			}
 			buildWorkRowTable(work[i]);
@@ -268,8 +268,8 @@ function populateData(person){
 	}
 	if (typeof(person.study)!='undefined'){	
 		study = person.study;
-		for(var i=study.length-1;i>=0;--i){
-			if (i===study.length-1){
+		for(var i=0;i<study.length;++i){
+			if (i==0){
 				populateStudyData(study[i]);
 			}
 			buildStudyRowTable(study[i]);
@@ -1123,16 +1123,21 @@ function removeWork(){
         	 rowIndex = i+2;
          }
     }
+    
+    console.log('Work before remove'+JSON.stringify(work));
+    
     if (rowIndex != -1){
 	    table.deleteRow(rowIndex);
 	    work.splice(rowIndex-2, 1);
 	           
 	    if (table.rows.length > 2){
 	    	radios[0].checked = "true";
+	    	populateWorkData(work[0]);
 	    }
 
     }
     
+    console.log('Work to be updated when save'+JSON.stringify(work));
     $process.hide();
 	$output.show()
 }
@@ -1300,6 +1305,7 @@ function removeStudy(){
 	           
 	    if (table.rows.length > 2){
 	    	radios[0].checked = "true";
+	    	populateStudyData(study[0]);
 	    }	
     }
     

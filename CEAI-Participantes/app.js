@@ -682,7 +682,10 @@ app.post('/services/ceai/searchPerson',
 function prepareUpdate(dbSource,request,callback){
 	
 	switch (request.type){
-		case  "finance":				
+		case  "finance":
+			if (typeof(request.association)!='undefined'){
+				dbSource.association.push(request.association);
+			}
 			for (var i=0;i<request.finance.length;++i){
 				dbSource.finance.push(request.finance[i]);
 			}						
@@ -714,6 +717,10 @@ function prepareUpdate(dbSource,request,callback){
 			dbSource.email2 = request.email2;
 			dbSource.habilities= request.habilities;
 			dbSource.habilitesNotes= request.habilitesNotes;
+			if (typeof(request.association)!='undefined'){
+				dbSource.association= request.association;
+			}
+			dbSource.association= request.association;
 			if (typeof(request.finance)!='undefined'){
 				for (var i=0;i<request.finance.length;++i){
 					dbSource.finance.push(request.finance[i]);
