@@ -1,5 +1,12 @@
 var lgpdMessage = "Observado os parâmetros da Lei 13.709/2018 (Lei Geral de Proteção de Dados – LGPD):  Você concorda que iremos armazenar informações pessoais como Endereço, Telefone, RG, CPF e CONTRIBUIÇÃO se houver no nosso sistema e que estas informações SOMENTE serão utilizadas para FINS exclusivos de cadastro de participantes em termos de ATIVIDADES DE ESTUDO, VOLUNTARIADO e ASSOCIAÇÃO AO CENTRO ESPIRÍTA ABIBE ISFER? As informações coletadas não serão de nenhuma forma compartilhadas para qualquer outra finalidade. As informações podem ser alteradas e solicitadas a exclusão pelo participante a qualquer momento.";
 var inputPassword = "<table style=\"width: 80%\"><tr><th scope=\"col\" colspan=\"1\" style=\"width: 25%\"><h5 class=\"base--h5\" style=\"width: 180px;\">Insira sua nova Senha:</h5></th><th scope=\"col\" colspan=\"6\" style=\"width: 75%\"><input	id=\"changePwd1\" type=\"password\" minlength=\"6\" maxlength=\"8\" class=\"input--question--manual--reduced base--a\" style=\"width: 90px;\"></th></tr><tr><td scope=\"col\" colspan=\"1\" style=\"width: 25%\"><h5 class=\"base--h5\" style=\"width: 180px;\">Repita a nova Senha:</h5></td><td scope=\"col\" colspan=\"6\" style=\"width: 75%\"><table border=\"\" style=\"width: 100%\"><tr><td><input id=\"changePwd2\" type=\"password\" minlength=\"6\" maxlength=\"8\" class=\"input--question--manual--reduced base--a\" style=\"width: 90px;\"></td></tr></table></td></tr></table>";
+var changePwdDialog = false;
+var accessClassification = {
+	"Worker" : 1,
+	"User" : 0,
+	"Coordenador":2,
+	"Diretor":3	
+}
 
 function loadSessionData(){
 	
@@ -62,14 +69,15 @@ function saveLGPD_Record(){
     });	
 }
 
-function showChangePasswordDialog(){
+function showChangePasswordDialog(){	
 	$.ajax({
 		url: '/services/ceai/verifyChangePwd',
         type: "GET",
         contentType: "application/json",
         success: function(data, textStatus, jqXHR){
-            console.log('Response from lgpd function',data);
+            console.log('Response from showChangePasswordDialog function',data);
         	if (data.message === "CHANGE"){
+        	    changePwdDialog = true;
 	        	bootbox.dialog({
 	        		title: "Mudança de Senha (Mínimo 6 caracteres - Máximo 8 caracteres)",
 	                message: inputPassword,
@@ -83,7 +91,7 @@ function showChangePasswordDialog(){
 	                        label: 'Mudar Senha',
 	                        className: 'btn btn-primary',
 	                        callback: function(){
-	                        	saveChangePassword();
+	                        	saveChangePassword();	                        	
 	                        }
 	                    }
 	                },
@@ -97,7 +105,7 @@ function showChangePasswordDialog(){
         	}       	
         },
         error: function(jqXHR, textStatus, errorThrown){
-        	console.log('Error calling GDPR validation: '+errorThrown);
+        	console.log('Error calling showChangePasswordDialog validation: '+errorThrown);
         }
     });	
 }
@@ -125,13 +133,15 @@ function saveChangePassword(){
 			        	if (data.message=="OK"){
 			        		alert("Senha Alterada com Sucesso");
 			        		loadSessionData();
+			        		$('#cpf').val("");
 			        	}
 			        	else{
 			        		alert("Problemas na troca de senha, Contate o Administrador");
 			        	}
+			        	changePwdDialog = false;			        	
 			        },
 			        error: function(jqXHR, textStatus, errorThrown){
-			        	console.log('GDPR acceptance failed to save ');
+			        	console.log('saveNewPassword acceptance failed to save ');
 			        }
 			    });	
 		}
@@ -168,7 +178,7 @@ function showLGPD_Dialog(){
 	                        label: 'Concordo',
 	                        className: 'btn btn-primary',
 	                        callback: function(){
-	                        	saveLGPD_Record();
+	                        	saveLGPD_Record();                     	
 	                        	showChangePasswordDialog();
 	                        }
 	                    }
@@ -178,7 +188,7 @@ function showLGPD_Dialog(){
 	                }
 	            });
         	}
-        	else{
+        	else{        		
         		showChangePasswordDialog();
         	}
         },

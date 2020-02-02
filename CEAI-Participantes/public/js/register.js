@@ -61,11 +61,16 @@ function handleChangeRadioButton(){
     checkUserAccess(function(access){
     	enableDisableActions(access);
     	enableDisableFields(access);
-    	if (access){
-    		alert("Usuário "+cellFullName.innerHTML+" carregado para alterações.");    		
-    	}
-    	else{
+    	switch (access){
+    	case 0:
     		alert("Usuário "+cellFullName.innerHTML+" carregado para leitura.");
+    		break;
+    	case 1:
+    		alert("Usuário "+cellFullName.innerHTML+" carregado para alterações parciais.");    		
+    		break;
+    	case 2:
+    		alert("Usuário "+cellFullName.innerHTML+" carregado para alterações em todos os campos.");    		
+    		break;
     	}    	
         association = [];
         work = [];
@@ -155,7 +160,10 @@ function splitFullName(name,callback){
 }
 
 function populateAssociationData(association){
+	$('#associationGroup').val(association.associationGroup);
+	handleAssociationGroupChange();
 	$('#associationType').val(association.associationType);
+	$('#associationStatus').val(association.associationStatus);
 	var date = '';
 	if (typeof(association.initDate)!=='undefined'){
 		var date =association.initDate.split("-");
@@ -181,11 +189,13 @@ function buildAssociationRowTable(data){
     var row = table.insertRow(rowCount);
 
     row.insertCell(0).innerHTML= '<input type="radio" name="group1" onchange="handleChangeRadioButtonAssociation();">';
-    row.insertCell(1).innerHTML= data.associationType;
-    row.insertCell(2).innerHTML= data.initDate;
-    row.insertCell(3).innerHTML= data.exitDate;
-    row.insertCell(4).innerHTML= data.contribution;
-    row.insertCell(5).innerHTML= data.notes;
+    row.insertCell(1).innerHTML= data.associationGroup;
+    row.insertCell(2).innerHTML= data.associationType;
+    row.insertCell(3).innerHTML= data.associationStatus;
+    row.insertCell(4).innerHTML= data.initDate;
+    row.insertCell(5).innerHTML= data.exitDate;
+    row.insertCell(6).innerHTML= data.contribution;
+    row.insertCell(7).innerHTML= data.notes;
   
 }
 
@@ -279,12 +289,24 @@ function populateData(person){
 			radios[0].checked = true;
 		}
 	}
+	if (typeof(person.fincode)!='undefined'){
+		$('#fincode').val(person.fincode);
+	}	
 	if (typeof(person.finance)!='undefined'){
 		handlePaymentYearLoad();
 		var currentdate = new Date(); 
 		$('#paymentYear').val(currentdate.getFullYear());
 		handlePaymentChange(person,currentdate.getFullYear());
 	}	
+	populateVolunteerFormData(person);
+}
+
+function populateVolunteerFormData(person){
+	
+	var a = document.getElementById('vonlunteerFormLink'); //or grab it by tagname etc
+	a.href = "/services/ceai/showVolunteerForm?fincode="+ person.fincode;		
+	   
+    console.log('Data Form Populated');
 }
 
 function handlePaymentChange(person,year){
@@ -446,24 +468,9 @@ function handleChangeRadioButtonWork(){
     populateWorkData(work);
 }
 
-function enableDisableActions(writer){
-	if (writer){
-		$('#create').prop("disabled",false).css('opacity',1.0);
-		$('#update').prop("disabled",false).css('opacity',1.0);
-		$('#resetPassword').prop("disabled",false).css('opacity',1.0);
-		$('#cleanFields').prop("disabled",false).css('opacity',1.0);
-		$('#insertWork').prop("disabled",false).css('opacity',1.0);
-		$('#updateWork').prop("disabled",false).css('opacity',1.0);
-		$('#deleteWork').prop("disabled",false).css('opacity',1.0);
-		$('#insertStudy').prop("disabled",false).css('opacity',1.0);
-		$('#updateStudy').prop("disabled",false).css('opacity',1.0);
-		$('#deleteStudy').prop("disabled",false).css('opacity',1.0);
-		$('#insertAssociation').prop("disabled",false).css('opacity',1.0);
-		$('#updateAssociation').prop("disabled",false).css('opacity',1.0);
-		$('#deleteAssociation').prop("disabled",false).css('opacity',1.0);
-		$('#searchParent').prop("disabled",false).css('opacity',1.0);		
-	}
-	else{
+function enableDisableActions(access){
+	switch(access){
+	case 0:
 		$('#create').prop("disabled",true).css('opacity',0.5);
 		$('#update').prop("disabled",true).css('opacity',0.5);
 		$('#resetPassword').prop("disabled",true).css('opacity',0.5);
@@ -478,76 +485,45 @@ function enableDisableActions(writer){
 		$('#updateAssociation').prop("disabled",true).css('opacity',0.5);
 		$('#deleteAssociation').prop("disabled",true).css('opacity',0.5);
 		$('#searchParent').prop("disabled",true).css('opacity',0.5);
-	}	
+		break;
+	case 1:
+		$('#create').prop("disabled",false).css('opacity',1.0);
+		$('#update').prop("disabled",false).css('opacity',1.0);
+		$('#resetPassword').prop("disabled",false).css('opacity',1.0);
+		$('#cleanFields').prop("disabled",false).css('opacity',1.0);
+		$('#insertWork').prop("disabled",true).css('opacity',0.5);
+		$('#updateWork').prop("disabled",true).css('opacity',0.5);
+		$('#deleteWork').prop("disabled",true).css('opacity',0.5);
+		$('#insertStudy').prop("disabled",true).css('opacity',0.5);
+		$('#updateStudy').prop("disabled",true).css('opacity',0.5);
+		$('#deleteStudy').prop("disabled",true).css('opacity',0.5);
+		$('#insertAssociation').prop("disabled",true).css('opacity',0.5);
+		$('#updateAssociation').prop("disabled",true).css('opacity',0.5);
+		$('#deleteAssociation').prop("disabled",true).css('opacity',0.5);
+		$('#searchParent').prop("disabled",false).css('opacity',1.0);		
+		break;		
+	case 2:
+		$('#create').prop("disabled",false).css('opacity',1.0);
+		$('#update').prop("disabled",false).css('opacity',1.0);
+		$('#resetPassword').prop("disabled",false).css('opacity',1.0);
+		$('#cleanFields').prop("disabled",false).css('opacity',1.0);
+		$('#insertWork').prop("disabled",false).css('opacity',1.0);
+		$('#updateWork').prop("disabled",false).css('opacity',1.0);
+		$('#deleteWork').prop("disabled",false).css('opacity',1.0);
+		$('#insertStudy').prop("disabled",false).css('opacity',1.0);
+		$('#updateStudy').prop("disabled",false).css('opacity',1.0);
+		$('#deleteStudy').prop("disabled",false).css('opacity',1.0);
+		$('#insertAssociation').prop("disabled",false).css('opacity',1.0);
+		$('#updateAssociation').prop("disabled",false).css('opacity',1.0);
+		$('#deleteAssociation').prop("disabled",false).css('opacity',1.0);
+		$('#searchParent').prop("disabled",false).css('opacity',1.0);
+		break;	
+	}
 }
 
-function enableDisableFields(writer){
-	if (writer){
-		$('#fullNameInput').prop("disabled",false);
-		$('#rg').prop("disabled",false);
-		$('#rgExp').prop("disabled",false);
-		$('#rgState').prop("disabled",false).css('opacity',1.0);
-		$('#cpfInput').prop("disabled",false);
-		$('#day').prop("disabled",false);
-		$('#month').prop("disabled",false);
-		$('#year').prop("disabled",false);
-		$('#address').prop("disabled",false);
-		$('#number').prop("disabled",false);
-		$('#complement').prop("disabled",false);
-		$('#neighborhood').prop("disabled",false);
-		$('#city').prop("disabled",false);
-		$('#state').prop("disabled",false).css('opacity',1.0);
-		$('#postCode-1').prop("disabled",false);
-		$('#postCode-2').prop("disabled",false);
-		$('#parentCpf').prop("disabled",false);
-		$('#parentName').prop("disabled",false);
-		$('#ddd1').prop("disabled",false);
-		$('#phone1').prop("disabled",false);
-		$('#whatsup1').prop("disabled",false).css('opacity',1.0);
-		$('#ddd2').prop("disabled",false);
-		$('#phone2').prop("disabled",false).css('opacity',1.0);
-		$('#whatsup2').prop("disabled",false);
-		$('#email1').prop("disabled",false);
-		$('#email2').prop("disabled",false);
-		$('#habilities').prop("disabled",false);
-		$('#notesHabilities').prop("disabled",false);
-		$('#associationType').prop("disabled",false).css('opacity',1.0);
-		$('#initAssociationDay').prop("disabled",false);
-		$('#initAssociationMonth').prop("disabled",false);
-		$('#initAssociationYear').prop("disabled",false);
-		$('#exitAssociationDay').prop("disabled",false);
-		$('#exitAssociationMonth').prop("disabled",false);
-		$('#exitAssociationYear').prop("disabled",false);
-		$('#contribution').prop("disabled",false);
-		$('#notesAssociation').prop("disabled",false);
-		$('#studyType').prop("disabled",false).css('opacity',1.0);
-		$('#weekDayStudy').prop("disabled",false).css('opacity',1.0);
-		$('#periodStudy').prop("disabled",false).css('opacity',1.0);
-		$('#initStudyDay').prop("disabled",false);
-		$('#initStudyMonth').prop("disabled",false);
-		$('#initStudyYear').prop("disabled",false);
-		$('#finalStudyDay').prop("disabled",false);
-		$('#finalStudyMonth').prop("disabled",false);
-		$('#finalStudyYear').prop("disabled",false);
-		$('#classStudy').prop("disabled",false);
-		$('#notesStudy').prop("disabled",false);
-		$('#department').prop("disabled",false).css('opacity',1.0);
-		$('#section').prop("disabled",false).css('opacity',1.0);
-		$('#function').prop("disabled",false).css('opacity',1.0);
-		$('#weekDayWork').prop("disabled",false).css('opacity',1.0);
-		$('#periodWork').prop("disabled",false).css('opacity',1.0);
-		$('#initWorkDay').prop("disabled",false);
-		$('#initWorkMonth').prop("disabled",false);
-		$('#initWorkYear').prop("disabled",false);
-		$('#finalWorkDay').prop("disabled",false);
-		$('#finalWorkMonth').prop("disabled",false);
-		$('#finalWorkYear').prop("disabled",false);
-		$('#classWork').prop("disabled",false).css('opacity',1.0);
-		$('#notesWork').prop("disabled",true);
-		
-		
-	}
-	else{
+function enableDisableFields(access){
+	switch(access){
+	case 0:
 		$('#fullNameInput').prop("disabled",true);
 		$('#rg').prop("disabled",true);
 		$('#rgExp').prop("disabled",true);
@@ -609,10 +585,85 @@ function enableDisableFields(writer){
 		$('#finalWorkYear').prop("disabled",true);
 		$('#classWork').prop("disabled",true).css('opacity',1.0);
 		$('#notesWork').prop("disabled",true);		
+		break;
+		
+	case 1:
+		
+		break;		
+	case 2:
+		$('#fullNameInput').prop("disabled",false);
+		$('#rg').prop("disabled",false);
+		$('#rgExp').prop("disabled",false);
+		$('#rgState').prop("disabled",false).css('opacity',1.0);
+		$('#cpfInput').prop("disabled",false);
+		$('#day').prop("disabled",false);
+		$('#month').prop("disabled",false);
+		$('#year').prop("disabled",false);
+		$('#address').prop("disabled",false);
+		$('#number').prop("disabled",false);
+		$('#complement').prop("disabled",false);
+		$('#neighborhood').prop("disabled",false);
+		$('#city').prop("disabled",false);
+		$('#state').prop("disabled",false).css('opacity',1.0);
+		$('#postCode-1').prop("disabled",false);
+		$('#postCode-2').prop("disabled",false);
+		$('#parentCpf').prop("disabled",false);
+		$('#parentName').prop("disabled",false);
+		$('#ddd1').prop("disabled",false);
+		$('#phone1').prop("disabled",false);
+		$('#whatsup1').prop("disabled",false).css('opacity',1.0);
+		$('#ddd2').prop("disabled",false);
+		$('#phone2').prop("disabled",false).css('opacity',1.0);
+		$('#whatsup2').prop("disabled",false);
+		$('#email1').prop("disabled",false);
+		$('#email2').prop("disabled",false);
+		$('#habilities').prop("disabled",false);
+		$('#notesHabilities').prop("disabled",false);
+		$('#associationType').prop("disabled",false).css('opacity',1.0);
+		$('#initAssociationDay').prop("disabled",false);
+		$('#initAssociationMonth').prop("disabled",false);
+		$('#initAssociationYear').prop("disabled",false);
+		$('#exitAssociationDay').prop("disabled",false);
+		$('#exitAssociationMonth').prop("disabled",false);
+		$('#exitAssociationYear').prop("disabled",false);
+		$('#contribution').prop("disabled",false);
+		$('#notesAssociation').prop("disabled",false);
+		$('#studyType').prop("disabled",false).css('opacity',1.0);
+		$('#weekDayStudy').prop("disabled",false).css('opacity',1.0);
+		$('#periodStudy').prop("disabled",false).css('opacity',1.0);
+		$('#initStudyDay').prop("disabled",false);
+		$('#initStudyMonth').prop("disabled",false);
+		$('#initStudyYear').prop("disabled",false);
+		$('#finalStudyDay').prop("disabled",false);
+		$('#finalStudyMonth').prop("disabled",false);
+		$('#finalStudyYear').prop("disabled",false);
+		$('#classStudy').prop("disabled",false);
+		$('#notesStudy').prop("disabled",false);
+		$('#department').prop("disabled",false).css('opacity',1.0);
+		$('#section').prop("disabled",false).css('opacity',1.0);
+		$('#function').prop("disabled",false).css('opacity',1.0);
+		$('#weekDayWork').prop("disabled",false).css('opacity',1.0);
+		$('#periodWork').prop("disabled",false).css('opacity',1.0);
+		$('#initWorkDay').prop("disabled",false);
+		$('#initWorkMonth').prop("disabled",false);
+		$('#initWorkYear').prop("disabled",false);
+		$('#finalWorkDay').prop("disabled",false);
+		$('#finalWorkMonth').prop("disabled",false);
+		$('#finalWorkYear').prop("disabled",false);
+		$('#classWork').prop("disabled",false).css('opacity',1.0);
+		$('#notesWork').prop("disabled",true);		
+		break;
 	}
-	
 }
-
+/**
+ * This function purpose is to return level access on fields
+ * @param callback 
+ * @returns 
+ * This function will return 3 access Levels
+ * 0 - Read Access
+ * 1 - Write Partial (It is not allowed to change Work neither association)
+ * 2 - Write Full (It is to change all Fields
+ */
 function checkUserAccess(callback){
 	
 	//Needs to improve to match coordinators, Look comment searchCache.docs[cachedPosition]
@@ -623,9 +674,41 @@ function checkUserAccess(callback){
         contentType: "text/plain",
         success: function(data, textStatus, jqXHR){
         	//If is the own user, enable changes
+        	console.log("Data from checkUserAccess "+JSON.stringify(data));
         	if (data.username === searchCache.docs[cachedPosition].email1){
         		console.log("Level access : Writer (it is own user data)");
-        		return callback(true);
+        		var higherRole = data.role[0]['function'];
+        		for(var i=1;i<data.role.length;++i){
+        			if (accessClassification[higherRole]<accessClassification[data.role[i]['function']]){
+        				higherRole = data.role[i]['function'];
+        			}
+        		}        		
+        		/*
+        		var higherRole = '';
+        		for(var i=0;i<data.role.length;++i){
+	        		if ((data.role[i]['function']=='Worker' || data.role[i]['function']=='User') && higherRole==''){
+	        			higherRole = data.role[i]['function'];
+	        		}
+	        		else{
+	        			if (data.role[i]['function']=='Diretor' && higherRole=='Coordenador'){
+	        				higherRole = data.role[i]['function'];
+	        			}
+	        			if (data.role[i]['function']=='Coordenador' && (higherRole=='Worker' || higherRole=='User')){
+	        				higherRole = data.role[i]['function'];
+	        			}	  
+	        			if (data.role[i]['function']=='Diretor' && (higherRole=='Worker' || higherRole=='User')){
+	        				higherRole = data.role[i]['function'];
+	        			}
+	        		}
+        		}
+        		*/
+        		console.log('Role: '+higherRole);
+        		if (higherRole == 'Worker' || higherRole=='User'){
+        			return callback(1);
+        		}
+        		else{        			
+        			return callback(2);
+        		}
         	}
         	else{
         		//Working with Rules only
@@ -635,7 +718,7 @@ function checkUserAccess(callback){
 	        	for(;i<data.length;++i){
 	        		if (data[i]['function']=='Worker' || data[i]['function']=='User'){
 	        			console.log("Level access : "+data[i]['function']);
-	        			return callback(false);
+	        			return callback(0);
 	        		}
 	        	}
 	        	if (i == data.length){
@@ -697,7 +780,12 @@ function checkUserAccess(callback){
 	        					isWriter = false; 
 	        			}
 	        		}
-	        		return callback(isWriter);
+	        		if (isWriter){
+	        			return callback(2);
+	        		}
+	        		else{
+	        			return callback(0);
+	        		}	        		
 	        	}
         	}
         },
@@ -842,11 +930,13 @@ function buildAssociationRowTable(data){
     var row = table.insertRow(rowCount);
 
     row.insertCell(0).innerHTML= '<input type="radio" name="groupAssociation" onchange="handleChangeRadioButtonAssociation();">';
-    row.insertCell(1).innerHTML= data.associationType;
-    row.insertCell(2).innerHTML= data.initDate;
-    row.insertCell(3).innerHTML= data.exitDate;
-    row.insertCell(4).innerHTML= data.contribution;
-    row.insertCell(5).innerHTML= data.notes;  
+    row.insertCell(1).innerHTML= data.associationGroup;
+    row.insertCell(2).innerHTML= data.associationType;
+    row.insertCell(3).innerHTML= data.associationStatus;
+    row.insertCell(4).innerHTML= data.initDate;
+    row.insertCell(5).innerHTML= data.exitDate;
+    row.insertCell(6).innerHTML= data.contribution;
+    row.insertCell(7).innerHTML= data.notes;  
 }
 
 function validateAssociationSave(callback){
@@ -860,10 +950,20 @@ function validateAssociationSave(callback){
 }
 
 function validateFieldsForAssociation(callback){
+	
+	var associationGroup = $('#associationGroup').val();
+	if (associationGroup == "No Selection"){
+		return callback(false,"Insira um Grupo de associação ao CEAI");
+	}
 
 	var associationType = $('#associationType').val();
 	if (associationType == "No Selection"){
 		return callback(false,"Insira um tipo de associação ao CEAI");
+	}
+	
+	var associationStatus = $('#associationStatus').val();
+	if (associationStatus == "No Selection"){
+		return callback(false,"Insira um status de associação ao CEAI");
 	}
 	
 	if ($.trim($('#initAssociationDay').val()) === '' || $.trim($('#initAssociationMonth').val()) === '' || $.trim($('#initAssociationYear').val())==='')  
@@ -909,21 +1009,29 @@ function updateAssociation(){
 		    if (index != -1){
 			    var associationItem = association[index];
 				var associationType = document.getElementById("associationType");
-			    row.cells[1].innerHTML = associationType.options[associationType.selectedIndex].value;
-			    associationItem["associationType"] = associationType.options[associationType.selectedIndex].value;
-			    row.cells[2].innerHTML = $.trim($('#initAssociationDay').val()) + '-' + $.trim($('#initAssociationMonth').val()) + '-' + $.trim($('#initAssociationYear').val());
+				
+			    row.cells[1].innerHTML = document.getElementById("associationGroup").value;
+			    associationItem["associationGroup"] = document.getElementById("associationGroup").value;
+			    
+			    row.cells[2].innerHTML = document.getElementById("associationType").value;
+			    associationItem["associationType"] = document.getElementById("associationType").value;
+			    
+			    row.cells[3].innerHTML = document.getElementById("associationStatus").value;
+			    associationItem["associationStatus"] = document.getElementById("associationStatus").value;
+			    
+			    row.cells[4].innerHTML = $.trim($('#initAssociationDay').val()) + '-' + $.trim($('#initAssociationMonth').val()) + '-' + $.trim($('#initAssociationYear').val());
 			    associationItem["initDate"] = $.trim($('#initAssociationDay').val()) + '-' + $.trim($('#initAssociationMonth').val()) + '-' + $.trim($('#initAssociationYear').val());
 			    if ($.trim($('#exitAssociationDay').val())!=='' && $.trim($('#exitAssociationMonth').val()) !=='' && $.trim($('#exitAssociationYear').val()) !==''){
-			    	row.cells[3].innerHTML = $.trim($('#exitAssociationDay').val()) + '-' + $.trim($('#exitAssociationMonth').val()) + '-' + $.trim($('#exitAssociationYear').val());
+			    	row.cells[5].innerHTML = $.trim($('#exitAssociationDay').val()) + '-' + $.trim($('#exitAssociationMonth').val()) + '-' + $.trim($('#exitAssociationYear').val());
 			    	associationItem["exitDate"] = $.trim($('#exitAssociationDay').val()) + '-' + $.trim($('#exitAssociationMonth').val()) + '-' + $.trim($('#exitAssociationYear').val());
 			    }
 			    else{
-			    	row.cells[3].innerHTML = '';
+			    	row.cells[5].innerHTML = '';
 			    	associationItem["exitDate"] = '';
 			    }
-			    row.cells[4].innerHTML = $.trim($('#contribution').val());
+			    row.cells[6].innerHTML = $.trim($('#contribution').val());
 			    associationItem["contribution"] = $.trim($('#contribution').val());
-			    row.cells[5].innerHTML = $.trim($('#notes').val());
+			    row.cells[7].innerHTML = $.trim($('#notes').val());
 			    associationItem["notes"] = $('#notesAssociation').val();
 			    association[index] = associationItem;
 		    }
@@ -948,9 +1056,10 @@ function insertAssociation(){
 		{
 			$process.show();
 			$output.hide();
-			var associationType = document.getElementById("associationType");
 			var associationItem = {};
-			associationItem["associationType"] = associationType.options[associationType.selectedIndex].value;
+			associationItem["associationGroup"] = document.getElementById("associationGroup").value;
+			associationItem["associationType"] = document.getElementById("associationType").value;
+			associationItem["associationStatus"] = document.getElementById("associationStatus").value;
 			associationItem["initDate"] = $.trim($('#initAssociationDay').val()) + '-' + $.trim($('#initAssociationMonth').val()) + '-' + $.trim($('#initAssociationYear').val());
 		    if ($.trim($('#exitAssociationDay').val())!==''){
 		    	associationItem["exitDate"] = $.trim($('#exitAssociationDay').val()) + '-' + $.trim($('#exitAssociationMonth').val()) + '-' + $.trim($('#exitAssociationYear').val());
@@ -971,8 +1080,9 @@ function insertAssociation(){
 }
 
 function cleanUpAssociationFields(){
-	var associationType = document.getElementById("associationType");
-	associationType.selectedIndex = 0;
+	document.getElementById("associationGroup").selectedIndex = 0;
+	document.getElementById("associationType").selectedIndex = 0;
+	document.getElementById("associationStatus").selectedIndex = 0;
 	$('#initAssociationDay').val('');
 	$('#initAssociationMonth').val('');
 	$('#initAssociationYear').val('');
@@ -1727,6 +1837,50 @@ function handlePaymentYearLoad(){
  	 sel.appendChild(fragment);
 }
 
+function handleAssociationGroupChange(){
+	 var valueGroup = group.map(function(item){ return item.name});
+	 console.log("value Array of Department:",JSON.stringify(valueGroup));
+	 var groupIndex = valueGroup.indexOf($('#associationGroup').val());
+	 if (groupIndex!=-1){
+		 var currentGroup = group[groupIndex];
+		 console.log("Group Selected:",JSON.stringify(currentGroup));
+	  	 var sel = document.getElementById('associationType');
+	  	 clearComboOptions(sel);
+	  	 var fragment = document.createDocumentFragment();
+	  	 var opt;
+	
+	     opt = document.createElement('option');
+	     opt.innerHTML = "Selecione";
+	     opt.value = "No Selection"; 
+	     fragment.appendChild(opt);
+	     for(var i=0;i<currentGroup.types.length;++i)
+	  	 {    		 
+	  	      opt = document.createElement('option');
+	   	      opt.innerHTML = currentGroup.types[i];
+	   	      opt.value = currentGroup.types[i];
+	   	      fragment.appendChild(opt);
+	  	 }        	
+	  	 sel.appendChild(fragment);
+	  	 
+	  	 sel = document.getElementById('associationStatus');
+	  	 clearComboOptions(sel);
+	  	 fragment = document.createDocumentFragment();
+	
+	     opt = document.createElement('option');
+	     opt.innerHTML = "Selecione";
+	     opt.value = "No Selection"; 
+	     fragment.appendChild(opt);
+	     for(var i=0;i<currentGroup.status.length;++i)
+	  	 {    		 
+	  	      opt = document.createElement('option');
+	   	      opt.innerHTML = currentGroup.status[i];
+	   	      opt.value = currentGroup.status[i];
+	   	      fragment.appendChild(opt);
+	  	 }        	
+	  	 sel.appendChild(fragment);
+	 }
+}
+
 function handleDepartmentChange(){
 	 var valueDepartment = chart.map(function(item){ return item.department});
 	 console.log("value Array of Department:",JSON.stringify(valueDepartment));
@@ -1865,41 +2019,47 @@ $(document).ready(function() {
 		search();
 	});
 	$("#parentCpf").focusout(function(){
-		var val = $.trim($('#parentCpf').val());
-		if (val!==''){
-			var isnum = /^\d+$/.test(val);
-			if (!isnum){
-				alert("Coloque somente números sem separadores");
+		if (changePwdDialog==false){
+			var val = $.trim($('#parentCpf').val());
+			if (val!==''){
+				var isnum = /^\d+$/.test(val);
+				if (!isnum){
+					alert("Coloque somente números sem separadores");
+					$('#parentCpf').val("");
+				}
+			}
+			if (cpfValidate(val)==false){
+				alert("CPF Inválido, Coloque somente números válidos e sem separadores");
 				$('#parentCpf').val("");
 			}
 		}
-		if (cpfValidate(val)==false){
-			alert("CPF Inválido, Coloque somente números válidos e sem separadores");
-			$('#parentCpf').val("");
-		}
 	});
 	$( "#parentCpf" ).keypress(function() {
-		var val = $.trim($('#parentCpf').val());
-		if (val!==''){
-			var isnum = /^\d+$/.test(val);
-			if (!isnum){
-				alert("Coloque somente números sem separadores");
-				$('#parentCpf').val("");
+		if (changePwdDialog==false){
+			var val = $.trim($('#parentCpf').val());
+			if (val!==''){
+				var isnum = /^\d+$/.test(val);
+				if (!isnum){
+					alert("Coloque somente números sem separadores");
+					$('#parentCpf').val("");
+				}
 			}
 		}
 	});	
 	$("#cpf").focusout(function(){
-		var val = $.trim($('#cpf').val());
-		if (val!==''){
-			var isnum = /^\d+$/.test(val);
-			if (!isnum){
-				alert("Coloque somente números sem separadores");
+		if (changePwdDialog==false){
+			var val = $.trim($('#cpf').val());
+			if (val!==''){
+				var isnum = /^\d+$/.test(val);
+				if (!isnum){
+					alert("Coloque somente números sem separadores");
+					$('#cpf').val("");
+				}
+			}
+			if (cpfValidate(val)==false){
+				alert("CPF Inválido, Coloque somente números válidos e sem separadores");
 				$('#cpf').val("");
 			}
-		}
-		if (cpfValidate(val)==false){
-			alert("CPF Inválido, Coloque somente números válidos e sem separadores");
-			$('#cpf').val("");
 		}
 	});
 	$( "#cpf" ).keypress(function(e) {
@@ -1919,28 +2079,32 @@ $(document).ready(function() {
 	    }
 	});	
 	$("#cpfInput").focusout(function(){
-		//alert("Acionou verificador");
-		var val = $.trim($('#cpfInput').val());
-		if (val!==''){
-			var isnum = /^\d+$/.test(val);
-			if (!isnum){
-				alert("Coloque somente números válidos e sem separadores");
+		if (changePwdDialog==false){
+			//alert("Acionou verificador");
+			var val = $.trim($('#cpfInput').val());
+			if (val!==''){
+				var isnum = /^\d+$/.test(val);
+				if (!isnum){
+					alert("Coloque somente números válidos e sem separadores");
+					$('#cpfInput').val("");
+				}
+			}
+			if (cpfValidate(val)==false){
+				alert("CPF Inválido, Coloque somente números válidos e sem separadores");
 				$('#cpfInput').val("");
 			}
-		}
-		if (cpfValidate(val)==false){
-			alert("CPF Inválido, Coloque somente números válidos e sem separadores");
-			$('#cpfInput').val("");
 		}
 	});
 	$( "#cpfInput" ).keypress(function() {
 		//alert("Acionou verificador");
-		var val = $.trim($('#cpfInput').val());
-		if (val!==''){
-			var isnum = /^\d+$/.test(val);
-			if (!isnum){
-				alert("Coloque somente números sem separadores");
-				$('#cpf').val("");
+		if (changePwdDialog==false){
+			var val = $.trim($('#cpfInput').val());
+			if (val!==''){
+				var isnum = /^\d+$/.test(val);
+				if (!isnum){
+					alert("Coloque somente números sem separadores");
+					$('#cpf').val("");
+				}
 			}
 		}
 	});	
@@ -2060,18 +2224,22 @@ $(document).ready(function() {
 			$('#classStudy').css("display","block");
 		}
 	});
-	$('#associationType').change(function(){
+	$('#associationGroup').change(function(){		
+		handleAssociationGroupChange();
 		
-		var associationType = $('#associationType').val();
-		if (associationType == "Assistido" || associationType == "Participante" || associationType == "Inativo" ){
+		var associationGroup = $('#associationGroup').val();
+		
+		if (associationGroup == "Associado"){
+			$('#contribution').val('');
+			$('#contribution').prop("disabled",false);
+			
+		}
+		if (associationGroup == "Não Associado"){
 			$('#contribution').val('ISENTO');
 			$('#contribution').prop("disabled",true);
 		}
-		else{
-			$('#contribution').val('');
-			$('#contribution').prop("disabled",false);
-		}
-	});
+		
+	});		
 	$('#updateWork').click(function(){
 		updateWork();
 	});		

@@ -68,6 +68,20 @@ passport.use('custom',new CustomStrategy(
 								 else{
 									 session.changePassword = false;
 								 }
+								 result.docs[0].lastAccessed = new Date();
+								 if (typeof(result.docs[0].access)=='undefined'){
+									 result.docs[0].access = [];
+								 }
+								 result.docs[0].access.push(result.docs[0].lastAccessed);
+								 var input = result.docs[0];
+								 users.updateUser(input,function(err,result){
+									   if (err){
+										   console.log('Error to update user',err);
+									   }
+									   else{
+										   console.log('User '+ input.username+' updated with success with standard password');
+									   }
+								 });								 
 								 return cb(null, result.docs[0]);								 
 							 }
 							 else{
@@ -255,22 +269,29 @@ app.post('/services/ceai/saveNewPassword',
         function(req, res){	
 	res.setHeader('Content-Type', 'application/json');
 	console.log("Saving Password for User",req.user.username);
-	var input = req.user
-	crypto.encrypt(req.body.password,function(encryptedPwd){
-		input.password = encryptedPwd;	
-		var db = cloudant.db.use(config.database.users.name);
-		
-		db.insert(input,function(err, body, header) {
-			  var data = {};
-		      if (err) {
-			        console.log('[db.update] saveNewPassword Error', err.message);
-					data.message = "NOK";
-					res.end(JSON.stringify(data));
+	var db = cloudant.db.use(config.database.users.name);
+	var sel = config.selectors.byUserName;
+	sel.selector.username = req.user.username;
+	  
+	db.find(sel, function(err, result) {
+	
+		var input = result.docs[0];
+		crypto.encrypt(req.body.password,function(encryptedPwd){
+			input.password = encryptedPwd;	
+			var db = cloudant.db.use(config.database.users.name);
+			console.log('updating document for new password',JSON.stringify(input));
+			db.insert(input,function(err, body, header) {
+				  var data = {};
+			      if (err) {
+				        console.log('[db.update] saveNewPassword Error', err.message);
+						data.message = "NOK";
+						res.end(JSON.stringify(data));
+				      }
+			      else{
+						data.message = "OK";
+						res.end(JSON.stringify(data));
 			      }
-		      else{
-					data.message = "OK";
-					res.end(JSON.stringify(data));
-		      }
+			});
 		});
 	});
 }); 
@@ -280,7 +301,7 @@ app.post('/services/ceai/resetPassword',
         function(req, res){	
 	res.setHeader('Content-Type', 'application/json');
 	
-	console.log("Reset Password for User ID ",req.body.userID);
+	console.log("Reseting Password for User ID ",req.body.userID);
 
 	var db = cloudant.db.use(config.database.users.name);
 	var sel = config.selectors.byUserIDSystem;
@@ -288,6 +309,7 @@ app.post('/services/ceai/resetPassword',
 	  
 	db.find(sel, function(err, result) {
 		if (err) {
+			console.log('Error in seach byUserIDSystem',JSON.stringify(result));
 		 	data.message = "NOK";
 			res.end(JSON.stringify(data));
 		}
@@ -295,7 +317,7 @@ app.post('/services/ceai/resetPassword',
 			 var data = {};
 			 if (result.docs.length > 0){
 				var input =  result.docs[0];
-			 	input.password = STANDARD_PASSWORD;			
+			 	input.password = STANDARD_PASSWORD;	
 				db.insert(input,function(err, body, header) {
 					  
 				      if (err) {
@@ -304,12 +326,14 @@ app.post('/services/ceai/resetPassword',
 							res.end(JSON.stringify(data));
 					      }
 				      else{
+				    	    console.log('[db.update] Reset Password OK');
 							data.message = "OK";
 							res.end(JSON.stringify(data));
 				      }
 				});
 			 }
 			 else{
+				 	console.log('User not FOUND, Check with Administrator');
 				 	data.message = "NOK";
 					res.end(JSON.stringify(data));
 			 }
@@ -1023,6 +1047,7 @@ app.post('/services/ceai/register',
 		input.displayName =  req.body.firstName+ ' '+ req.body.middleName+' '+ req.body.lastName;
 		if (result.docs.length == 0){
 			input.userID  = req.body.userID;
+			input.createdOn = new Date();
 			users.createUser(input,function(err,result){
 			   if (err){
 				   console.log('Error to create new user',err);
@@ -1033,6 +1058,8 @@ app.post('/services/ceai/register',
 		   });			
 		}
 		else{
+			  input.userID  = req.body.userID;
+			  input.createdOn = new Date();
 			  users.updateUser(input,function(err,result){
 				   if (err){
 					   console.log('Error to update user',err);
@@ -1108,6 +1135,65 @@ app.post('/services/ceai/register',
 	});
 });
 
+app.get('/services/ceai/showVolunteerForm',require('connect-ensure-login').ensureLoggedIn(),function(req,res){
+	 res.setHeader('Content-Type', 'application/json');
+	 const fs = require('fs');
+	 
+	 var fincode = req.query.fincode;
+	 
+	 var bdm = require('./BinaryDataManager');
+	 
+	 bdm.getAttachmentContent(fincode,"fichaVoluntario",function(stream,error){
+	 //bdm.getAttachmentContent(fincode,"fichaVoluntario",function(filename,error){
+		 if (error){
+			 console.log('Error in showVolunteerForm form Function : '+err);
+			 res.status(500); 
+			 res.end(JSON.stringify(err));
+		 }
+		 else{
+			 console.log("Sending File "+ fincode+'.pdf'+ " to the Client");
+			 
+			 /* WORKED */
+			 res.setHeader('Content-Type', 'application/pdf');			 
+			 res.setHeader('Content-Disposition', 'attachment; filename='+ fincode+'.pdf');			 
+			 //res.send(stream)
+			 stream.pipe(res);
+					 
+			 /*
+			 var data =fs.readFileSync(filename);
+			 var stat = fs.statSync(filename);
+			 console.log('Reading File with size:'+stat.size);
+			 res.contentType("application/pdf");
+			 res.send(data);
+			 */
+			 
+			 /*
+			 
+			 var file = fs.createReadStream(filename);
+			 var stat = fs.statSync(filename);
+			 
+			 console.log("File size: "+stat.size);
+			 res.setHeader('Content-Length', stat.size);
+			 res.setHeader('Content-Type', 'application/pdf');			 
+			 res.setHeader('Content-Disposition', 'attachment; filename='+filename);			 
+			 file.pipe(res);
+			 
+			 */
+			 
+			 /* 
+			 res.set('Content-Type','application/pdf');
+			 res.attachment("Volunteer-"+ fincode +".pdf");
+			 fs.readFile(filename, (err, dados) => {
+				    if (err) 
+				    	throw err
+				    console.log('Data with attachment sent with success!');
+				    res.send(dados);
+			 });
+			 */
+		 }
+	 });
+});
+
 app.get('/',
 		function(req, res){
 		if (typeof(session.user) == 'undefined'){
@@ -1118,7 +1204,12 @@ app.get('/',
 					res.redirect('/publico');
 				}
 			}
-			res.redirect('/cadastro');			
+			try{
+				res.redirect('/cadastro');
+			}
+			catch(e){				
+				res.sendFile(__dirname + "/public/register.html");
+			}
 		}
 });
 

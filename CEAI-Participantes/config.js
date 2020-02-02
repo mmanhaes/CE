@@ -24,6 +24,15 @@ exports.lgpd = {
 		   ]
 }
 
+exports.attachments = {};
+
+exports.attachments.VolunteerForm = {
+        "fichaVoluntario" : {
+            "content_type" :"application/pdf",
+            "data" : "iVBORw0KGgoAA... ...AASUVORK5CYII="
+        }
+}
+
 exports.selectors={};
 
 exports.selectors={
@@ -72,7 +81,10 @@ exports.selectors={
 			      "password",
 			      "role",
 			      "displayName",
-			      "userID"
+			      "userID",
+			      "createdOn",
+			      "lastAccessed",
+			      "access"
 			   ],
 			   "sort": [
 			      {
@@ -91,7 +103,10 @@ exports.selectors={
 			      "password",
 			      "role",
 			      "displayName",
-			      "userID"
+			      "userID",
+			      "createdOn",
+			      "lastAccessed",
+			      "access"
 			   ],
 			   "sort": [
 			      {
@@ -110,7 +125,10 @@ exports.selectors={
 				      "password",
 				      "role",
 				      "displayName",
-				      "userID"
+				      "userID",
+				      "createdOn",
+				      "lastAccessed",
+				      "access"
 				   ],
 				   "sort": [
 				      {
@@ -203,6 +221,7 @@ exports.selectors={
 			    "middleName",
 			    "lastName",
 			    "userID",
+			    "fincode",
 			    "cpf",
 			    "rg",
 			    "rgExp",
@@ -229,7 +248,8 @@ exports.selectors={
 			    "work",
 			    "study",
 			    "book",
-			    "finance"
+			    "finance",
+			    "_attachments"
 			  ]
 		},
 		"forFinancialUpdates":{
@@ -270,7 +290,8 @@ exports.selectors={
 			    "work",
 			    "study",
 			    "book",
-			    "finance"
+			    "finance",
+			    "_attachments"
 			  ]
 		},
 		"general":{
@@ -405,6 +426,7 @@ exports.selectors={
 						    "middleName",
 						    "lastName",
 						    "userID",
+						    "fincode",
 						    "cpf",
 						    "rg",
 						    "rgExp",
@@ -431,7 +453,8 @@ exports.selectors={
 						    "work",
 						    "study",
 						    "book",
-						    "finance"
+						    "finance",
+						    "_attachments"
 					  ],
 					  "sort": [
 					    {
@@ -525,7 +548,8 @@ exports.searchPerson = [
 						    "whatsup2",
 						    "email1",
 						    "email2",
-						    "finance"
+						    "finance",
+						    "_attachments"
 					  ],
 					  "sort": [
 					    {
@@ -582,7 +606,8 @@ exports.searchPerson = [
 						    "work",
 						    "study",
 						    "book",
-						    "finance"
+						    "finance",
+						    "_attachments"
 					  ],
 					  "sort": [
 					    {
@@ -630,7 +655,8 @@ exports.searchPerson = [
 						    "work",
 						    "study",
 						    "book",
-						    "finance"
+						    "finance",
+						    "_attachments"
 					  ],
 					  "sort": [
 					    {
@@ -681,7 +707,8 @@ exports.searchPerson = [
 						    "work",
 						    "study",
 						    "book",
-						    "finance"
+						    "finance",
+						    "_attachments"
 					  ],
 					  "sort": [
 					    {
@@ -732,7 +759,9 @@ exports.searchPerson = [
 						    "work",
 						    "study",
 						    "book",
-						    "finance"
+						    "finance",
+						    "_attachments"
+						    
 					  ],
 					  "sort": [
 					    {

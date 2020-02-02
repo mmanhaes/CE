@@ -445,76 +445,88 @@
 				<table border="" style="width: 80%">
 					<tr>
 						<td colspan="1">
-							<h5 class="base--h5" style="width: 180px;">Tipo Associado:</h5>
+							<h5 class="base--h5" style="width: 180px;">Grupo:</h5>
 						</td>
-						<td style="width: 150px;"><select id="associationType"
-							style="color: #a53725";width: 55px">
+						<td><select id="associationGroup" style="color: #a53725;width:210">
 								<option selected="selected" value="No Selection">Selecione</option>
-								<option value="Assistido">Assistido</option>
-								<option value="Colaborador">Colaborador</option>
-								<option value="Efetivo">Efetivo</option>
-								<option value="Inativo">Inativo</option>
-								<option value="Participante">Participante</option>
+								<option value="Associado">Associado</option>
+								<option value="Não Associado">Não Associado</option>
 						</select></td>
-						<td><h5 align="right" class="base--h5" style="width: 150px;">Data de Início:</h5></td>
+						<td colspan="1">
+							<h5 align="right" class="base--h5" style="width: 140px;">Tipo Associado:</h5>
+						</td>
+						<td><select id="associationType" style="color: #a53725;width:180">
+								<option selected="selected" value="No Selection">Selecione</option>								
+						</select></td>
+						<td colspan="1">
+							<h5 align="right" class="base--h5" style="width: 130px;">Situação:</h5>
+						</td>
+						<td><select id="associationStatus" style="color: #a53725;width:110px">
+								<option selected="selected" value="No Selection">Selecione</option>
+								<option value="Assistido">Ativo</option>
+								<option value="Inativo">Inativo</option>
+						</select></td>
+					</tr>
+					<tr>
+						<td><h5  class="base--h5" style="width: 150px;">Data
+								de Início:</h5></td>
 						<td colspan="1" style="width: 200px;">
 							<table border="" style="width: 60%" cellspacing="0">
 								<tr>
-									<td><input id="initAssociationDay" maxlength="2" type="text"
-										class="input--question--manual base--a" style="width: 30px;">
-									</td>
+									<td><input id="initAssociationDay" maxlength="2"
+										type="text" class="input--question--manual base--a"
+										style="width: 30px;"></td>
 									<td>/</td>
-									<td><input id="initAssociationMonth" maxlength="2" type="text"
-										class="input--question--manual base--a" style="width: 30px;">
-									</td>
+									<td><input id="initAssociationMonth" maxlength="2"
+										type="text" class="input--question--manual base--a"
+										style="width: 30px;"></td>
 									<td>/</td>
-									<td><input id="initAssociationYear" type="text" maxlength="4"
-										class="input--question--manual base--a" style="width: 60px;">
-									</td>
+									<td><input id="initAssociationYear" type="text"
+										maxlength="4" class="input--question--manual base--a"
+										style="width: 60px;"></td>
 								</tr>
-							</table>
+							</table>							
 						</td>
-						<td><h5 align="right" class="base--h5" style="width: 150px;">Data da Término:</h5></td>
+						<td><h5 align="right" class="base--h5" style="width: 140px;">Data
+								da Término:</h5></td>
 						<td colspan="1" style="width: 90px;">
 							<table border="" style="width: 100%" cellspacing="0">
 								<tr>
-									<td><input id="exitAssociationDay" maxlength="2" type="text"
-										class="input--question--manual base--a" style="width: 30px;">
-									</td>
+									<td><input id="exitAssociationDay" maxlength="2"
+										type="text" class="input--question--manual base--a"
+										style="width: 30px;"></td>
 									<td>/</td>
-									<td><input id="exitAssociationMonth" maxlength="2" type="text"
-										class="input--question--manual base--a" style="width: 30px;">
-									</td>
+									<td><input id="exitAssociationMonth" maxlength="2"
+										type="text" class="input--question--manual base--a"
+										style="width: 30px;"></td>
 									<td>/</td>
-									<td><input id="exitAssociationYear" type="text" maxlength="4"
-										class="input--question--manual base--a" style="width: 60px;">
-									</td>
+									<td><input id="exitAssociationYear" type="text"
+										maxlength="4" class="input--question--manual base--a"
+										style="width: 60px;"></td>
 								</tr>
 							</table>
 						</td>
-					</tr>
-					<tr>
-						<td colspan="1" style="width: 50px;"><h5 class="base--h5">Valor
-								Contribuição:</h5></td>
+						<td colspan="1" style="width: 120px;"><h5 align="right" class="base--h5">Contribuição:</h5></td>
 						<td scope="col" colspan="6" style="width: 75%">
 							<table border="" style="width: 100%">
-							<tr>
-								<td colspan="1"><input id="contribution" type="text"
-									class="input--question--manual--reduced base--a"
-									style="width: 220px;"></td>
-							</tr>
+								<tr>
+									<td colspan="1"><input id="contribution" type="text"
+										class="input--question--manual--reduced base--a"
+										style="width: 120px;"></td>
+								</tr>
 							</table>
 						</td>
-					</tr>
+					</tr>					
 					<tr>
 						<td scope="col" colspan="1" style="width: 25%"><h5
-								class="base--h5" style="width: 160px;">Informações Complementares:</h5></td>
+								class="base--h5" style="width: 160px;">Informações
+								Complementares:</h5></td>
 						<td scope="col" colspan="6" style="width: 75%">
 							<table border="" style="width: 100%">
 								<tr>
 									<td><textarea placeholder="Não Obrigatório"
-								id="notesAssociation" class="output-spam"
-								style="height: 100px;color: #a53725; width: 810px;"></textarea></td>
+											id="notesAssociation" class="output-spam"
+											style="height: 100px; color: #a53725; width: 810px;"></textarea></td>
 								</tr>
 							</table>
 						</td>
@@ -539,14 +551,18 @@
 							<table class="table" id="tableResultAssociation" 
 							style="border: 1px solid grey">
 								<tr>
-									<th class="th" style="border: 1px solid grey" colspan="6"><h5
+									<th class="th" style="border: 1px solid grey" colspan="8"><h5
 											class="base--h5">Histórico de Associação</h5></th>
 								</tr>
 								<tr>
 									<th class="th" style="border: 1px solid grey"><h5
 											class="base--h5">Sel</h5></th>
 									<th class="th" style="border: 1px solid grey"><h5
-											class="base--h5">Tipo Associado</h5></th>							
+											class="base--h5">Grupo</h5></th>	
+									<th class="th" style="border: 1px solid grey"><h5
+											class="base--h5">Tipo</h5></th>	
+									<th class="th" style="border: 1px solid grey"><h5
+											class="base--h5">Status</h5></th>					
 									<th class="th" style="border: 1px solid grey"><h5
 											class="base--h5">Data Início</h5></th>
 									<th class="th" style="border: 1px solid grey"><h5
@@ -959,6 +975,22 @@
 		<div class="_demo--container">
 			<article class="_content base--article">
 				<div class="_content--choose-input-file">
+					<h3 id="top" class="base--h3">Ficha de Voluntariado</h3>
+					<p class="_content--input-description base--p">Descreve Detalhes da Ficha de Voluntariado
+					</p>
+				</div>
+				<table border="" style="width: 100%">					
+					<tr>						
+						<td scope="col" colspan="7" style="width: 100%">															
+  							<a id="vonlunteerFormLink" href="/services/ceai/showVolunteerForm?fincode=">Termo de Voluntariado.pdf</a>
+						</td>
+					</tr>
+				</table>
+			</article>
+		</div>		
+		<div class="_demo--container">
+			<article class="_content base--article">
+				<div class="_content--choose-input-file">
 					<h3 id="top" class="base--h3">Informações Financeiras</h3>
 					<p class="_content--input-description base--p">Visualize o histórico de pagamentos
 					</p>
@@ -966,7 +998,17 @@
 				<table border="" style="width: 80%">
 					<tr>
 						<td colspan="1""width: 25%">
-							<h5 class="base--h5" style="width: 140px;">Ano:</h5>
+							<h5 class="base--h5" style="width: 155px;">Código Financeiro:</h5>
+						</td>
+						<td style="width: 100%" colspan="1"><input id="fincode" type="text" 
+										class="input--question--manual--reduced base--a" disabled="disabled"
+										style="width: 65px;"></td>										
+					</tr> 
+				</table>
+				<table border="" style="width: 80%">
+					<tr>
+						<td colspan="1""width: 25%">
+							<h5 class="base--h5" style="width: 155px;">Ano:</h5>
 						</td>
 						<td style="width: 100%" colspan="1"><select id="paymentYear"
 							style="color: #a53725;width: 120px">
@@ -1032,6 +1074,7 @@
    <script type="text/javascript" src="js/lib/bootbox.all.min.js"></script>
    <script type="text/javascript" src="js/shared.js"></script>
    <script type="text/javascript" src="js/chart.js"></script>
+   <script type="text/javascript" src="js/associationTypes.js"></script>
    <script type="text/javascript" src="js/cpf.validate.js"></script>
    <script type="text/javascript" src="js/register.js"></script>
 </body>

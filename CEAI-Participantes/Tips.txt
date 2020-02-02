@@ -104,3 +104,24 @@ https://github.com/cloudfoundry/nodejs-buildpack
 11 - Insert Graduation
 
 12 - Prepare new load of data from spreadsheet adauto
+
+13 - Code to load embeded or object in page
+
+    var w = 720;
+    var h = 540;
+	var obj = document.createElement('object');
+    obj.setAttribute('width', w);
+    obj.setAttribute('height', h);
+    var param = document.createElement('param');
+        param.setAttribute('name', 'Src');
+        param.setAttribute('value', person.fincode+'.pdf');
+    obj.appendChild(param);
+    var embed = document.createElement('embed');
+        embed.setAttribute('width', w);
+        embed.setAttribute('height', h);
+        embed.setAttribute('src', 'http://localhost:3000/services/ceai/showVolunteerForm?fincode='+ person.fincode);
+        embed.setAttribute('href', 'http://localhost:3000/services/ceai/showVolunteerForm?fincode='+ person.fincode);
+    obj.appendChild(embed);
+    // here is where you need to know where you're inserting it
+
+    document.getElementById('vonlunteerForm').appendChild(obj);
