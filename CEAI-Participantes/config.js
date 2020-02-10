@@ -497,7 +497,8 @@ exports.participant = {
 		  "work": [],
 		  "study": [],
 		  "notes":"",
-		  "finance":[]
+		  "finance":[],
+		  "_attachments":""
 }
 
 exports.association = {

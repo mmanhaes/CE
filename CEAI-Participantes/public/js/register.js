@@ -206,10 +206,12 @@ function populateData(person){
 	$('#rgExp').val(person.rgExp);
 	$('#rgState').val(person.rgState);
 	$('#cpfInput').val(person.cpf);
-	var date = person.birthDate.split("-");
-	$('#day').val(date[0]);
-	$('#month').val(date[1]);
-	$('#year').val(date[2]);
+	if (typeof(person.birthDate)!='undefined'){
+		var date = person.birthDate.split("-");
+		$('#day').val(date[0]);
+		$('#month').val(date[1]);
+		$('#year').val(date[2]);
+	}
 	$('#address').val(person.address);
 	$('#number').val(person.number);
 	$('#complement').val(person.complement);

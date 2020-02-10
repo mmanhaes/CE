@@ -454,6 +454,96 @@ app.post('/services/ceai/searchCPF',
 	});
 });
 
+app.post('/services/ceai/createORupdatePersonAPI', 
+		function(req, res){
+	res.setHeader('Content-Type', 'text/plain');
+	
+	if (req.get('apiKey') != APIKEY)
+	{
+		console.log("API Key passed",req.get('apiKey'));
+		res.status(403);
+		console.log('Headers',req.headers);
+		res.end('{"message":"Not Authorized"}');
+	}
+	else{
+		var db = cloudant.db.use(config.database.person.name);
+		var selector = config.selectors.forFinancialUpdates;
+		selector.selector.fincode = req.body.fincode;
+		db.find(selector, function(err, result) {
+			  if (err) {
+			    console.log(err);
+			    config.config.searchError.error = err;
+			    res.end(config.searchError);
+			  }
+			  else{
+				    console.log('Found %d documents with %s', result.docs.length,JSON.stringify(selector));
+				    console.log('Result %s', JSON.stringify(result));
+				    if (result.docs.length>0)
+				    {					  	
+				    	req.body.type = "finance_update";
+				    	prepareUpdate(result.docs[0],req.body,function(response){
+				    		db.insert(response, function(err, body, header) {
+								if (err) {
+									console.log('[db.update] ', err.message);
+									res.end('[db.update] ', err.message);
+								}
+								else{
+									console.log('You have updated the record.');
+									console.log(body);
+									console.log('With Content :');
+									console.log(JSON.stringify(req.body, null, 2));
+									res.write('Requisicão Atualizada com Sucesso Para o Usuário com o ID :'+response.userID +'\n');
+									res.write('Código Financeiro :'+response.fincode +'\n');
+									res.end('Participante : '+ response.firstName+ " "+ response.middleName+" "+response.lastName);	
+								}	
+							});								    		
+				    	});
+				    }
+				    else
+				    {
+				    	var input = {};
+						input.username = req.body.email1;
+						input.password = STANDARD_PASSWORD;
+						input.role = "user";	
+						input.displayName =  req.body.firstName+ ' '+ req.body.middleName+' '+ req.body.lastName;
+						input.userID  = req.body.userID;
+						users.createUser(input,function(err,result){
+							   if (err){
+								   res.write('Erro para criar um novo usuário',err);
+							   }
+							   else{
+								   res.write('Usuário '+ input.username+' criado com sucesso com a senha padrão \n');
+							   }
+							   
+							   var db = cloudant.db.use(config.database.person.name);		
+							   var id =  uuidv1();
+							   var participant = JSON.parse(JSON.stringify(config.participant));
+							   participant.userID = getCustomerID();
+							   req.body.type = "finance_insert";
+							   prepareUpdate(participant,req.body,function(response){
+						    		db.insert(response,id,function(err, body, header) {
+										if (err) {
+											res.end('[db.insert from public Register Error] ', err.message);
+										}
+										else{
+											console.log('You have inserted the record.');
+											console.log(body);
+											console.log('With Content :');
+											console.log(JSON.stringify(req.body, null, 2));
+											
+											res.write('Dados Criados com Sucesso Para o Usuário com o ID :'+response.userID +'\n');
+											res.write('Código Financeiro :'+response.fincode +'\n');
+											res.end('Participante : '+ response.firstName+ " "+ response.middleName+" "+response.lastName);
+										}
+									});
+							 });		
+						});
+				    }
+			  }			  
+		});	 
+	}
+});
+
 app.post('/services/ceai/updatePersonAPI', 
 		function(req, res){
 	res.setHeader('Content-Type', 'text/plain');
@@ -706,49 +796,129 @@ app.post('/services/ceai/searchPerson',
 function prepareUpdate(dbSource,request,callback){
 	
 	switch (request.type){
-		case  "finance":
+		case  "finance_update":
+			if (typeof(request.firstName)!='undefined')
+				dbSource.firstName = request.firstName;
+			if (typeof(request.middleName)!='undefined')
+				dbSource.middleName = request.middleName;
+			if (typeof(request.lastName)!='undefined')
+				dbSource.lastName = request.lastName;
+			if (typeof(request.fincode)!='undefined')
+				dbSource.fincode = request.fincode;
+			if (typeof(request.cpf)!='undefined')
+				dbSource.cpf = request.cpf;
+			if (typeof(request.rg)!='undefined')
+				dbSource.rg = request.rg;
+			if (typeof(request.rgExp)!='undefined')
+				dbSource.rgExp = request.rgExp;
+			if (typeof(request.rgState)!='undefined')
+				dbSource.rgState = request.rgState;
+			if (typeof(request.birthDate)!='undefined')
+				dbSource.birthDate = request.birthDate;
+			if (typeof(request.address)!='undefined')
+				dbSource.address = request.address;
+			if (typeof(request.number)!='undefined')
+				dbSource.number = request.number;
+			if (typeof(request.complement)!='undefined')
+				dbSource.complement = request.complement;
+			if (typeof(request.neighborhood)!='undefined')
+				dbSource.neighborhood = request.neighborhood;
+			if (typeof(request.city)!='undefined')
+				dbSource.city = request.city;
+			if (typeof(request.state)!='undefined')
+				dbSource.state = request.state;
+			if (typeof(request.postCode)!='undefined')
+				dbSource.postCode = request.postCode;
+			if (typeof(request.parentCpf)!='undefined')
+				dbSource.parentCpf = request.parentCpf;
+			if (typeof(request.parentName)!='undefined')
+				dbSource.parentName = request.parentName;
+			if (typeof(request.parentName)!='undefined')
+				dbSource.phone1 = request.parentName;
+			if (typeof(request.whatsup1)!='undefined')
+				dbSource.whatsup1 = request.whatsup1;
+			if (typeof(request.phone2)!='undefined')
+				dbSource.phone2 = request.phone2;
+			if (typeof(request.phone2)!='undefined')
+				dbSource.whatsup2 = request.phone2;
+			if (typeof(request.email1)!='undefined')
+				dbSource.email1 = request.email1;
+			if (typeof(request.email2)!='undefined')
+				dbSource.email2 = request.email2;
+			if (typeof(request.habilities)!='undefined')
+				dbSource.habilities= request.habilities;
+			if (typeof(request.habilitesNotes)!='undefined')
+				dbSource.habilitesNotes= request.habilitesNotes;
 			if (typeof(request.association)!='undefined'){
 				dbSource.association.push(request.association);
 			}
-			for (var i=0;i<request.finance.length;++i){
-				dbSource.finance.push(request.finance[i]);
-			}						
+			console.log('Current DB Finance',JSON.stringify(dbSource.finance));
+			if (typeof(request.finance)!='undefined'){
+				for (var i=0;i<request.finance.length;++i){
+					dbSource.finance.push(request.finance[i]);
+				}
+			}
 			break;
 		case  "finance_insert":	
-			dbSource.firstName = request.firstName;
-			dbSource.middleName = request.middleName;
-			dbSource.lastName = request.lastName;
-			dbSource.fincode = request.fincode;
-			dbSource.cpf = request.cpf;
-			dbSource.rg = request.rg;
-			dbSource.rgExp = request.rgExp;
-			dbSource.rgState = request.rgState;
-			dbSource.birthDate = request.birthDate;
-			dbSource.address = request.address;
-			dbSource.number = request.number;
-			dbSource.complement = request.complement;
-			dbSource.neighborhood = request.neighborhood;
-			dbSource.city = request.city;
-			dbSource.state = request.state;
-			dbSource.postCode = request.postCode;
-			dbSource.parentCpf = request.parentCpf;
-			dbSource.parentName = request.parentName;
-			dbSource.phone1 = request.phone1;
-			dbSource.whatsup1 = request.whatsup1;
-			dbSource.phone2 = request.phone2;
-			dbSource.whatsup2 = request.whatsup2;
-			dbSource.email1 = request.email1;
-			dbSource.email2 = request.email2;
-			dbSource.habilities= request.habilities;
+			if (typeof(request.firstName)!='undefined')
+				dbSource.firstName = request.firstName;
+			if (typeof(request.middleName)!='undefined')
+				dbSource.middleName = request.middleName;
+			if (typeof(request.lastName)!='undefined')
+				dbSource.lastName = request.lastName;
+			if (typeof(request.fincode)!='undefined')
+				dbSource.fincode = request.fincode;
+			if (typeof(request.cpf)!='undefined')
+				dbSource.cpf = request.cpf;
+			if (typeof(request.rg)!='undefined')
+				dbSource.rg = request.rg;
+			if (typeof(request.rgExp)!='undefined')
+				dbSource.rgExp = request.rgExp;
+			if (typeof(request.rgState)!='undefined')
+				dbSource.rgState = request.rgState;
+			if (typeof(request.birthDate)!='undefined')
+				dbSource.birthDate = request.birthDate;
+			if (typeof(request.address)!='undefined')
+				dbSource.address = request.address;
+			if (typeof(request.number)!='undefined')
+				dbSource.number = request.number;
+			if (typeof(request.complement)!='undefined')
+				dbSource.complement = request.complement;
+			if (typeof(request.neighborhood)!='undefined')
+				dbSource.neighborhood = request.neighborhood;
+			if (typeof(request.city)!='undefined')
+				dbSource.city = request.city;
+			if (typeof(request.state)!='undefined')
+				dbSource.state = request.state;
+			if (typeof(request.postCode)!='undefined')
+				dbSource.postCode = request.postCode;
+			if (typeof(request.parentCpf)!='undefined')
+				dbSource.parentCpf = request.parentCpf;
+			if (typeof(request.parentName)!='undefined')
+				dbSource.parentName = request.parentName;
+			if (typeof(request.parentName)!='undefined')
+				dbSource.phone1 = request.parentName;
+			if (typeof(request.whatsup1)!='undefined')
+				dbSource.whatsup1 = request.whatsup1;
+			if (typeof(request.phone2)!='undefined')
+				dbSource.phone2 = request.phone2;
+			if (typeof(request.phone2)!='undefined')
+				dbSource.whatsup2 = request.phone2;
+			if (typeof(request.email1)!='undefined')
+				dbSource.email1 = request.email1;
+			if (typeof(request.email2)!='undefined')
+				dbSource.email2 = request.email2;
+			if (typeof(request.habilities)!='undefined')
+				dbSource.habilities= request.habilities;
+			if (typeof(request.habilitesNotes)!='undefined')
+				dbSource.habilitesNotes= request.habilitesNotes;
 			dbSource.habilitesNotes= request.habilitesNotes;
 			if (typeof(request.association)!='undefined'){
 				dbSource.association= request.association;
 			}
 			dbSource.association= request.association;
 			if (typeof(request.finance)!='undefined'){
-				for (var i=0;i<request.finance.length;++i){
-					dbSource.finance.push(request.finance[i]);
-				}
+				dbSource.finance = request.finance;				
 			}
 			break;
 		case  "all":	
